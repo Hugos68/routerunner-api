@@ -1,6 +1,6 @@
 import { pgTable, text, uuid } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-valibot";
-import { email, minLength, string } from "valibot";
+import { email, minLength, partial, string } from "valibot";
 
 export const user = pgTable("user", {
 	id: uuid("id").primaryKey().defaultRandom(),
@@ -12,7 +12,9 @@ export const user = pgTable("user", {
 
 export type User = typeof user.$inferSelect;
 
-export const InsertUserSchema = createInsertSchema(user, {
+export const CreateUserSchema = createInsertSchema(user, {
 	email: () => string([email()]),
 	password: () => string([minLength(10)]),
 });
+
+export const UpdateUserSchema = partial(CreateUserSchema);
