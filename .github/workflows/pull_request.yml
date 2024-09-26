@@ -1,18 +1,21 @@
-name: CI
+name: Code quality
+
 on:
   push:
+  pull_request:
+
 jobs:
-  check:
+  quality:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install Bun
-        uses: oven-sh/setup-bun@v1
-      - name: Install Dependencies
-        run: bun Install
-      - name: Check
-        run: bun ci:check
+      - name: Setup Biome
+        uses: biomejs/setup-biome@v2
+        with:
+          version: latest
+      - name: Run Biome
+        run: biome ci
   test:
     runs-on: ubuntu-latest
     steps:
