@@ -1,12 +1,15 @@
 {
-  "name": "trucker_app_backend",
-  "scripts": {
-    "dev": "bun run --hot src/index.ts"
-  },
-  "dependencies": {
-    "hono": "^4.6.2"
-  },
-  "devDependencies": {
-    "@types/bun": "latest"
-  }
+	"name": "trucker_app_backend",
+	"scripts": {
+		"dev": "bun run --hot src/index.ts",
+		"check": "biome check --write",
+		"ci:check": "biome check"
+	},
+	"dependencies": {
+		"hono": "^4.6.2"
+	},
+	"devDependencies": {
+		"@types/bun": "latest",
+		"@biomejs/biome": "^1.9.2"
+	}
 }
