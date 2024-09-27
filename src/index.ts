@@ -10,7 +10,7 @@ app.onError((err, c) => {
 		return c.json(
 			{
 				error: {
-					code: "Validation",
+					code: err.name,
 					message: err.message,
 				},
 			},
@@ -21,7 +21,7 @@ app.onError((err, c) => {
 		return c.json(
 			{
 				error: {
-					code: "NotFound",
+					code: err.name,
 					message: err.message,
 				},
 			},
@@ -32,11 +32,11 @@ app.onError((err, c) => {
 		return c.json(
 			{
 				error: {
-					code: "Unknown",
+					code: err.name,
 					message: err.message,
 				},
 			},
-			400,
+			500,
 		);
 	}
 	return c.json({
