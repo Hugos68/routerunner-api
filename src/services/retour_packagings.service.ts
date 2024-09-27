@@ -4,54 +4,54 @@ import { database } from "../database/database.js";
 import {
 	CreateRetourEmballageSchema,
 	type RetourEmballage,
-	retourEmballage,
-} from "../database/models/retour_emballage.model.js";
+	retourPackagings,
+} from "../database/models/retour_packagings.model.js";
 import { NotFoundError } from "../utility/errors.js";
 
-export const createRetourEmballage = async (input: unknown) => {
+export const createRetourPackaging = async (input: unknown) => {
 	const values = parse(CreateRetourEmballageSchema, input);
 	const [result] = await database
-		.insert(retourEmballage)
+		.insert(retourPackagings)
 		.values(values)
 		.returning();
 	return result;
 };
 
-export const getRetourEmballages = async () => {
-	const result = await database.select().from(retourEmballage);
+export const getRetourPackagings = async () => {
+	const result = await database.select().from(retourPackagings);
 	return result;
 };
 
-export const getRetourEmballage = async (id: RetourEmballage["id"]) => {
+export const getRetourPackaging = async (id: RetourEmballage["id"]) => {
 	const [result] = await database
 		.select()
-		.from(retourEmballage)
-		.where(eq(retourEmballage.id, id));
+		.from(retourPackagings)
+		.where(eq(retourPackagings.id, id));
 	if (result === undefined) {
 		throw new NotFoundError(`RetourEmballage with id ${id} not found`);
 	}
 	return result;
 };
 
-export const deleteRetourEmballage = async (id: RetourEmballage["id"]) => {
+export const deleteRetourPackaging = async (id: RetourEmballage["id"]) => {
 	const [result] = await database
-		.delete(retourEmballage)
-		.where(eq(retourEmballage.id, id));
+		.delete(retourPackagings)
+		.where(eq(retourPackagings.id, id));
 	if (result === undefined) {
 		throw new NotFoundError(`RetourEmballage with id ${id} not found`);
 	}
 	return result;
 };
 
-export const updateRetourEmballage = async (
+export const updateRetourPackaging = async (
 	id: RetourEmballage["id"],
 	input: unknown,
 ) => {
 	const values = parse(CreateRetourEmballageSchema, input);
 	const [result] = await database
-		.update(retourEmballage)
+		.update(retourPackagings)
 		.set(values)
-		.where(eq(retourEmballage.id, id))
+		.where(eq(retourPackagings.id, id))
 		.returning();
 	if (result === undefined) {
 		throw new NotFoundError(`RetourEmballage with id ${id} not found`);

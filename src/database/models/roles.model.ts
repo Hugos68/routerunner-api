@@ -1,6 +1,6 @@
 import { pgTable, text, uuid } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-valibot";
-import { partial, string } from "valibot";
+import { partial } from "valibot";
 
 export const roles = pgTable("roles", {
 	id: uuid("id").primaryKey().defaultRandom(),

@@ -1,16 +1,16 @@
 import { Hono } from "hono";
 import {
-	createRetourEmballage,
-	deleteRetourEmballage,
-	getRetourEmballage,
-	getRetourEmballages,
-	updateRetourEmballage,
-} from "../services/retour_emballage.service";
+	createRetourPackaging,
+	deleteRetourPackaging,
+	getRetourPackaging,
+	getRetourPackagings,
+	updateRetourPackaging,
+} from "../services/retour_packagings.service";
 
 export const retourEmballage = new Hono();
 
 retourEmballage.post("/", async (c) => {
-	const retour_emballage = await createRetourEmballage(await c.req.json());
+	const retour_emballage = await createRetourPackaging(await c.req.json());
 	return c.json(
 		{
 			value: [retour_emballage],
@@ -20,7 +20,7 @@ retourEmballage.post("/", async (c) => {
 });
 
 retourEmballage.get("/", async (c) => {
-	const retour_emballages = await getRetourEmballages();
+	const retour_emballages = await getRetourPackagings();
 	return c.json(
 		{
 			value: retour_emballages,
@@ -31,7 +31,7 @@ retourEmballage.get("/", async (c) => {
 
 retourEmballage.get("/:id", async (c) => {
 	const id = c.req.param("id");
-	const retour_emballage = await getRetourEmballage(id);
+	const retour_emballage = await getRetourPackaging(id);
 	return c.json(
 		{
 			value: [retour_emballage],
@@ -42,7 +42,7 @@ retourEmballage.get("/:id", async (c) => {
 
 retourEmballage.patch("/:id", async (c) => {
 	const id = c.req.param("id");
-	const retour_emballage = await updateRetourEmballage(id, await c.req.json());
+	const retour_emballage = await updateRetourPackaging(id, await c.req.json());
 	return c.json(
 		{
 			value: [retour_emballage],
@@ -53,7 +53,7 @@ retourEmballage.patch("/:id", async (c) => {
 
 retourEmballage.delete("/:id", async (c) => {
 	const id = c.req.param("id");
-	const retour_emballage = await deleteRetourEmballage(id);
+	const retour_emballage = await deleteRetourPackaging(id);
 	return c.json(
 		{
 			value: [retour_emballage],
