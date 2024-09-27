@@ -2,7 +2,7 @@ import { pgTable, text, uuid } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-valibot";
 import { email, minLength, partial, string } from "valibot";
 
-export const users = pgTable("user", {
+export const users = pgTable("users", {
 	id: uuid("id").primaryKey().defaultRandom(),
 	firstName: text("first_name").notNull(),
 	lastName: text("last_name").notNull(),

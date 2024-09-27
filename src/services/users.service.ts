@@ -8,8 +8,13 @@ import {
 	type User,
 	users,
 } from "../database/tables/users.table.js";
-import { HASH_CONFIG } from "../utility/constants.js";
 import { NotFoundError } from "../utility/errors.js";
+
+const HASH_CONFIG = {
+	algorithm: "argon2id",
+	memoryCost: 19_456,
+	timeCost: 2,
+} satisfies Parameters<typeof Bun.password.hash>[1];
 
 const safeColumns = (() => {
 	const { password: _, ...columns } = getTableColumns(users);
@@ -34,7 +39,7 @@ export const getUser = async (id: User["id"]) => {
 		.from(users)
 		.where(eq(users.id, id));
 	if (result === undefined) {
-		throw new NotFoundError("User not found");
+		throw new NotFoundError(`User with id ${id} not found`);
 	}
 	return result;
 };
@@ -42,10 +47,7 @@ export const getUser = async (id: User["id"]) => {
 export const updateUser = async (id: User["id"], input: unknown) => {
 	const values = parse(UpdateUserSchema, input);
 	if ("password" in values && values.password !== undefined) {
-		values.password = await Bun.password.hash(
-			values.password,
-			HASH_CONFIG,
-		);
+		values.password = await Bun.password.hash(values.password, HASH_CONFIG);
 	}
 	const [user] = await database
 		.update(users)
@@ -53,7 +55,7 @@ export const updateUser = async (id: User["id"], input: unknown) => {
 		.where(eq(users.id, id))
 		.returning(safeColumns);
 	if (user === undefined) {
-		throw new NotFoundError("User not found");
+		throw new NotFoundError(`User with id ${id} not found`);
 	}
 	return user;
 };
@@ -64,7 +66,7 @@ export const deleteUser = async (id: User["id"]) => {
 		.where(eq(users.id, id))
 		.returning(safeColumns);
 	if (user === undefined) {
-		throw new NotFoundError("User not found");
+		throw new NotFoundError(`User with id ${id} not found`);
 	}
 	return user;
 };
