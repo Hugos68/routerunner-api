@@ -1,6 +1,5 @@
 import { pgTable, uuid } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-valibot";
-import { partial } from "valibot";
 import { users } from "./users.model";
 
 export const sessions = pgTable("sessions", {
