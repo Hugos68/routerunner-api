@@ -2,7 +2,7 @@ import { pgTable, uuid } from "drizzle-orm/pg-core";
 import { trips } from "./trips.model";
 import { users } from "./users.model";
 
-export const trip_drivers = pgTable("trip_drivers", {
+export const tripDrivers = pgTable("trip_drivers", {
 	id: uuid("id").primaryKey().defaultRandom(),
 	driverId: uuid("driver_id")
 		.notNull()

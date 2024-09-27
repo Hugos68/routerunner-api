@@ -1,5 +1,6 @@
 import { defineConfig } from "drizzle-kit";
 
+// biome-ignore lint/style/noDefaultExport: This is a config file
 export default defineConfig({
 	dialect: "postgresql",
 	schema: "./src/database/models/*.model.ts",

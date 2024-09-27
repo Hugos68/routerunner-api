@@ -2,7 +2,7 @@ import { pgTable, uuid } from "drizzle-orm/pg-core";
 import { orders } from "./orders.model";
 import { trips } from "./trips.model";
 
-export const order_trips = pgTable("order_trips", {
+export const orderTrips = pgTable("order_trips", {
 	id: uuid("id").primaryKey().defaultRandom(),
 	orderId: uuid("order_id")
 		.notNull()
@@ -12,4 +12,4 @@ export const order_trips = pgTable("order_trips", {
 		.references(() => trips.id),
 });
 
-export type OrderTrip = typeof order_trips.$inferSelect;
+export type OrderTrip = typeof orderTrips.$inferSelect;

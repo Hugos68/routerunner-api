@@ -35,4 +35,5 @@ app.route("/sessions", sessions);
 app.route("/trips", trips);
 app.route("/users", users);
 
+// biome-ignore lint/style/noDefaultExport: Required for app to run on Bun
 export default app;
