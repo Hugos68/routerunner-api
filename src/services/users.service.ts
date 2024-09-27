@@ -1,6 +1,5 @@
 import { eq, getTableColumns } from "drizzle-orm";
-import { createInsertSchema } from "drizzle-valibot";
-import { ValiError, parse } from "valibot";
+import { parse } from "valibot";
 import { database } from "../database/database.js";
 import {
 	CreateUserSchema,
