@@ -1,5 +1,4 @@
 import { eq } from "drizzle-orm";
-import { type Output, pick } from "valibot";
 import { database } from "../database/database.js";
 
 import { type Address, address } from "../database/tables/address.js";

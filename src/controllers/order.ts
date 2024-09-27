@@ -1,7 +1,6 @@
 import { Hono } from "hono";
 import { insertOrderSchema, updateOrderSchema } from "../database/tables/order";
 import { createRequestValidator } from "../helpers/request-validator";
-import { getAddress } from "../services/address";
 import {
 	createOrder,
 	deleteOrder,
@@ -26,24 +25,12 @@ app.get("/:id", async (c) => {
 app.post("/", createRequestValidator(insertOrderSchema), async (c) => {
 	const order = c.req.valid("json");
 	const result = await createOrder(order);
-	if (order.address !== undefined) {
-		const addres = getAddress(order.address);
-		if (addres === undefined) {
-			return c.json({ error: "Address not found" }, 404);
-		}
-	}
 	return c.json(result, 201);
 });
 
 app.patch("/:id", createRequestValidator(updateOrderSchema), async (c) => {
 	const id = c.req.param("id");
 	const order = c.req.valid("json");
-	if (order.address !== undefined) {
-		const addres = getAddress(order.address);
-		if (addres === undefined) {
-			return c.json({ error: "Address not found" }, 404);
-		}
-	}
 	const result = await updateOrder(id, order);
 	return c.json(result, 200);
 });

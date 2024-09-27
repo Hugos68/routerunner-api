@@ -10,9 +10,12 @@ export const order = pgTable("order", {
 	unloadingAddress: uuid("unloading_address")
 		.notNull()
 		.references(() => address.id),
-	unloadingDateTime: timestamp("unloading_date_time").notNull(),
+	unloadingDateTime: timestamp("unloading_date_time", {
+		mode: "string",
+		withTimezone: true,
+	}).notNull(),
 	deliveryInstructions: text("delivery_instructions").notNull(),
-	status: text("status").notNull(),
+	status: text("status", { enum: ["GESLOTEN", "OPEN"] }),
 });
 
 export type Order = typeof order.$inferSelect;
