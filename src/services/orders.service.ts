@@ -6,7 +6,7 @@ import {
 	type Order,
 	orders,
 	updateOrderSchema,
-} from "../database/tables/orders.table.js";
+} from "../database/models/orders.model.js";
 import { NotFoundError } from "../utility/errors.js";
 
 export const createOrder = async (input: unknown) => {

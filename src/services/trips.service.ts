@@ -6,7 +6,7 @@ import {
 	type Trip,
 	UpdateTripSchema,
 	trips,
-} from "../database/tables/trips.tables.js";
+} from "../database/models/trips.model.js";
 import { NotFoundError } from "../utility/errors.js";
 
 export const createTrip = async (input: unknown) => {

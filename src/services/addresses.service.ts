@@ -6,7 +6,7 @@ import {
 	CreateAddressSchema,
 	UpdateAddressSchema,
 	addresses,
-} from "../database/tables/addresses.table.js";
+} from "../database/models/addresses.model.js";
 import { NotFoundError } from "../utility/errors.js";
 
 export const createAddress = async (input: unknown) => {

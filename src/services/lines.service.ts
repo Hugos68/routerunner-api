@@ -6,7 +6,7 @@ import {
 	type Line,
 	UpdateLineSchema,
 	lines,
-} from "../database/tables/lines.table.js";
+} from "../database/models/lines.model.js";
 import { NotFoundError } from "../utility/errors.js";
 
 export const createLine = async (input: unknown) => {

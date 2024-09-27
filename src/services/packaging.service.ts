@@ -3,8 +3,8 @@ import { parse } from "valibot";
 import { database } from "../database/database.js";
 import {
 	CreateRetourEmballageSchema,
-	type RetourEmballage,
 	retourEmballage,
+	type RetourEmballage,
 } from "../database/models/retour_emballage.model.js";
 import { NotFoundError } from "../utility/errors.js";
 

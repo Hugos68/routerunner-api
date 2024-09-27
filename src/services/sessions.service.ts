@@ -5,7 +5,7 @@ import {
 	CreateSessionSchema,
 	type Session,
 	sessions,
-} from "../database/tables/sessions.table.js";
+} from "../database/models/sessions.model.js";
 import { NotFoundError } from "../utility/errors.js";
 
 export const createSession = async (input: unknown) => {

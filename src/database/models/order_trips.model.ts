@@ -1,6 +1,6 @@
 import { pgTable, uuid } from "drizzle-orm/pg-core";
-import { orders } from "./orders.table";
-import { trips } from "./trips.tables";
+import { orders } from "./orders.model";
+import { trips } from "./trips.model";
 
 export const order_trips = pgTable("order_trips", {
 	id: uuid("id").primaryKey().defaultRandom(),

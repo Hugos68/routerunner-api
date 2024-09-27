@@ -1,6 +1,6 @@
 import { pgTable, uuid } from "drizzle-orm/pg-core";
-import { trips } from "./trips.tables";
-import { users } from "./users.table";
+import { trips } from "./trips.model";
+import { users } from "./users.model";
 
 export const trip_drivers = pgTable("trip_drivers", {
 	id: uuid("id").primaryKey().defaultRandom(),

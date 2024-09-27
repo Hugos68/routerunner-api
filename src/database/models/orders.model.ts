@@ -1,7 +1,7 @@
 import { integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-valibot";
 import { partial } from "valibot";
-import { addresses } from "./addresses.table";
+import { addresses } from "./addresses.model";
 
 export const orders = pgTable("orders", {
 	id: uuid("id").primaryKey().defaultRandom(),

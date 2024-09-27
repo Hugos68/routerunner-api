@@ -7,7 +7,7 @@ import {
 	UpdateUserSchema,
 	type User,
 	users,
-} from "../database/tables/users.table.js";
+} from "../database/models/users.model.js";
 import { NotFoundError } from "../utility/errors.js";
 
 const HASH_CONFIG = {

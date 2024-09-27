@@ -5,7 +5,7 @@ import {
 	CreateNoteSchema,
 	type Note,
 	notes,
-} from "../database/tables/notes.tables.js";
+} from "../database/models/notes.model.js";
 import { NotFoundError } from "../utility/errors.js";
 
 export const createNote = async (input: unknown) => {
