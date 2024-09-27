@@ -6,8 +6,9 @@ import {
 	getRoles,
 	updateRole,
 } from "../services/roles.service";
+import type { Environment } from "../utility/types.js";
 
-export const roles = new Hono();
+export const roles = new Hono<Environment>();
 
 roles.post("/", async (c) => {
 	const role = await createRole(await c.req.json());

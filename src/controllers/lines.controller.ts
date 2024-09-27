@@ -6,8 +6,9 @@ import {
 	getLines,
 	updateLine,
 } from "../services/lines.service";
+import type { Environment } from "../utility/types.js";
 
-export const lines = new Hono();
+export const lines = new Hono<Environment>();
 
 lines.post("/", async (c) => {
 	const line = await createLine(await c.req.json());

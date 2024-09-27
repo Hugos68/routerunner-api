@@ -1,22 +1,18 @@
 import { Hono } from "hono";
 import { setCookie } from "hono/cookie";
-import type { CookieOptions } from "hono/utils/cookie";
 import {
 	createSession,
 	deleteSession,
 	getSession,
 	getSessions,
 } from "../services/sessions.service";
+import {
+	SESSION_COOKIE_CONIG,
+	SESSION_COOKIE_KEY,
+} from "../utility/constants.js";
+import type { Environment } from "../utility/types.js";
 
-const SESSION_COOKIE_KEY = "session_id";
-
-const SESSION_COOKIE_CONIG = {
-	sameSite: "strict",
-	secure: true,
-	httpOnly: true,
-} satisfies CookieOptions;
-
-export const sessions = new Hono();
+export const sessions = new Hono<Environment>();
 
 sessions.post("/", async (c) => {
 	const session = await createSession(await c.req.json());

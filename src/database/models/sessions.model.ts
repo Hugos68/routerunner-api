@@ -1,6 +1,6 @@
 import { pgTable, uuid } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-valibot";
-import { users } from "./users.model";
+import { pick } from "valibot";
+import { CreateUserSchema, users } from "./users.model";
 
 export const sessions = pgTable("sessions", {
 	id: uuid("id").primaryKey().defaultRandom(),
@@ -11,4 +11,7 @@ export const sessions = pgTable("sessions", {
 
 export type Session = typeof sessions.$inferSelect;
 
-export const CreateSessionSchema = createInsertSchema(sessions);
+export const CreateSessionSchema = pick(CreateUserSchema, [
+	"email",
+	"password",
+]);

@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { logger } from "hono/logger";
 import { addresses } from "./controllers/addresses.controller.js";
 import { lines } from "./controllers/lines.controller.js";
 import { notes } from "./controllers/notes.controller.js";
@@ -9,6 +10,7 @@ import { sessions } from "./controllers/sessions.controller.js";
 import { trips } from "./controllers/trips.controller.js";
 import { users } from "./controllers/users.controller.js";
 import { onError } from "./handlers/on-error.js";
+import { authentication } from "./middleware/authentication.js";
 
 const app = new Hono().basePath("/api/v1");
 
@@ -20,7 +22,8 @@ app.onError(onError);
 /**
  * Middleware
  */
-// TODO
+app.use(logger());
+app.use(authentication);
 
 /**
  * Routes

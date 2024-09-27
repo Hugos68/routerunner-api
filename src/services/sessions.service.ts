@@ -6,11 +6,39 @@ import {
 	type Session,
 	sessions,
 } from "../database/models/sessions.model.js";
+import { users } from "../database/models/users.model.js";
+import { HASH_CONFIG } from "../utility/constants.js";
 import { NotFoundError } from "../utility/errors.js";
 
 export const createSession = async (input: unknown) => {
 	const values = parse(CreateSessionSchema, input);
-	const [result] = await database.insert(sessions).values(values).returning();
+
+	const [user] = await database
+		.select()
+		.from(users)
+		.where(eq(users.email, values.email));
+
+	if (user === undefined) {
+		throw new NotFoundError(`User with email ${values.email} not found`);
+	}
+
+	const passwordMatches = await Bun.password.verify(
+		values.password,
+		user.password,
+		HASH_CONFIG.algorithm,
+	);
+
+	if (!passwordMatches) {
+		throw new NotFoundError(`User with email ${values.email} not found`);
+	}
+
+	const [result] = await database
+		.insert(sessions)
+		.values({
+			userId: user.id,
+		})
+		.returning();
+
 	return result;
 };
 

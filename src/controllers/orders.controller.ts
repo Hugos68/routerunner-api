@@ -6,8 +6,9 @@ import {
 	getOrders,
 	updateOrder,
 } from "../services/orders.service";
+import type { Environment } from "../utility/types.js";
 
-export const orders = new Hono();
+export const orders = new Hono<Environment>();
 
 orders.post("/", async (c) => {
 	const order = await createOrder(await c.req.json());

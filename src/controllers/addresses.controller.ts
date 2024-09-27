@@ -6,8 +6,9 @@ import {
 	getAddresses,
 	updateAddress,
 } from "../services/addresses.service";
+import type { Environment } from "../utility/types.js";
 
-export const addresses = new Hono();
+export const addresses = new Hono<Environment>();
 
 addresses.get("/", async (c) => {
 	const addresses = await getAddresses();

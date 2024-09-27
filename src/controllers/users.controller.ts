@@ -6,8 +6,9 @@ import {
 	getUsers,
 	updateUser,
 } from "../services/users.service";
+import type { Environment } from "../utility/types.js";
 
-export const users = new Hono();
+export const users = new Hono<Environment>();
 
 users.get("/", async (c) => {
 	const users = await getUsers();

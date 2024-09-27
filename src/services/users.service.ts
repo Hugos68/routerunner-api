@@ -7,13 +7,8 @@ import {
 	type User,
 	users,
 } from "../database/models/users.model.js";
+import { HASH_CONFIG } from "../utility/constants.js";
 import { NotFoundError } from "../utility/errors.js";
-
-const HASH_CONFIG = {
-	algorithm: "argon2id",
-	memoryCost: 19_456,
-	timeCost: 2,
-} satisfies Parameters<typeof Bun.password.hash>[1];
 
 const safeColumns = (() => {
 	const { password: _, ...columns } = getTableColumns(users);

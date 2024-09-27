@@ -6,8 +6,9 @@ import {
 	getNotes,
 	updateNote,
 } from "../services/notes.service";
+import type { Environment } from "../utility/types.js";
 
-export const notes = new Hono();
+export const notes = new Hono<Environment>();
 
 notes.post("/", async (c) => {
 	const note = await createNote(await c.req.json());

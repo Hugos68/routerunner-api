@@ -6,8 +6,9 @@ import {
 	getTrips,
 	updateTrip,
 } from "../services/trips.service";
+import type { Environment } from "../utility/types.js";
 
-export const trips = new Hono();
+export const trips = new Hono<Environment>();
 
 trips.post("/", async (c) => {
 	const trip = await createTrip(await c.req.json());

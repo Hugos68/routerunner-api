@@ -6,8 +6,9 @@ import {
 	getRetourPackagings,
 	updateRetourPackaging,
 } from "../services/retour_packagings.service";
+import type { Environment } from "../utility/types.js";
 
-export const retourEmballage = new Hono();
+export const retourEmballage = new Hono<Environment>();
 
 retourEmballage.post("/", async (c) => {
 	const retourEmballage = await createRetourPackaging(await c.req.json());
