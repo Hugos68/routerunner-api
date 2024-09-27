@@ -7,11 +7,9 @@
 		"ci:check": "biome check"
 	},
 	"dependencies": {
-		"@hono/valibot-validator": "^0.3.0",
 		"drizzle-orm": "^0.33.0",
 		"drizzle-valibot": "^0.2.0",
 		"hono": "^4.6.2",
-		"neverthrow": "^8.0.0",
 		"postgres": "^3.4.4",
 		"valibot": "0.30.0"
 	},
