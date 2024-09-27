@@ -16,23 +16,16 @@ export const authentication = createMiddleware<Environment>(async (c, next) => {
 		return;
 	}
 	const [session] = await database
-		.select()
+		.select({ user: users })
 		.from(sessions)
-		.where(eq(sessions.id, sessionId));
-
-	if (session === undefined) {
-		return;
-	}
-	const [user] = await database
-		.select()
-		.from(users)
-		.where(eq(users.id, session.userId));
-	if (user === undefined) {
+		.where(eq(sessions.id, sessionId))
+		.innerJoin(users, eq(users.id, sessions.userId));
+	if (session === undefined || session.user === null) {
 		return;
 	}
 	c.set("session", {
 		authenticated: true,
-		user: user,
+		user: session.user,
 	});
 	await next();
 });
