@@ -1,4 +1,6 @@
 import { pgTable, text, uuid } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-valibot";
+import { partial } from "valibot";
 
 export const address = pgTable("address", {
 	id: uuid("id").primaryKey().defaultRandom(),
@@ -9,3 +11,9 @@ export const address = pgTable("address", {
 	country: text("country").notNull(),
 	zip: text("zip").notNull(),
 });
+
+export type Address = typeof address.$inferSelect;
+
+export const insertAddressSchema = createInsertSchema(address);
+
+export const updateAddressSchema = partial(insertAddressSchema);
