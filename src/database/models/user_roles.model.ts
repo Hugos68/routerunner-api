@@ -1,13 +1,15 @@
 import { pgTable, uuid } from "drizzle-orm/pg-core";
-import { role } from "./role";
-import { user } from "./user";
+import { roles } from "./roles.model";
+import { users } from "./users.model";
 
 export const userRoles = pgTable("user_roles", {
 	id: uuid("id").primaryKey().defaultRandom(),
 	userId: uuid("user_id")
 		.notNull()
-		.references(() => user.id),
+		.references(() => users.id),
 	roleId: uuid("role_id")
 		.notNull()
-		.references(() => role.id),
+		.references(() => roles.id),
 });
+
+export type UserRole = typeof userRoles.$inferSelect;

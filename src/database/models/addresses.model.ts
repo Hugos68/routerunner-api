@@ -2,7 +2,7 @@ import { pgTable, text, uuid } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-valibot";
 import { partial } from "valibot";
 
-export const address = pgTable("address", {
+export const addresses = pgTable("addresses", {
 	id: uuid("id").primaryKey().defaultRandom(),
 	street: text("street").notNull(),
 	number: text("number").notNull(),
@@ -12,8 +12,8 @@ export const address = pgTable("address", {
 	zip: text("zip").notNull(),
 });
 
-export type Address = typeof address.$inferSelect;
+export type Address = typeof addresses.$inferSelect;
 
-export const insertAddressSchema = createInsertSchema(address);
+export const CreateAddressSchema = createInsertSchema(addresses);
 
-export const updateAddressSchema = partial(insertAddressSchema);
+export const UpdateAddressSchema = partial(CreateAddressSchema);
