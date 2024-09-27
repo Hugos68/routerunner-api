@@ -7,9 +7,9 @@ import {
 	updateRetourEmballage,
 } from "../services/retour_emballage.service";
 
-const app = new Hono();
+export const retourEmballage = new Hono();
 
-app.post("/", async (c) => {
+retourEmballage.post("/", async (c) => {
 	const retour_emballage = await createRetourEmballage(await c.req.json());
 	return c.json(
 		{
@@ -19,7 +19,7 @@ app.post("/", async (c) => {
 	);
 });
 
-app.get("/", async (c) => {
+retourEmballage.get("/", async (c) => {
 	const retour_emballages = await getRetourEmballages();
 	return c.json(
 		{
@@ -29,7 +29,7 @@ app.get("/", async (c) => {
 	);
 });
 
-app.get("/:id", async (c) => {
+retourEmballage.get("/:id", async (c) => {
 	const id = c.req.param("id");
 	const retour_emballage = await getRetourEmballage(id);
 	return c.json(
@@ -40,7 +40,7 @@ app.get("/:id", async (c) => {
 	);
 });
 
-app.patch("/:id", async (c) => {
+retourEmballage.patch("/:id", async (c) => {
 	const id = c.req.param("id");
 	const retour_emballage = await updateRetourEmballage(id, await c.req.json());
 	return c.json(
@@ -51,7 +51,7 @@ app.patch("/:id", async (c) => {
 	);
 });
 
-app.delete("/:id", async (c) => {
+retourEmballage.delete("/:id", async (c) => {
 	const id = c.req.param("id");
 	const retour_emballage = await deleteRetourEmballage(id);
 	return c.json(
@@ -61,5 +61,3 @@ app.delete("/:id", async (c) => {
 		200,
 	);
 });
-
-export default app;

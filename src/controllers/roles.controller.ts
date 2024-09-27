@@ -7,9 +7,9 @@ import {
 	updateRole,
 } from "../services/roles.service";
 
-const app = new Hono();
+export const roles = new Hono();
 
-app.post("/", async (c) => {
+roles.post("/", async (c) => {
 	const role = await createRole(await c.req.json());
 	return c.json(
 		{
@@ -19,7 +19,7 @@ app.post("/", async (c) => {
 	);
 });
 
-app.get("/", async (c) => {
+roles.get("/", async (c) => {
 	const role = await getRoles();
 	return c.json(
 		{
@@ -29,7 +29,7 @@ app.get("/", async (c) => {
 	);
 });
 
-app.get("/:id", async (c) => {
+roles.get("/:id", async (c) => {
 	const id = c.req.param("id");
 	const role = await getRole(id);
 	return c.json(
@@ -40,7 +40,7 @@ app.get("/:id", async (c) => {
 	);
 });
 
-app.patch("/:id", async (c) => {
+roles.patch("/:id", async (c) => {
 	const id = c.req.param("id");
 	const role = await updateRole(id, await c.req.json());
 	return c.json(
@@ -51,7 +51,7 @@ app.patch("/:id", async (c) => {
 	);
 });
 
-app.delete("/:id", async (c) => {
+roles.delete("/:id", async (c) => {
 	const id = c.req.param("id");
 	const role = await deleteRole(id);
 	return c.json(

@@ -6,9 +6,10 @@ import {
 	getTrips,
 	updateTrip,
 } from "../services/trips.service";
-const app = new Hono();
 
-app.post("/", async (c) => {
+export const trips = new Hono();
+
+trips.post("/", async (c) => {
 	const trip = await createTrip(await c.req.json());
 	return c.json(
 		{
@@ -18,7 +19,7 @@ app.post("/", async (c) => {
 	);
 });
 
-app.get("/", async (c) => {
+trips.get("/", async (c) => {
 	const trips = await getTrips();
 	return c.json(
 		{
@@ -28,7 +29,7 @@ app.get("/", async (c) => {
 	);
 });
 
-app.get("/:id", async (c) => {
+trips.get("/:id", async (c) => {
 	const id = c.req.param("id");
 	const trip = await getTrip(id);
 	return c.json(
@@ -39,7 +40,7 @@ app.get("/:id", async (c) => {
 	);
 });
 
-app.patch("/:id", async (c) => {
+trips.patch("/:id", async (c) => {
 	const id = c.req.param("id");
 	const trip = await updateTrip(id, await c.req.json());
 	return c.json(
@@ -50,7 +51,7 @@ app.patch("/:id", async (c) => {
 	);
 });
 
-app.delete("/:id", async (c) => {
+trips.delete("/:id", async (c) => {
 	const id = c.req.param("id");
 	const trip = await deleteTrip(id);
 	return c.json(

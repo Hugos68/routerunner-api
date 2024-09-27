@@ -7,9 +7,9 @@ import {
 	updateLine,
 } from "../services/lines.service";
 
-const app = new Hono();
+export const lines = new Hono();
 
-app.post("/", async (c) => {
+lines.post("/", async (c) => {
 	const line = await createLine(await c.req.json());
 	return c.json(
 		{
@@ -19,7 +19,7 @@ app.post("/", async (c) => {
 	);
 });
 
-app.get("/", async (c) => {
+lines.get("/", async (c) => {
 	const lines = await getLines();
 	return c.json(
 		{
@@ -29,7 +29,7 @@ app.get("/", async (c) => {
 	);
 });
 
-app.get("/:id", async (c) => {
+lines.get("/:id", async (c) => {
 	const id = c.req.param("id");
 	const line = await getLine(id);
 	return c.json(
@@ -40,7 +40,7 @@ app.get("/:id", async (c) => {
 	);
 });
 
-app.patch("/:id", async (c) => {
+lines.patch("/:id", async (c) => {
 	const id = c.req.param("id");
 	const line = await updateLine(id, await c.req.json());
 	return c.json(
@@ -51,7 +51,7 @@ app.patch("/:id", async (c) => {
 	);
 });
 
-app.delete("/:id", async (c) => {
+lines.delete("/:id", async (c) => {
 	const id = c.req.param("id");
 	const line = await deleteLine(id);
 	return c.json(
@@ -61,5 +61,3 @@ app.delete("/:id", async (c) => {
 		200,
 	);
 });
-
-export default app;

@@ -7,9 +7,9 @@ import {
 	updateNote,
 } from "../services/notes.service";
 
-const app = new Hono();
+export const notes = new Hono();
 
-app.post("/", async (c) => {
+notes.post("/", async (c) => {
 	const note = await createNote(await c.req.json());
 	return c.json(
 		{
@@ -19,7 +19,7 @@ app.post("/", async (c) => {
 	);
 });
 
-app.get("/", async (c) => {
+notes.get("/", async (c) => {
 	const notes = await getNotes();
 	return c.json(
 		{
@@ -29,7 +29,7 @@ app.get("/", async (c) => {
 	);
 });
 
-app.get("/:id", async (c) => {
+notes.get("/:id", async (c) => {
 	const id = c.req.param("id");
 	const note = await getNote(id);
 	return c.json(
@@ -40,7 +40,7 @@ app.get("/:id", async (c) => {
 	);
 });
 
-app.patch("/:id", async (c) => {
+notes.patch("/:id", async (c) => {
 	const id = c.req.param("id");
 	const note = await updateNote(id, await c.req.json());
 	return c.json(
@@ -51,7 +51,7 @@ app.patch("/:id", async (c) => {
 	);
 });
 
-app.delete("/:id", async (c) => {
+notes.delete("/:id", async (c) => {
 	const id = c.req.param("id");
 	const note = await deleteNote(id);
 	return c.json(
@@ -61,5 +61,3 @@ app.delete("/:id", async (c) => {
 		200,
 	);
 });
-
-export default app;

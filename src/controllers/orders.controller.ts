@@ -7,9 +7,9 @@ import {
 	updateOrder,
 } from "../services/orders.service";
 
-const app = new Hono();
+export const orders = new Hono();
 
-app.post("/", async (c) => {
+orders.post("/", async (c) => {
 	const order = await createOrder(await c.req.json());
 	return c.json(
 		{
@@ -19,7 +19,7 @@ app.post("/", async (c) => {
 	);
 });
 
-app.get("/", async (c) => {
+orders.get("/", async (c) => {
 	const orders = await getOrders();
 	return c.json(
 		{
@@ -29,7 +29,7 @@ app.get("/", async (c) => {
 	);
 });
 
-app.get("/:id", async (c) => {
+orders.get("/:id", async (c) => {
 	const id = c.req.param("id");
 	const order = await getOrder(id);
 	return c.json(
@@ -40,7 +40,7 @@ app.get("/:id", async (c) => {
 	);
 });
 
-app.patch("/:id", async (c) => {
+orders.patch("/:id", async (c) => {
 	const id = c.req.param("id");
 	const order = await updateOrder(id, await c.req.json());
 	return c.json(
@@ -51,7 +51,7 @@ app.patch("/:id", async (c) => {
 	);
 });
 
-app.delete("/:id", async (c) => {
+orders.delete("/:id", async (c) => {
 	const id = c.req.param("id");
 	const order = await deleteOrder(id);
 	return c.json(

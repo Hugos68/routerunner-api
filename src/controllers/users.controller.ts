@@ -7,9 +7,9 @@ import {
 	updateUser,
 } from "../services/users.service";
 
-const app = new Hono();
+export const users = new Hono();
 
-app.get("/", async (c) => {
+users.get("/", async (c) => {
 	const users = await getUsers();
 	return c.json(
 		{
@@ -19,7 +19,7 @@ app.get("/", async (c) => {
 	);
 });
 
-app.get("/:id", async (c) => {
+users.get("/:id", async (c) => {
 	const id = c.req.param("id");
 	const user = await getUser(id);
 	return c.json(
@@ -30,7 +30,7 @@ app.get("/:id", async (c) => {
 	);
 });
 
-app.post("/", async (c) => {
+users.post("/", async (c) => {
 	const user = await createUser(await c.req.json());
 	return c.json(
 		{
@@ -40,7 +40,7 @@ app.post("/", async (c) => {
 	);
 });
 
-app.patch("/:id", async (c) => {
+users.patch("/:id", async (c) => {
 	const id = c.req.param("id");
 	const user = await updateUser(id, await c.req.json());
 	return c.json(
@@ -51,7 +51,7 @@ app.patch("/:id", async (c) => {
 	);
 });
 
-app.delete("/:id", async (c) => {
+users.delete("/:id", async (c) => {
 	const id = c.req.param("id");
 	const user = await deleteUser(id);
 	return c.json(
@@ -61,5 +61,3 @@ app.delete("/:id", async (c) => {
 		200,
 	);
 });
-
-export default app;

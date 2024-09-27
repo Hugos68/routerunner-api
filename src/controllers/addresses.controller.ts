@@ -7,9 +7,9 @@ import {
 	updateAddress,
 } from "../services/addresses.service";
 
-const app = new Hono();
+export const addresses = new Hono();
 
-app.get("/", async (c) => {
+addresses.get("/", async (c) => {
 	const addresses = await getAddresses();
 	return c.json(
 		{
@@ -19,7 +19,7 @@ app.get("/", async (c) => {
 	);
 });
 
-app.get("/:id", async (c) => {
+addresses.get("/:id", async (c) => {
 	const id = c.req.param("id");
 	const address = await getAddress(id);
 	return c.json(
@@ -30,7 +30,7 @@ app.get("/:id", async (c) => {
 	);
 });
 
-app.post("/", async (c) => {
+addresses.post("/", async (c) => {
 	const address = await createAddress(await c.req.json());
 	return c.json(
 		{
@@ -40,7 +40,7 @@ app.post("/", async (c) => {
 	);
 });
 
-app.patch("/:id", async (c) => {
+addresses.patch("/:id", async (c) => {
 	const id = c.req.param("id");
 	const address = await updateAddress(id, await c.req.json());
 	return c.json(
@@ -51,7 +51,7 @@ app.patch("/:id", async (c) => {
 	);
 });
 
-app.delete("/:id", async (c) => {
+addresses.delete("/:id", async (c) => {
 	const id = c.req.param("id");
 	const address = await deleteAddress(id);
 	return c.json(
@@ -61,5 +61,3 @@ app.delete("/:id", async (c) => {
 		200,
 	);
 });
-
-export default app;

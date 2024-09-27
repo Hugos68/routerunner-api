@@ -1,5 +1,4 @@
-import { line, pgTable, text, uuid } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-valibot";
+import { pgTable, uuid } from "drizzle-orm/pg-core";
 import { lines } from "./lines.table";
 import { orders } from "./orders.table";
 
