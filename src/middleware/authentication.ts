@@ -18,27 +18,22 @@ export const authentication = createMiddleware<Environment>(async (c, next) => {
 		await next();
 		return;
 	}
-	const [session] = await database
-		.select()
+	const [result] = await database
+		.select({
+			session: sessions,
+			user: users,
+			role: roles,
+		})
 		.from(sessions)
-		.where(eq(sessions.id, sessionId));
-	const [user] = await database
-		.select()
-		.from(users)
-		.where(eq(users.id, session.userId));
-	const [userRole] = await database
-		.select()
-		.from(userRoles)
-		.where(eq(userRoles.userId, user.id));
-	const [role] = await database
-		.select()
-		.from(roles)
-		.where(eq(roles.id, userRole.roleId));
+		.where(eq(sessions.id, sessionId))
+		.leftJoin(users, eq(sessions.userId, users.id))
+		.leftJoin(userRoles, eq(users.id, userRoles.userId))
+		.leftJoin(roles, eq(userRoles.roleId, roles.id));
 	if (
-		session === undefined ||
-		user === undefined ||
-		userRole === undefined ||
-		role === undefined
+		result === undefined ||
+		result.session === null ||
+		result.user === null ||
+		result.role === null
 	) {
 		await next();
 		return;
@@ -46,8 +41,8 @@ export const authentication = createMiddleware<Environment>(async (c, next) => {
 	c.set("session", {
 		authenticated: true,
 		user: {
-			...user,
-			role: role,
+			...result.user,
+			role: result.role,
 		},
 	});
 	await next();
