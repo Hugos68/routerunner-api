@@ -2,7 +2,9 @@ import { eq } from "drizzle-orm";
 import { getCookie } from "hono/cookie";
 import { createMiddleware } from "hono/factory";
 import { database } from "../database/database.js";
+import { roles } from "../database/models/roles.model.js";
 import { sessions } from "../database/models/sessions.model.js";
+import { userRoles } from "../database/models/user_roles.model.js";
 import { users } from "../database/models/users.model.js";
 import { SESSION_COOKIE_KEY } from "../utility/constants.js";
 import type { Environment } from "../utility/types.js";
@@ -17,17 +19,36 @@ export const authentication = createMiddleware<Environment>(async (c, next) => {
 		return;
 	}
 	const [session] = await database
-		.select({ user: users })
+		.select()
 		.from(sessions)
-		.where(eq(sessions.id, sessionId))
-		.innerJoin(users, eq(users.id, sessions.userId));
-	if (session === undefined || session.user === null) {
+		.where(eq(sessions.id, sessionId));
+	const [user] = await database
+		.select()
+		.from(users)
+		.where(eq(users.id, session.userId));
+	const [userRole] = await database
+		.select()
+		.from(userRoles)
+		.where(eq(userRoles.userId, user.id));
+	const [role] = await database
+		.select()
+		.from(roles)
+		.where(eq(roles.id, userRole.roleId));
+	if (
+		session === undefined ||
+		user === undefined ||
+		userRole === undefined ||
+		role === undefined
+	) {
 		await next();
 		return;
 	}
 	c.set("session", {
 		authenticated: true,
-		user: session.user,
+		user: {
+			...user,
+			role: role,
+		},
 	});
 	await next();
 });

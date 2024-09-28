@@ -1,8 +1,11 @@
+import type { Role } from "../database/models/roles.model";
 import type { User } from "../database/models/users.model";
 
 interface Authenticated {
 	authenticated: true;
-	user: User;
+	user: User & {
+		role: Role;
+	};
 }
 
 interface Unauthenticated {

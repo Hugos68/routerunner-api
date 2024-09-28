@@ -6,7 +6,8 @@ export const userRoles = pgTable("user_roles", {
 	id: uuid("id").primaryKey().defaultRandom(),
 	userId: uuid("user_id")
 		.notNull()
-		.references(() => users.id),
+		.references(() => users.id)
+		.unique(),
 	roleId: uuid("role_id")
 		.notNull()
 		.references(() => roles.id),
