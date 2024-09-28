@@ -13,6 +13,7 @@ export const authentication = createMiddleware<Environment>(async (c, next) => {
 	});
 	const sessionId = getCookie(c, SESSION_COOKIE_KEY);
 	if (sessionId === undefined) {
+		await next();
 		return;
 	}
 	const [session] = await database
@@ -21,6 +22,7 @@ export const authentication = createMiddleware<Environment>(async (c, next) => {
 		.where(eq(sessions.id, sessionId))
 		.innerJoin(users, eq(users.id, sessions.userId));
 	if (session === undefined || session.user === null) {
+		await next();
 		return;
 	}
 	c.set("session", {
