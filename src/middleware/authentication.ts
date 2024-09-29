@@ -2,10 +2,10 @@ import { eq } from "drizzle-orm";
 import { getCookie } from "hono/cookie";
 import { createMiddleware } from "hono/factory";
 import { database } from "../database/database.js";
-import { roles } from "../database/models/roles.model.js";
-import { sessions } from "../database/models/sessions.model.js";
-import { userRoles } from "../database/models/user_roles.model.js";
-import { users } from "../database/models/users.model.js";
+import { roles_table } from "../database/tables/roles.js";
+import { sessions_table } from "../database/tables/sessions.js";
+import { user_roles_table } from "../database/tables/user-roles.js";
+import { users_table } from "../database/tables/users.js";
 import { SESSION_COOKIE_KEY } from "../utility/constants.js";
 import type { Environment } from "../utility/types.js";
 
@@ -13,22 +13,22 @@ export const authentication = createMiddleware<Environment>(async (c, next) => {
 	c.set("session", {
 		authenticated: false,
 	});
-	const sessionId = getCookie(c, SESSION_COOKIE_KEY);
-	if (sessionId === undefined) {
+	const session_id = getCookie(c, SESSION_COOKIE_KEY);
+	if (session_id === undefined) {
 		await next();
 		return;
 	}
 	const [result] = await database
 		.select({
-			session: sessions,
-			user: users,
-			role: roles,
+			session: sessions_table,
+			user: users_table,
+			role: roles_table,
 		})
-		.from(sessions)
-		.where(eq(sessions.id, sessionId))
-		.leftJoin(users, eq(sessions.userId, users.id))
-		.leftJoin(userRoles, eq(users.id, userRoles.userId))
-		.leftJoin(roles, eq(userRoles.roleId, roles.id));
+		.from(sessions_table)
+		.where(eq(sessions_table.id, session_id))
+		.leftJoin(users_table, eq(sessions_table.userId, users_table.id))
+		.leftJoin(user_roles_table, eq(users_table.id, user_roles_table.userId))
+		.leftJoin(roles_table, eq(user_roles_table.roleId, roles_table.id));
 	if (
 		result === undefined ||
 		result.session === null ||

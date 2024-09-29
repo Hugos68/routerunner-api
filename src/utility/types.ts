@@ -1,20 +1,19 @@
-import type { Role } from "../database/models/roles.model";
-import type { User } from "../database/models/users.model";
+import type { Role } from "../database/tables/roles.js";
+import type { User } from "../database/tables/users.js";
 
-interface Authenticated {
+interface authenticated {
 	authenticated: true;
 	user: User & {
 		role: Role;
 	};
 }
 
-interface Unauthenticated {
+interface unauthenticated {
 	authenticated: false;
 }
 
 export interface Environment {
-	// biome-ignore lint/style/useNamingConvention: Hono uses PascalCase here
 	Variables: {
-		session: Authenticated | Unauthenticated;
+		session: authenticated | unauthenticated;
 	};
 }
