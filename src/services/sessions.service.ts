@@ -39,6 +39,10 @@ export const createSession = async (input: unknown) => {
 		})
 		.returning();
 
+	if (result === undefined) {
+		throw new Error("Failed to create session");
+	}
+
 	return result;
 };
 
