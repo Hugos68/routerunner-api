@@ -6,7 +6,7 @@ import {
 	type Role,
 	UpdateRoleSchema,
 	roles_table,
-} from "../database/tables/roles.js";
+} from "../database/schema.js";
 import { NotFoundError } from "../utility/errors.js";
 
 export const create_role = async (input: unknown) => {

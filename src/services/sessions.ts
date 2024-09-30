@@ -5,8 +5,8 @@ import {
 	CreateSessionSchema,
 	type Session,
 	sessions_table,
-} from "../database/tables/sessions.js";
-import { users_table } from "../database/tables/users.js";
+} from "../database/schema.js";
+import { users_table } from "../database/schema.js";
 import { HASH_CONFIG } from "../utility/constants.js";
 import { NotFoundError } from "../utility/errors.js";
 

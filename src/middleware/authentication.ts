@@ -2,10 +2,10 @@ import { eq } from "drizzle-orm";
 import { getCookie } from "hono/cookie";
 import { createMiddleware } from "hono/factory";
 import { database } from "../database/database.js";
-import { roles_table } from "../database/tables/roles.js";
-import { sessions_table } from "../database/tables/sessions.js";
-import { user_roles_table } from "../database/tables/user-roles.js";
-import { users_table } from "../database/tables/users.js";
+import { roles_table } from "../database/schema.js";
+import { sessions_table } from "../database/schema.js";
+import { user_roles_table } from "../database/schema.js";
+import { users_table } from "../database/schema.js";
 import { SESSION_COOKIE_KEY } from "../utility/constants.js";
 import type { Environment } from "../utility/types.js";
 

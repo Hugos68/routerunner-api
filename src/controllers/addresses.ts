@@ -14,7 +14,7 @@ addresses.get("/", async (c) => {
 	const addresses = await get_addresses();
 	return c.json(
 		{
-			value: addresses,
+			data: addresses,
 		},
 		200,
 	);
@@ -25,7 +25,7 @@ addresses.get("/:id", async (c) => {
 	const address = await get_address(id);
 	return c.json(
 		{
-			value: [address],
+			data: [address],
 		},
 		200,
 	);
@@ -35,7 +35,7 @@ addresses.post("/", async (c) => {
 	const address = await create_address(await c.req.json());
 	return c.json(
 		{
-			value: [address],
+			data: [address],
 		},
 		201,
 	);
@@ -46,7 +46,7 @@ addresses.patch("/:id", async (c) => {
 	const address = await update_address(id, await c.req.json());
 	return c.json(
 		{
-			value: [address],
+			data: [address],
 		},
 		200,
 	);
@@ -57,7 +57,7 @@ addresses.delete("/:id", async (c) => {
 	const address = await delete_address(id);
 	return c.json(
 		{
-			value: [address],
+			data: [address],
 		},
 		200,
 	);

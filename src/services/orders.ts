@@ -4,9 +4,9 @@ import { database } from "../database/database.js";
 import {
 	CreateOrderSchema,
 	type Order,
+	UpdateOrderSchema,
 	orders_table,
-	updateOrderSchema,
-} from "../database/tables/orders.js";
+} from "../database/schema.js";
 import { NotFoundError } from "../utility/errors.js";
 
 export const create_order = async (input: unknown) => {
@@ -38,7 +38,7 @@ export const get_order = async (id: Order["id"]) => {
 };
 
 export const update_order = async (id: Order["id"], input: unknown) => {
-	const values = parse(updateOrderSchema, input);
+	const values = parse(UpdateOrderSchema, input);
 	const [order] = await database
 		.update(orders_table)
 		.set(values)

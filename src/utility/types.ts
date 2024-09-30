@@ -1,5 +1,5 @@
-import type { Role } from "../database/tables/roles.js";
-import type { User } from "../database/tables/users.js";
+import type { Role } from "../database/schema.js";
+import type { User } from "../database/schema.js";
 
 interface authenticated {
 	authenticated: true;

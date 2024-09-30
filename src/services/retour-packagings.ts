@@ -5,7 +5,7 @@ import {
 	CreateRetourEmballageSchema,
 	type RetourEmballage,
 	retour_packaging_table,
-} from "../database/tables/retour-packagings.js";
+} from "../database/schema.js";
 import { NotFoundError } from "../utility/errors.js";
 
 export const create_retour_packaging = async (input: unknown) => {

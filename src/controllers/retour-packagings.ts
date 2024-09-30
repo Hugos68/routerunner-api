@@ -14,7 +14,7 @@ retour_packaging.post("/", async (c) => {
 	const retour_packaging = await create_retour_packaging(await c.req.json());
 	return c.json(
 		{
-			value: [retour_packaging],
+			data: [retour_packaging],
 		},
 		201,
 	);
@@ -24,7 +24,7 @@ retour_packaging.get("/", async (c) => {
 	const retour_packagings = await get_retour_packagings();
 	return c.json(
 		{
-			value: retour_packagings,
+			data: retour_packagings,
 		},
 		200,
 	);
@@ -35,7 +35,7 @@ retour_packaging.get("/:id", async (c) => {
 	const retour_emballages = await get_retour_packaging(id);
 	return c.json(
 		{
-			value: [retour_emballages],
+			data: [retour_emballages],
 		},
 		200,
 	);
@@ -49,7 +49,7 @@ retour_packaging.patch("/:id", async (c) => {
 	);
 	return c.json(
 		{
-			value: [retour_packaging],
+			data: [retour_packaging],
 		},
 		200,
 	);
@@ -60,7 +60,7 @@ retour_packaging.delete("/:id", async (c) => {
 	const retour_packaging = await delete_retour_packaging(id);
 	return c.json(
 		{
-			value: [retour_packaging],
+			data: [retour_packaging],
 		},
 		200,
 	);
