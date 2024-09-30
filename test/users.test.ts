@@ -18,22 +18,7 @@ describe("Users", () => {
 		});
 		expect(user).toBeDefined();
 	});
-
-	// 	test("Create a user with an existing email will throw an error", async () => {
-	// 		const email = "test@test.com";
-
-	// 		await create_user({
-	// 			email: email,
-	// 			password: "1234567890",
-
-	// 		});
-
-	// 		expect(async () =>await create_user({
-	// 			email: email,
-	// 			password: "1234567890"
-	// 		})).toThrowError(postgres.PostgresError);
-	// });
-
+	
 	test("Get all users", async () => {
 		const users = await get_users();
 		expect(users).toBeInstanceOf(Array);
