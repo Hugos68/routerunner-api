@@ -50,7 +50,8 @@ export const update_address = async (id: Address["id"], input: unknown) => {
 export const delete_address = async (id: Address["id"]) => {
 	const [address] = await database
 		.delete(addresses_table)
-		.where(eq(addresses_table.id, id));
+		.where(eq(addresses_table.id, id))
+		.returning();
 	if (address === undefined) {
 		throw new NotFoundError(`Address with id ${id} not found`);
 	}

@@ -39,7 +39,10 @@ export const orders_table = pgTable("orders", {
 	packageType: text("package_type").notNull(),
 	unloadingAddress: uuid("unloading_address")
 		.notNull()
-		.references(() => addresses_table.id),
+		.references(() => addresses_table.id, {
+			onDelete: "cascade",
+			onUpdate: "cascade",
+		}),
 	unloadingDateTime: timestamp("unloading_date_time", {
 		mode: "string",
 		withTimezone: true,

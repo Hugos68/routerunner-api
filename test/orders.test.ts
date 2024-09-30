@@ -1,60 +1,76 @@
 import { describe, expect, test } from "bun:test";
-import app from "../src";
+import {
+	create_order,
+	delete_order,
+	get_order,
+	get_orders,
+	update_order,
+} from "../src/services/orders";
+import * as uuid from "uuid";
+import { NotFoundError } from "../src/utility/errors";
+import { or } from "drizzle-orm";
 
 describe("Orders", () => {
-	test("GET /orders", async () => {
-		const response = await app.request("/api/v1/orders");
-		expect(response.status).toBe(200);
+	test("Create an order", async () => {
+		const orders = await get_orders();
+		const order = await create_order({
+			quantity: 1,
+			packageType: "box",
+			unloadingAddress: orders[0]?.unloadingAddress ?? "",
+			unloadingDateTime: new Date().toDateString(),
+			deliveryInstructions: "test",
+			status: "OPEN",
+		});
+		expect(order).toBeDefined();
 	});
 
-	test("GET /orders/:id", async () => {
-		const response = await app.request("/api/v1/orders/1");
-		expect(response.status).toBe(200);
+	test("Get all orders", async () => {
+		const orders = await get_orders();
+		expect(orders).toBeInstanceOf(Array);
+		expect(orders.length).toBeGreaterThan(0);
+	});
+	test("Get an order", async () => {
+		const orders = await get_orders();
+		const order = await get_order(orders[0]?.id ?? "");
+		expect(order).toBeDefined();
+	});
+	test("Getting an unknown order will throw a NotFoundError", async () => {
+		expect(() => get_order(uuid.v4())).toThrowError(NotFoundError);
 	});
 
-	test("POST /orders", async () => {
-		const response = await app.request("/api/v1/orders", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				quantity: 6,
-				packageType: "BP",
-				unloadingAddress: "c71ce777-9555-4078-8983-d34745fd5e56",
-				unloadingDateTime: "2018-12-10T13:45:00.000Z",
-				deliveryInstructions: "de pallet moet ik vak 4 komen te staan",
+	test("Updating an unknown order will throw a NotFoundError", async () => {
+		expect(() =>
+			update_order(uuid.v4(), {
+				quantity: 1,
+				packageType: "box",
+				unloadingAddress: uuid.v4(),
+				unloadingDateTime: new Date().toDateString(),
+				deliveryInstructions: "test",
 				status: "OPEN",
 			}),
-		});
-
-		expect(response.status).toBe(201);
+		).toThrowError(NotFoundError);
 	});
 
-	test("PATCH /orders/:id", async () => {
-		const response = await app.request("/api/v1/orders/1", {
-			method: "PATCH",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				quantity: 6,
-				packageType: "BP",
-				unloadingAddress: "c71ce777-9555-4078-8983-d34745fd5e56",
-				unloadingDateTime: "2018-12-10T13:45:00.000Z",
-				deliveryInstructions: "de pallet moet ik vak 4 komen te staan",
-				status: "GESLOTEN",
-			}),
+	test("Updating an order", async () => {
+		const orders = await get_orders();
+		const order = await update_order(orders[0]?.id ?? "", {
+			quantity: 1,
+			packageType: "box",
+			unloadingAddress: orders[0]?.unloadingAddress ?? "",
+			unloadingDateTime: new Date().toDateString(),
+			deliveryInstructions: "test",
+			status: "GESLOTEN",
 		});
-
-		expect(response.status).toBe(200);
+		expect(order).toBeDefined();
 	});
 
-	test("DELETE /orders/:id", async () => {
-		const response = await app.request("/api/v1/orders/1", {
-			method: "DELETE",
-		});
+	test("Deleting an unknown order will throw a NotFoundError", async () => {
+		expect(() => delete_order(uuid.v4())).toThrowError(NotFoundError);
+	});
 
-		expect(response.status).toBe(200);
+	test("Delete an order", async () => {
+		const orders = await get_orders();
+		const order = await delete_order(orders[0]?.id ?? "");
+		expect(order).toBeDefined();
 	});
 });

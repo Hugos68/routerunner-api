@@ -18,7 +18,7 @@ describe("Users", () => {
 		});
 		expect(user).toBeDefined();
 	});
-	
+
 	test("Get all users", async () => {
 		const users = await get_users();
 		expect(users).toBeInstanceOf(Array);

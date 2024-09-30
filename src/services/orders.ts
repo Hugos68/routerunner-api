@@ -53,7 +53,8 @@ export const update_order = async (id: Order["id"], input: unknown) => {
 export const delete_order = async (id: Order["id"]) => {
 	const [order] = await database
 		.delete(orders_table)
-		.where(eq(orders_table.id, id));
+		.where(eq(orders_table.id, id))
+		.returning();
 	if (order === undefined) {
 		throw new NotFoundError(`Order with id ${id} not found`);
 	}
