@@ -4,7 +4,7 @@ import { partial } from "valibot";
 
 export const roles_table = pgTable("roles", {
 	id: uuid("id").primaryKey().defaultRandom(),
-	name: text("role", { enum: ["ADMIN", "USER", "GUEST"] })
+	name: text("role", { enum: ["DRIVER", "PLANNER", "ADMIN"] })
 		.notNull()
 		.unique(),
 });

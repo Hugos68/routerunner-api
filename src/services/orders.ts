@@ -21,7 +21,7 @@ export const create_order = async (input: unknown) => {
 	return order;
 };
 
-export const getOrders = async () => {
+export const get_orders = async () => {
 	const orders = await database.select().from(orders_table);
 	return orders;
 };
