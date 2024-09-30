@@ -18,7 +18,10 @@ const safe_columns = (() => {
 export const create_user = async (input: unknown) => {
 	const values = parse(CreateUserSchema, input);
 	values.password = await Bun.password.hash(values.password, HASH_CONFIG);
-	const [user] = await database.insert(users_table).values(values).returning();
+	const [user] = await database
+		.insert(users_table)
+		.values(values)
+		.returning(safe_columns);
 	if (user === undefined) {
 		throw new Error("Failed to create user");
 	}

@@ -32,10 +32,10 @@ retour_packaging.get("/", async (c) => {
 
 retour_packaging.get("/:id", async (c) => {
 	const id = c.req.param("id");
-	const retour_emballages = await get_retour_packaging(id);
+	const retour_packaging = await get_retour_packaging(id);
 	return c.json(
 		{
-			data: [retour_emballages],
+			data: [retour_packaging],
 		},
 		200,
 	);

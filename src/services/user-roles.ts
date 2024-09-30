@@ -2,15 +2,15 @@ import { eq } from "drizzle-orm";
 import { parse } from "valibot";
 import { database } from "../database/database.js";
 import {
-	CreateUserRoleSchema,
-	UpdateUserRoleSchema,
-	type UserRole,
+	CreateUserRolesSchema,
+	UpdateUserRolesSchema,
+	type UserRoles,
 	user_roles_table,
 } from "../database/schema.js";
 import { NotFoundError } from "../utility/errors.js";
 
 export const create_user_role = async (input: unknown) => {
-	const values = parse(CreateUserRoleSchema, input);
+	const values = parse(CreateUserRolesSchema, input);
 	const [user_role] = await database
 		.insert(user_roles_table)
 		.values(values)
@@ -26,7 +26,7 @@ export const get_user_roles = async () => {
 	return user_roles;
 };
 
-export const get_user_role = async (id: UserRole["id"]) => {
+export const get_user_role = async (id: UserRoles["id"]) => {
 	const [user_role] = await database
 		.select()
 		.from(user_roles_table)
@@ -37,8 +37,8 @@ export const get_user_role = async (id: UserRole["id"]) => {
 	return user_role;
 };
 
-export const update_user_role = async (id: UserRole["id"], input: unknown) => {
-	const values = parse(UpdateUserRoleSchema, input);
+export const update_user_role = async (id: UserRoles["id"], input: unknown) => {
+	const values = parse(UpdateUserRolesSchema, input);
 	const [user_role] = await database
 		.update(user_roles_table)
 		.set(values)
@@ -50,7 +50,7 @@ export const update_user_role = async (id: UserRole["id"], input: unknown) => {
 	return user_role;
 };
 
-export const delete_user_role = async (id: UserRole["id"]) => {
+export const delete_user_role = async (id: UserRoles["id"]) => {
 	const [user_role] = await database
 		.delete(user_roles_table)
 		.where(eq(user_roles_table.id, id));

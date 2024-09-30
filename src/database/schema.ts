@@ -125,11 +125,17 @@ export const user_roles_table = pgTable("user_roles", {
 	id: uuid("id").primaryKey().defaultRandom(),
 	userId: uuid("user_id")
 		.notNull()
-		.references(() => users_table.id)
+		.references(() => users_table.id, {
+			onDelete: "cascade",
+			onUpdate: "cascade",
+		})
 		.unique(),
 	roleId: uuid("role_id")
 		.notNull()
-		.references(() => roles_table.id),
+		.references(() => roles_table.id, {
+			onDelete: "cascade",
+			onUpdate: "cascade",
+		}),
 });
 
 export type User = typeof users_table.$inferSelect;
@@ -177,10 +183,10 @@ export const UpdateAddressSchema = partial(CreateAddressSchema);
 export const CreateNoteSchema = createInsertSchema(notes_table);
 export const UpdateNoteSchema = partial(CreateNoteSchema);
 
-export const CreateRetourEmballageSchema = createInsertSchema(
+export const CreateRetourPackagingSchema = createInsertSchema(
 	retour_packaging_table,
 );
-export const UpdateRetourEmballageSchema = partial(CreateRetourEmballageSchema);
+export const UpdateRetourPackagingSchema = partial(CreateRetourPackagingSchema);
 
 export const CreateOrderLineSchema = createInsertSchema(order_lines_table);
 export const UpdateOrderLineSchema = partial(CreateOrderLineSchema);
