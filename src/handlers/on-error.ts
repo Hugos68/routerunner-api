@@ -2,7 +2,7 @@ import type { ErrorHandler } from "hono";
 import { ValiError } from "valibot";
 import { NotFoundError } from "../utility/errors.js";
 
-export const onError: ErrorHandler = (err, c) => {
+export const on_error: ErrorHandler = (err, c) => {
 	if (err instanceof ValiError) {
 		return c.json(
 			{
