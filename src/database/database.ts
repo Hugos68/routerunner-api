@@ -9,4 +9,4 @@ const client = postgres({
 	password: process.env.POSTGRES_PASSWORD as string,
 });
 
-export const database = drizzle(client);
+export const database = drizzle(client, { logger: true });

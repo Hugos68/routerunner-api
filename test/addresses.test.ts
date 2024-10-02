@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import * as uuid from "uuid";
 import {
 	create_address,
 	delete_address,
@@ -6,7 +7,6 @@ import {
 	get_addresses,
 	update_address,
 } from "../src/services/addresses";
-import * as uuid from "uuid";
 import { NotFoundError } from "../src/utility/errors";
 
 describe("Addresses", () => {

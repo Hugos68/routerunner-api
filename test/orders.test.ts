@@ -1,4 +1,6 @@
 import { describe, expect, test } from "bun:test";
+import { or } from "drizzle-orm";
+import * as uuid from "uuid";
 import {
 	create_order,
 	delete_order,
@@ -6,9 +8,7 @@ import {
 	get_orders,
 	update_order,
 } from "../src/services/orders";
-import * as uuid from "uuid";
 import { NotFoundError } from "../src/utility/errors";
-import { or } from "drizzle-orm";
 
 describe("Orders", () => {
 	test("Create an order", async () => {
