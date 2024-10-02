@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import * as uuid from "uuid";
+import { get_addresses } from "../src/services/addresses";
 import {
 	create_trip,
 	delete_trip,
@@ -7,7 +8,6 @@ import {
 	get_trips,
 	update_trip,
 } from "../src/services/trips";
-import { get_addresses } from "../src/services/addresses";
 import { get_users } from "../src/services/users";
 import { NotFoundError } from "../src/utility/errors";
 
