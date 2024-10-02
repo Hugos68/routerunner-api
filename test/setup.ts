@@ -4,6 +4,7 @@ import {
 	addresses_table,
 	orders_table,
 	roles_table,
+	trips_table,
 	user_roles_table,
 	users_table,
 } from "../src/database/schema";
@@ -14,6 +15,7 @@ beforeEach(async () => {
 	await database.delete(roles_table);
 	await database.delete(addresses_table);
 	await database.delete(orders_table);
+	await database.delete(trips_table);
 
 	const [driver] = await database
 		.insert(users_table)
@@ -101,6 +103,18 @@ beforeEach(async () => {
 		.returning();
 	if (order1 === undefined) {
 		throw new Error("Failed to create order1");
+	}
+
+	const [trip1] = await database
+		.insert(trips_table)
+		.values({
+			driverId: driver.id,
+			startLocation: address1.id,
+			loadingDateTime: new Date().toDateString(),
+		})
+		.returning();
+	if (trip1 === undefined) {
+		throw new Error("Failed to create trip1");
 	}
 
 	await database.insert(user_roles_table).values({

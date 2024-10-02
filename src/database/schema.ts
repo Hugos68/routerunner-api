@@ -26,11 +26,20 @@ export const trips_table = pgTable("trips", {
 	id: uuid("id").primaryKey().defaultRandom(),
 	driverId: uuid("driver_id")
 		.notNull()
-		.references(() => users_table.id),
+		.references(() => users_table.id, {
+			onDelete: "cascade",
+			onUpdate: "cascade",
+		}),
 	startLocation: uuid("start_location")
 		.notNull()
-		.references(() => addresses_table.id),
-	loadingDateTime: timestamp("loading_date_time").notNull(),
+		.references(() => addresses_table.id, {
+			onDelete: "cascade",
+			onUpdate: "cascade",
+		}),
+	loadingDateTime: timestamp("loading_date_time", {
+		mode: "string",
+		withTimezone: true,
+	}).notNull(),
 });
 
 export const orders_table = pgTable("orders", {
@@ -95,10 +104,16 @@ export const order_trips_table = pgTable("order_trips", {
 	id: uuid("id").primaryKey().defaultRandom(),
 	orderId: uuid("order_id")
 		.notNull()
-		.references(() => orders_table.id),
+		.references(() => orders_table.id, {
+			onDelete: "cascade",
+			onUpdate: "cascade",
+		}),
 	tripId: uuid("trip_id")
 		.notNull()
-		.references(() => trips_table.id),
+		.references(() => trips_table.id, {
+			onDelete: "cascade",
+			onUpdate: "cascade",
+		}),
 });
 
 export const retour_packaging_orders_table = pgTable(
@@ -118,7 +133,10 @@ export const trip_drivers_table = pgTable("trip_drivers", {
 	id: uuid("id").primaryKey().defaultRandom(),
 	driverId: uuid("driver_id")
 		.notNull()
-		.references(() => users_table.id),
+		.references(() => users_table.id, {
+			onDelete: "cascade",
+			onUpdate: "cascade",
+		}),
 	tripId: uuid("trip_id")
 		.notNull()
 		.references(() => trips_table.id),
