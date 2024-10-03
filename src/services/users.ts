@@ -10,6 +10,8 @@ import {
 import { HASH_CONFIG } from "../utility/constants.js";
 import { NotFoundError } from "../utility/errors.js";
 
+const CryptoJS = require("crypto-js");
+
 const safe_columns = (() => {
 	const { password: _, ...columns } = getTableColumns(users_table);
 	return columns;
@@ -18,6 +20,13 @@ const safe_columns = (() => {
 export const create_user = async (input: unknown) => {
 	const values = parse(CreateUserSchema, input);
 	values.password = await Bun.password.hash(values.password, HASH_CONFIG);
+	// Your secret key for encryption
+	const secretKey = "yourSecretKey";
+
+	// Encrypt using AES
+	values.email = CryptoJS.AES.encrypt(values.email, secretKey).toString();
+
+	console.log("Encrypted Text:", values.email);
 	const [user] = await database
 		.insert(users_table)
 		.values(values)
