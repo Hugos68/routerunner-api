@@ -8,10 +8,10 @@ const encryptedText = customType<{ data: string }>({
 	dataType: () => "text",
 	toDriver: (value) => {
 		const encryption = encrypt(String(value));
-		return `${encryption.ciphertext}::${encryption.iv}::${encryption.tag}`;
+		return btoa(`${encryption.ciphertext}.${encryption.iv}.${encryption.tag}`);
 	},
 	fromDriver: (value) => {
-		const [ciphertext, iv, tag] = String(value).split("::");
+		const [ciphertext, iv, tag] = atob(String(value)).split(".");
 		if (!ciphertext || !iv || !tag) {
 			throw new Error(`Invalid encrypted text: ${value}`);
 		}
@@ -21,7 +21,7 @@ const encryptedText = customType<{ data: string }>({
 
 export const users_table = pgTable("users", {
 	id: uuid("id").primaryKey().defaultRandom(),
-	email: encryptedText("email").notNull().unique(),
+	email: encryptedText("email").notNull(),
 	password: text("password").notNull(),
 });
 
