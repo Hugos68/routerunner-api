@@ -8,7 +8,6 @@
 		"push:test": "bun --env-file=.env.test push --config=./drizzle.config.ts"
 	},
 	"dependencies": {
-		"crypto-js": "^4.2.0",
 		"drizzle-orm": "^0.33.0",
 		"drizzle-valibot": "^0.2.0",
 		"hono": "^4.6.2",
