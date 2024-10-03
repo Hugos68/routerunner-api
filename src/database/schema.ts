@@ -1,107 +1,24 @@
-import {
-	customType,
-	integer,
-	pgTable,
-	text,
-	timestamp,
-	uuid,
-} from "drizzle-orm/pg-core";
+import { customType } from "drizzle-orm/pg-core";
+import { integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-valibot";
 import { email, minLength, partial, pick, string } from "valibot";
-const { Buffer } = require("node:buffer");
-import crypto, {
-	randomBytes,
-	createCipheriv,
-	createDecipheriv,
-} from "node:crypto";
-
-const key = "keykeykeykeykeykeykeykeykeykeykey";
-const iv = crypto.randomBytes(12);
-const aad = Buffer.from("0123456789", "hex");
-
-// function encryptText(text: string): string {
-// 	const iv = crypto.randomBytes(IV_LENGTH);
-// 	const cipher = crypto.createCipheriv("aes-256-gcm", secretKey, iv);
-
-// 	let encrypted = cipher.update(text, "utf-8", "hex");
-// 	encrypted += cipher.final("hex");
-
-// 	const authTag = cipher.getAuthTag().toString("hex");
-// 	console.log(encrypted);
-
-// 	return encodeURI(`${iv.toString("hex")}:${authTag}:${encrypted}`);
-// }
-
-// function decryptText(encryptedText: string): string {
-// 	const [ivHex, authTagHex, encrypted] = encryptedText.split(":");
-// 	const iv = Buffer.from(ivHex, "hex");
-// 	const authTag = Buffer.from(authTagHex, "hex");
-
-// 	const decipher = crypto.createDecipheriv("aes-256-gcm", secretKey, iv);
-// 	decipher.setAuthTag(authTag);
-// 	if (encrypted === undefined) {
-// 		throw new Error("Encrypted email is undefined");
-// 	}
-// 	let decrypted = decipher.update(encrypted, "hex", "utf-8");
-// 	decrypted += decipher.final("utf-8");
-
-// 	return decrypted;
-// }
-
-// const customEncryptedText = customType<{ data: string }>({
-// 	dataType() {
-// 		return "text";
-// 	},
-// 	toDriver(value: string): string {
-// 		return encryptText(value);
-// 	},
-// 	fromDriver(value: string): string {
-// 		return decryptText(value);
-// 	},
-// });
+import { decrypt, encrypt } from "../utility/crypto";
 
 const encryptedText = customType<{ data: string }>({
-	dataType() {
-		return "text";
+	dataType: () => "text",
+	toDriver: (value) => {
+		const encryption = encrypt(String(value));
+		return `${encryption.ciphertext}::${encryption.iv}::${encryption.tag}`;
 	},
-	toDriver(value) {
-		const nonce = randomBytes(12);
-
-		const aad = Buffer.from("0123456789", "hex");
-
-		const cipher = createCipheriv("aes-192-ccm", key, nonce, {
-			authTagLength: 16,
-		});
-		const plaintext = value;
-		cipher.setAAD(aad, {
-			plaintextLength: Buffer.byteLength(plaintext),
-		});
-		const ciphertext = cipher.update(plaintext, "utf8");
-		cipher.final();
-		const tag = cipher.getAuthTag();
-		return `${nonce.toString("hex")}:${tag.toString("hex")}:${ciphertext.toString(
-			"hex",
-		)}`;
-	},
-	fromDriver(value) {
-		const [ciphertext, nonce, tag] = value.split(":");
-		const decipher = createDecipheriv("aes-192-ccm", key, nonce, {
-			authTagLength: 16,
-		});
-		decipher.setAuthTag(tag);
-		decipher.setAAD(aad, {
-			plaintextLength: ciphertext.length,
-		});
-		const receivedPlaintext = decipher.update(ciphertext, "hex", "utf8");
-
-		try {
-			decipher.final();
-		} catch (err) {
-			throw new Error("Authentication failed!", { cause: err });
+	fromDriver: (value) => {
+		const [ciphertext, iv, tag] = String(value).split("::");
+		if (!ciphertext || !iv || !tag) {
+			throw new Error(`Invalid encrypted text: ${value}`);
 		}
-		return receivedPlaintext;
+		return decrypt(ciphertext, iv, tag);
 	},
 });
+
 export const users_table = pgTable("users", {
 	id: uuid("id").primaryKey().defaultRandom(),
 	email: encryptedText("email").notNull().unique(),
