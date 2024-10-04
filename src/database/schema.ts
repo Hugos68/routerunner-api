@@ -74,7 +74,7 @@ export const orders_table = pgTable("orders", {
 export const lines_table = pgTable("lines", {
 	id: uuid("id").primaryKey().defaultRandom(),
 	palletId: text("pallet_id").notNull(),
-	quantity: text("quantity").notNull(),
+	quantity: integer("quantity").notNull(),
 	productName: text("product_name").notNull(),
 	packageType: text("package_type").notNull(),
 });

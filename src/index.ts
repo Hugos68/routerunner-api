@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { addresses } from "./controllers/addresses.js";
 import { lines } from "./controllers/lines.js";
@@ -11,7 +12,6 @@ import { trips } from "./controllers/trips.js";
 import { users } from "./controllers/users.js";
 import { on_error } from "./handlers/on-error.js";
 import { authentication } from "./middleware/authentication.js";
-import { cors } from "hono/cors";
 
 const app = new Hono().basePath("/api/v1");
 
