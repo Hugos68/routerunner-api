@@ -21,6 +21,11 @@ jobs:
         run: biome ci
   test:
     runs-on: ubuntu-latest
+    env:
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
+      POSTGRES_DATABASE: postgres
+      POSTGRES_USERNAME: postgres
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,8 +37,3 @@ jobs:
         run: bun push:test
       - name: Test
         run: bun test
-        env:
-          POSTGRES_HOST: localhost
-          POSTGRES_PORT: 5432
-          POSTGRES_DATABASE: postgres
-          POSTGRES_USERNAME: postgres
