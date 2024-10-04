@@ -1,5 +1,4 @@
 import { describe, expect, test } from "bun:test";
-import postgres from "postgres";
 import * as uuid from "uuid";
 import {
 	create_user,
@@ -13,7 +12,7 @@ import { NotFoundError } from "../src/utility/errors";
 describe("Users", () => {
 	test("Create a user", async () => {
 		const user = await create_user({
-			email: "test@test.com",
+			username: "test",
 			password: "1234567890",
 		});
 		expect(user).toBeDefined();
@@ -38,8 +37,8 @@ describe("Users", () => {
 	test("Updating an unknown user will throw a NotFoundError", async () => {
 		expect(() =>
 			update_user(uuid.v4(), {
-				email: "test@test.com",
-				"password	": "1234567890",
+				username: "unknown",
+				password: "1234567890",
 			}),
 		).toThrowError(NotFoundError);
 	});
@@ -47,8 +46,8 @@ describe("Users", () => {
 	test("Updating an unknown user will throw a NotFoundError", async () => {
 		expect(() =>
 			update_user(uuid.v4(), {
-				email: "test@test.com",
-				"password	": "1234567890",
+				username: "unknown",
+				password: "1234567890",
 			}),
 		).toThrowError(NotFoundError);
 	});
@@ -77,7 +76,7 @@ describe("Users", () => {
 		});
 		test("Password is excluded when creating a user", async () => {
 			const user = await create_user({
-				email: "post@test.com",
+				username: "post@test.com",
 				password: "1234567890",
 			});
 			expect(user).not.toHaveProperty("password");
@@ -85,7 +84,7 @@ describe("Users", () => {
 		test("Password is excluded when updating a user", async () => {
 			const users = await get_users();
 			const response = await update_user(users[0]?.id ?? "", {
-				email: "patch@test.com",
+				username: "patch@test.com",
 				password: "1234567890",
 			});
 			expect(response).not.toHaveProperty("password");

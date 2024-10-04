@@ -20,8 +20,8 @@ beforeEach(async () => {
 	const [driver] = await database
 		.insert(users_table)
 		.values({
-			email: "driver@test.com",
-			password: "driver",
+			username: "driver",
+			password: "1234567890",
 		})
 		.returning();
 	if (driver === undefined) {
@@ -30,8 +30,8 @@ beforeEach(async () => {
 	const [planner] = await database
 		.insert(users_table)
 		.values({
-			email: "planner@test.com",
-			password: "planner",
+			username: "planner",
+			password: "1234567890",
 		})
 		.returning();
 	if (planner === undefined) {
@@ -40,8 +40,8 @@ beforeEach(async () => {
 	const [admin] = await database
 		.insert(users_table)
 		.values({
-			email: "admin@test.com",
-			password: "admin",
+			username: "admin",
+			password: "1234567890",
 		})
 		.returning();
 	if (admin === undefined) {
