@@ -34,7 +34,9 @@ app.use(
 		exposeHeaders: ["Content-Length", "Authorization"], // Headers you want to expose to the frontend
 		credentials: true, // If you need to allow credentials (cookies, authorization headers)
 	}),
-); /**
+);
+
+/**
  * Routes
  */
 app.route("/addresses", addresses);
