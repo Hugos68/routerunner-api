@@ -11,6 +11,7 @@ import { trips } from "./controllers/trips.js";
 import { users } from "./controllers/users.js";
 import { on_error } from "./handlers/on-error.js";
 import { authentication } from "./middleware/authentication.js";
+import { cors } from "hono/cors";
 
 const app = new Hono().basePath("/api/v1");
 
@@ -24,8 +25,16 @@ app.onError(on_error);
  */
 app.use(logger());
 app.use(authentication);
-
-/**
+app.use(
+	"/*",
+	cors({
+		origin: "*", // Frontend URL (your Flutter app)
+		allowMethods: ["GET", "POST", "OPTIONS"], // Allowed HTTP methods
+		allowHeaders: ["Content-Type", "Authorization"], // Allowed headers in requests
+		exposeHeaders: ["Content-Length", "Authorization"], // Headers you want to expose to the frontend
+		credentials: true, // If you need to allow credentials (cookies, authorization headers)
+	}),
+); /**
  * Routes
  */
 app.route("/addresses", addresses);
