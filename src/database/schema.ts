@@ -1,28 +1,22 @@
 import { customType } from "drizzle-orm/pg-core";
 import { integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-valibot";
-import { email, minLength, partial, pick, string } from "valibot";
-import { decrypt, encrypt } from "../utility/crypto";
+import { minLength, partial, pick, string, transform } from "valibot";
+import { HASH_CONFIG } from "../utility/constants";
 
-const encryptedText = customType<{ data: string }>({
-	dataType: () => "text",
-	toDriver: (value) => {
-		const encryption = encrypt(String(value));
-		return btoa(`${encryption.ciphertext}.${encryption.iv}.${encryption.tag}`);
+const hash = customType<{ data: string }>({
+	dataType: () => {
+		return "text";
 	},
-	fromDriver: (value) => {
-		const [ciphertext, iv, tag] = atob(String(value)).split(".");
-		if (!ciphertext || !iv || !tag) {
-			throw new Error(`Invalid encrypted text: ${value}`);
-		}
-		return decrypt(ciphertext, iv, tag);
+	toDriver: (value) => {
+		return Bun.password.hashSync(value, HASH_CONFIG);
 	},
 });
 
 export const users_table = pgTable("users", {
 	id: uuid("id").primaryKey().defaultRandom(),
-	email: encryptedText("email").notNull(),
-	password: text("password").notNull(),
+	username: text("username").unique().notNull(),
+	password: hash("password").notNull(),
 });
 
 export const roles_table = pgTable("roles", {
@@ -192,17 +186,21 @@ export type RetourPackagingOrders =
 export type TripDrivers = typeof trip_drivers_table.$inferSelect;
 export type UserRoles = typeof user_roles_table.$inferSelect;
 
-export const CreateUserSchema = createInsertSchema(users_table, {
-	email: () => string([email()]),
-	password: () => string([minLength(10)]),
-});
+export const CreateUserSchema = transform(
+	createInsertSchema(users_table, {
+		password: () => string([minLength(10)]),
+	}),
+	(output) => {
+		return output;
+	},
+);
 export const UpdateUserSchema = partial(CreateUserSchema);
 
 export const CreateRoleSchema = createInsertSchema(roles_table);
 export const UpdateRoleSchema = partial(CreateRoleSchema);
 
 export const CreateSessionSchema = pick(CreateUserSchema, [
-	"email",
+	"username",
 	"password",
 ]);
 
