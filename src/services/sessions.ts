@@ -15,9 +15,11 @@ export const create_session = async (input: unknown) => {
 	const [user] = await database
 		.select()
 		.from(users_table)
-		.where(eq(users_table.email, values.email));
+		.where(eq(users_table.username, values.username));
 	if (user === undefined) {
-		throw new NotFoundError(`User with email ${values.email} not found`);
+		throw new NotFoundError(
+			`User with username "${values.username}" not found`,
+		);
 	}
 	const password_matches = await Bun.password.verify(
 		values.password,
@@ -25,7 +27,9 @@ export const create_session = async (input: unknown) => {
 		HASH_CONFIG.algorithm,
 	);
 	if (!password_matches) {
-		throw new NotFoundError(`User with email ${values.email} not found`);
+		throw new NotFoundError(
+			`User with username "${values.username}" not found`,
+		);
 	}
 	const [session] = await database
 		.insert(sessions_table)
