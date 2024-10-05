@@ -8,7 +8,7 @@ import {
 } from "../database/schema.js";
 import { users_table } from "../database/schema.js";
 import { HASH_CONFIG } from "../utility/constants.js";
-import { NotFoundError } from "../utility/errors.js";
+import { BadCredentialsError, NotFoundError } from "../utility/errors.js";
 
 export const create_session = async (input: unknown) => {
 	const values = parse(CreateSessionSchema, input);
@@ -27,9 +27,7 @@ export const create_session = async (input: unknown) => {
 		HASH_CONFIG.algorithm,
 	);
 	if (!password_matches) {
-		throw new NotFoundError(
-			`User with username "${values.username}" not found`,
-		);
+		throw new BadCredentialsError("Username or password is incorrect");
 	}
 	const [session] = await database
 		.insert(sessions_table)

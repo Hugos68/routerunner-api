@@ -30,7 +30,8 @@ export const sessions_table = pgTable("sessions", {
 	id: uuid("id").primaryKey().defaultRandom(),
 	userId: uuid("user_id")
 		.notNull()
-		.references(() => users_table.id),
+		.references(() => users_table.id)
+		.unique(),
 });
 
 export const trips_table = pgTable("trips", {
