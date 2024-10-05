@@ -14,7 +14,7 @@ lines.post("/", async (c) => {
 	const line = await create_line(await c.req.json());
 	return c.json(
 		{
-			data: [line],
+			data: line,
 		},
 		201,
 	);
@@ -35,7 +35,7 @@ lines.get("/:id", async (c) => {
 	const line = await get_line(id);
 	return c.json(
 		{
-			data: [line],
+			data: line,
 		},
 		200,
 	);
@@ -46,7 +46,7 @@ lines.patch("/:id", async (c) => {
 	const line = await update_line(id, await c.req.json());
 	return c.json(
 		{
-			data: [line],
+			data: line,
 		},
 		200,
 	);
@@ -57,7 +57,7 @@ lines.delete("/:id", async (c) => {
 	const line = await delete_line(id);
 	return c.json(
 		{
-			data: [line],
+			data: line,
 		},
 		200,
 	);

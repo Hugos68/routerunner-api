@@ -14,7 +14,7 @@ orders.post("/", async (c) => {
 	const order = await create_order(await c.req.json());
 	return c.json(
 		{
-			data: [order],
+			data: order,
 		},
 		201,
 	);
@@ -35,7 +35,7 @@ orders.get("/:id", async (c) => {
 	const order = await get_order(id);
 	return c.json(
 		{
-			data: [order],
+			data: order,
 		},
 		200,
 	);
@@ -46,7 +46,7 @@ orders.patch("/:id", async (c) => {
 	const order = await update_order(id, await c.req.json());
 	return c.json(
 		{
-			data: [order],
+			data: order,
 		},
 		200,
 	);
@@ -57,7 +57,7 @@ orders.delete("/:id", async (c) => {
 	const order = await delete_order(id);
 	return c.json(
 		{
-			data: [order],
+			data: order,
 		},
 		200,
 	);

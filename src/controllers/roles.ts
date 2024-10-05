@@ -14,7 +14,7 @@ roles.post("/", async (c) => {
 	const role = await create_role(await c.req.json());
 	return c.json(
 		{
-			data: [role],
+			data: role,
 		},
 		201,
 	);
@@ -35,7 +35,7 @@ roles.get("/:id", async (c) => {
 	const role = await get_role(id);
 	return c.json(
 		{
-			data: [role],
+			data: role,
 		},
 		200,
 	);
@@ -46,7 +46,7 @@ roles.patch("/:id", async (c) => {
 	const role = await update_role(id, await c.req.json());
 	return c.json(
 		{
-			data: [role],
+			data: role,
 		},
 		200,
 	);
@@ -57,7 +57,7 @@ roles.delete("/:id", async (c) => {
 	const role = await delete_role(id);
 	return c.json(
 		{
-			data: [role],
+			data: role,
 		},
 		200,
 	);

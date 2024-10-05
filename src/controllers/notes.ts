@@ -14,7 +14,7 @@ notes.post("/", async (c) => {
 	const note = await create_note(await c.req.json());
 	return c.json(
 		{
-			data: [note],
+			data: note,
 		},
 		201,
 	);
@@ -35,7 +35,7 @@ notes.get("/:id", async (c) => {
 	const note = await get_note(id);
 	return c.json(
 		{
-			data: [note],
+			data: note,
 		},
 		200,
 	);
@@ -46,7 +46,7 @@ notes.patch("/:id", async (c) => {
 	const note = await update_note(id, await c.req.json());
 	return c.json(
 		{
-			data: [note],
+			data: note,
 		},
 		200,
 	);
@@ -57,7 +57,7 @@ notes.delete("/:id", async (c) => {
 	const note = await delete_note(id);
 	return c.json(
 		{
-			data: [note],
+			data: note,
 		},
 		200,
 	);

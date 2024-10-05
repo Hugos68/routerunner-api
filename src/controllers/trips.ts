@@ -14,7 +14,7 @@ trips.post("/", async (c) => {
 	const trip = await create_trip(await c.req.json());
 	return c.json(
 		{
-			data: [trip],
+			data: trip,
 		},
 		201,
 	);
@@ -35,7 +35,7 @@ trips.get("/:id", async (c) => {
 	const trip = await get_trip(id);
 	return c.json(
 		{
-			data: [trip],
+			data: trip,
 		},
 		200,
 	);
@@ -46,7 +46,7 @@ trips.patch("/:id", async (c) => {
 	const trip = await update_trip(id, await c.req.json());
 	return c.json(
 		{
-			data: [trip],
+			data: trip,
 		},
 		200,
 	);
@@ -57,7 +57,7 @@ trips.delete("/:id", async (c) => {
 	const trip = await delete_trip(id);
 	return c.json(
 		{
-			data: [trip],
+			data: trip,
 		},
 		200,
 	);

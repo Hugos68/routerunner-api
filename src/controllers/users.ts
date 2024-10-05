@@ -25,7 +25,7 @@ users.get("/:id", async (c) => {
 	const user = await get_user(id);
 	return c.json(
 		{
-			data: [user],
+			data: user,
 		},
 		200,
 	);
@@ -35,7 +35,7 @@ users.post("/", async (c) => {
 	const user = await create_user(await c.req.json());
 	return c.json(
 		{
-			data: [user],
+			data: user,
 		},
 		201,
 	);
@@ -46,7 +46,7 @@ users.patch("/:id", async (c) => {
 	const user = await update_user(id, await c.req.json());
 	return c.json(
 		{
-			data: [user],
+			data: user,
 		},
 		200,
 	);
@@ -57,7 +57,7 @@ users.delete("/:id", async (c) => {
 	const user = await delete_user(id);
 	return c.json(
 		{
-			data: [user],
+			data: user,
 		},
 		200,
 	);
