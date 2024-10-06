@@ -93,7 +93,7 @@ export const addresses_table = pgTable("addresses", {
 export const notes_table = pgTable("notes", {
 	id: uuid("id").primaryKey().defaultRandom(),
 	content: text("content").notNull(),
-	photo: text("photo").notNull(),
+	photo: text("photo"),
 });
 
 export const retour_packaging_table = pgTable("retour_packagings", {
