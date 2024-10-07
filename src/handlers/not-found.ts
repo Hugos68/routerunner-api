@@ -1,13 +1,8 @@
 import type { NotFoundHandler } from "hono";
+import { NotFoundError } from "../utility/errors.js";
 
 export const notFound: NotFoundHandler = (c) => {
-	return c.json(
-		{
-			error: {
-				code: "NotFoundError",
-				message: "Resource not found",
-			},
-		},
-		404,
+	throw new NotFoundError(
+		`Resource "${new URL(c.req.url).pathname}" not found`,
 	);
 };
