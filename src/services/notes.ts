@@ -2,7 +2,7 @@ import { and, eq } from "drizzle-orm";
 import { parse } from "valibot";
 import { database } from "../database/database.js";
 import { CreateNoteSchema, type Note, notesTable } from "../database/schema.js";
-import { createFilterCondition } from "../utility/create-filter-conditions.js";
+import { createFilterConditions } from "../utility/create-filter-conditions.js";
 import { NotFoundError } from "../utility/errors.js";
 
 export const createNote = async (input: unknown) => {
@@ -15,7 +15,7 @@ export const createNote = async (input: unknown) => {
 };
 
 export const getNotes = async (filter: Record<string, unknown> = {}) => {
-	const conditions = createFilterCondition(filter, notesTable);
+	const conditions = createFilterConditions(filter, notesTable);
 	const notes = await database
 		.select()
 		.from(notesTable)

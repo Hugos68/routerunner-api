@@ -8,7 +8,7 @@ import {
 } from "../database/schema.js";
 import { usersTable } from "../database/schema.js";
 import { HASH_CONFIG } from "../utility/constants.js";
-import { createFilterCondition } from "../utility/create-filter-conditions.js";
+import { createFilterConditions } from "../utility/create-filter-conditions.js";
 import { BadCredentialsError, NotFoundError } from "../utility/errors.js";
 
 export const createSession = async (input: unknown) => {
@@ -43,7 +43,7 @@ export const createSession = async (input: unknown) => {
 };
 
 export const getSessions = async (filter: Record<string, unknown> = {}) => {
-	const conditions = createFilterCondition(filter, sessionsTable);
+	const conditions = createFilterConditions(filter, sessionsTable);
 	const sessions = await database
 		.select()
 		.from(sessionsTable)

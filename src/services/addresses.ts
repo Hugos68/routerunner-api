@@ -7,7 +7,7 @@ import {
 	UpdateAddressSchema,
 	addressesTable,
 } from "../database/schema.js";
-import { createFilterCondition } from "../utility/create-filter-conditions.js";
+import { createFilterConditions } from "../utility/create-filter-conditions.js";
 import { NotFoundError } from "../utility/errors.js";
 
 export const createAddress = async (input: unknown) => {
@@ -20,7 +20,7 @@ export const createAddress = async (input: unknown) => {
 };
 
 export const getAddresses = async (filter: Record<string, unknown> = {}) => {
-	const conditions = createFilterCondition(filter, addressesTable);
+	const conditions = createFilterConditions(filter, addressesTable);
 	const addresses = await database
 		.select()
 		.from(addressesTable)

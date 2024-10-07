@@ -2,7 +2,7 @@ import { eq, getTableColumns, getTableName } from "drizzle-orm";
 import type { PgTableWithColumns } from "drizzle-orm/pg-core";
 import { InvalidFilterError } from "./errors.ts";
 
-export function createFilterCondition(
+export function createFilterConditions(
 	filters: Record<string, unknown>,
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	table: PgTableWithColumns<any>,

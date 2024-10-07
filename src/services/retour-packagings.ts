@@ -7,7 +7,7 @@ import {
 	UpdateRetourPackagingSchema,
 	retourPackagingsTable,
 } from "../database/schema.js";
-import { createFilterCondition } from "../utility/create-filter-conditions.js";
+import { createFilterConditions } from "../utility/create-filter-conditions.js";
 import { NotFoundError } from "../utility/errors.js";
 
 export const createRetourPackaging = async (input: unknown) => {
@@ -23,7 +23,7 @@ export const createRetourPackaging = async (input: unknown) => {
 };
 
 export const getRetourPackagings = async (filter: Record<string, unknown>) => {
-	const conditions = createFilterCondition(filter, retourPackagingsTable);
+	const conditions = createFilterConditions(filter, retourPackagingsTable);
 	const retourPackaging = await database
 		.select()
 		.from(retourPackagingsTable)

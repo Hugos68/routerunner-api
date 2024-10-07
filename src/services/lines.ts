@@ -7,7 +7,7 @@ import {
 	UpdateLineSchema,
 	linesTable,
 } from "../database/schema.js";
-import { createFilterCondition } from "../utility/create-filter-conditions.js";
+import { createFilterConditions } from "../utility/create-filter-conditions.js";
 import { NotFoundError } from "../utility/errors.js";
 
 export const createLine = async (input: unknown) => {
@@ -20,7 +20,7 @@ export const createLine = async (input: unknown) => {
 };
 
 export const getLines = async (filter: Record<string, unknown>) => {
-	const conditions = createFilterCondition(filter, linesTable);
+	const conditions = createFilterConditions(filter, linesTable);
 	const lines = await database
 		.select()
 		.from(linesTable)

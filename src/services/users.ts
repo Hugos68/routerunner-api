@@ -7,7 +7,7 @@ import {
 	type User,
 	usersTable,
 } from "../database/schema.js";
-import { createFilterCondition } from "../utility/create-filter-conditions.js";
+import { createFilterConditions } from "../utility/create-filter-conditions.js";
 import { NotFoundError } from "../utility/errors.js";
 
 const safeColumns = (() => {
@@ -28,7 +28,7 @@ export const createUser = async (input: unknown) => {
 };
 
 export const getUsers = async (filter: Record<string, unknown> = {}) => {
-	const conditions = createFilterCondition(filter, usersTable);
+	const conditions = createFilterConditions(filter, usersTable);
 	const users = await database
 		.select(safeColumns)
 		.from(usersTable)

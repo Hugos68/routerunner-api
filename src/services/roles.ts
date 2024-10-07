@@ -7,7 +7,7 @@ import {
 	UpdateRoleSchema,
 	rolesTable,
 } from "../database/schema.js";
-import { createFilterCondition } from "../utility/create-filter-conditions.js";
+import { createFilterConditions } from "../utility/create-filter-conditions.js";
 import { NotFoundError } from "../utility/errors.js";
 
 export const createRole = async (input: unknown) => {
@@ -20,7 +20,7 @@ export const createRole = async (input: unknown) => {
 };
 
 export const getRoles = async (filter: Record<string, unknown> = {}) => {
-	const conditions = createFilterCondition(filter, rolesTable);
+	const conditions = createFilterConditions(filter, rolesTable);
 	const roles = await database
 		.select()
 		.from(rolesTable)

@@ -7,7 +7,7 @@ import {
 	UpdateTripSchema,
 	tripsTable,
 } from "../database/schema.js";
-import { createFilterCondition } from "../utility/create-filter-conditions.js";
+import { createFilterConditions } from "../utility/create-filter-conditions.js";
 import { NotFoundError } from "../utility/errors.js";
 
 export const createTrip = async (input: unknown) => {
@@ -20,7 +20,7 @@ export const createTrip = async (input: unknown) => {
 };
 
 export const getTrips = async (filter: Record<string, unknown> = {}) => {
-	const conditions = createFilterCondition(filter, tripsTable);
+	const conditions = createFilterConditions(filter, tripsTable);
 	const trips = await database
 		.select()
 		.from(tripsTable)
