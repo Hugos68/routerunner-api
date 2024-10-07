@@ -10,6 +10,7 @@ import { roles } from "./controllers/roles.js";
 import { sessions } from "./controllers/sessions.js";
 import { trips } from "./controllers/trips.js";
 import { users } from "./controllers/users.js";
+import { notFound } from "./handlers/not-found.js";
 import { onError } from "./handlers/on-error.js";
 import { authentication } from "./middleware/authentication.js";
 
@@ -19,6 +20,7 @@ const app = new Hono().basePath("/api/v1");
  * Handlers
  */
 app.onError(onError);
+app.notFound(notFound);
 
 /**
  * Middleware
