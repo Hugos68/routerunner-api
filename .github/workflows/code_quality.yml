@@ -4,6 +4,13 @@ on:
   push:
   pull_request:
 
+env:
+  POSTGRES_HOST: localhost
+  POSTGRES_PORT: 5432
+  POSTGRES_USERNAME: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_DATABASE: postgres
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -21,12 +28,8 @@ jobs:
     services:
       postgres:
         image: postgres:latest
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: postgres
         ports:
-          - 5432:5432
+          - ${{ env.POSTGRES_PORT }}:${{ env.POSTGRES_PORT }}
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -44,17 +47,5 @@ jobs:
 
       - name: Run Database Migrations
         run: bun push
-        env:
-          POSTGRES_HOST: localhost
-          POSTGRES_USERNAME: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DATABASE: postgres
-          POSTGRES_PORT: 5432
       - name: Run Tests
         run: bun test
-        env:
-          POSTGRES_HOST: localhost
-          POSTGRES_USERNAME: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DATABASE: postgres
-          POSTGRES_PORT: 5432
