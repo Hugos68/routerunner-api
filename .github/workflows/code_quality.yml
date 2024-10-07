@@ -45,6 +45,7 @@ jobs:
       - name: Run Database Migrations
         run: bun push
         env:
+          POSTGRES_HOST: localhost
           POSTGRES_USERNAME: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DATABASE: postgres
@@ -52,6 +53,7 @@ jobs:
       - name: Run Tests
         run: bun test
         env:
+          POSTGRES_HOST: localhost
           POSTGRES_USERNAME: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DATABASE: postgres
