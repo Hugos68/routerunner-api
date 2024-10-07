@@ -1,66 +1,63 @@
 import { Hono } from "hono";
 import {
-	create_retour_packaging,
-	delete_retour_packaging,
-	get_retour_packaging,
-	get_retour_packagings,
-	update_retour_packaging,
+	createRetourPackaging,
+	deleteRetourPackaging,
+	getRetourPackaging,
+	getRetourPackagings,
+	updateRetourPackaging,
 } from "../services/retour-packagings.js";
 import type { Environment } from "../utility/types.js";
 
-export const retour_packagings = new Hono<Environment>();
+export const retourPackagings = new Hono<Environment>();
 
-retour_packagings.post("/", async (c) => {
-	const retour_packaging = await create_retour_packaging(await c.req.json());
+retourPackagings.post("/", async (c) => {
+	const retourPackaging = await createRetourPackaging(await c.req.json());
 	return c.json(
 		{
-			data: retour_packaging,
+			data: retourPackaging,
 		},
 		201,
 	);
 });
 
-retour_packagings.get("/", async (c) => {
-	const retour_packagings = await get_retour_packagings(c.req.query());
+retourPackagings.get("/", async (c) => {
+	const retourPackagings = await getRetourPackagings(c.req.query());
 	return c.json(
 		{
-			data: retour_packagings,
+			data: retourPackagings,
 		},
 		200,
 	);
 });
 
-retour_packagings.get("/:id", async (c) => {
+retourPackagings.get("/:id", async (c) => {
 	const id = c.req.param("id");
-	const retour_packaging = await get_retour_packaging(id);
+	const retourPackaging = await getRetourPackaging(id);
 	return c.json(
 		{
-			data: retour_packaging,
+			data: retourPackaging,
 		},
 		200,
 	);
 });
 
-retour_packagings.patch("/:id", async (c) => {
+retourPackagings.patch("/:id", async (c) => {
 	const id = c.req.param("id");
-	const retour_packaging = await update_retour_packaging(
-		id,
-		await c.req.json(),
-	);
+	const retourPackaging = await updateRetourPackaging(id, await c.req.json());
 	return c.json(
 		{
-			data: retour_packaging,
+			data: retourPackaging,
 		},
 		200,
 	);
 });
 
-retour_packagings.delete("/:id", async (c) => {
+retourPackagings.delete("/:id", async (c) => {
 	const id = c.req.param("id");
-	const retour_packaging = await delete_retour_packaging(id);
+	const retourPackaging = await deleteRetourPackaging(id);
 	return c.json(
 		{
-			data: retour_packaging,
+			data: retourPackaging,
 		},
 		200,
 	);

@@ -4,34 +4,34 @@ import { database } from "../database/database.js";
 import {
 	CreateUserSchema,
 	type Session,
-	sessions_table,
+	sessionsTable,
 } from "../database/schema.js";
-import { users_table } from "../database/schema.js";
+import { usersTable } from "../database/schema.js";
 import { HASH_CONFIG } from "../utility/constants.js";
-import { create_filter_conditions } from "../utility/create-filter-conditions.js";
+import { createFilterCondition } from "../utility/create-filter-conditions.js";
 import { BadCredentialsError, NotFoundError } from "../utility/errors.js";
 
-export const create_session = async (input: unknown) => {
+export const createSession = async (input: unknown) => {
 	const values = parse(pick(CreateUserSchema, ["username", "password"]), input);
 	const [user] = await database
 		.select()
-		.from(users_table)
-		.where(eq(users_table.username, values.username));
+		.from(usersTable)
+		.where(eq(usersTable.username, values.username));
 	if (user === undefined) {
 		throw new NotFoundError(
 			`User with username "${values.username}" not found`,
 		);
 	}
-	const password_matches = await Bun.password.verify(
+	const passwordMatches = await Bun.password.verify(
 		values.password,
 		user.password,
 		HASH_CONFIG.algorithm,
 	);
-	if (!password_matches) {
+	if (!passwordMatches) {
 		throw new BadCredentialsError();
 	}
 	const [session] = await database
-		.insert(sessions_table)
+		.insert(sessionsTable)
 		.values({
 			userId: user.id,
 		})
@@ -42,30 +42,31 @@ export const create_session = async (input: unknown) => {
 	return session;
 };
 
-export const get_sessions = async (filter: Record<string, unknown> = {}) => {
-	const conditions = create_filter_conditions(filter, sessions_table);
+export const getSessions = async (filter: Record<string, unknown> = {}) => {
+	const conditions = createFilterCondition(filter, sessionsTable);
 	const sessions = await database
 		.select()
-		.from(sessions_table)
+		.from(sessionsTable)
 		.where(and(...conditions));
 	return sessions;
 };
 
-export const get_session = async (id: Session["id"]) => {
+export const getSession = async (id: Session["id"]) => {
 	const [session] = await database
 		.select()
-		.from(sessions_table)
-		.where(eq(sessions_table.id, id));
+		.from(sessionsTable)
+		.where(eq(sessionsTable.id, id));
 	if (session === undefined) {
 		throw new NotFoundError(`Session with id ${id} not found`);
 	}
 	return session;
 };
 
-export const delete_session = async (id: Session["id"]) => {
+export const deleteSession = async (id: Session["id"]) => {
 	const [session] = await database
-		.delete(sessions_table)
-		.where(eq(sessions_table.id, id));
+		.delete(sessionsTable)
+		.where(eq(sessionsTable.id, id))
+		.returning();
 	if (session === undefined) {
 		throw new NotFoundError(`Session with id ${id} not found`);
 	}

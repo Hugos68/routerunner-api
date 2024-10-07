@@ -6,7 +6,7 @@ import {
 	NotFoundError,
 } from "../utility/errors.js";
 
-export const on_error: ErrorHandler = (err, c) => {
+export const onError: ErrorHandler = (err, c) => {
 	if (err instanceof ValiError) {
 		return c.json(
 			{

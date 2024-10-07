@@ -1,70 +1,70 @@
 import { and, eq, getTableColumns } from "drizzle-orm";
-import { parse, partial } from "valibot";
+import { parse } from "valibot";
 import { database } from "../database/database.js";
 import {
 	CreateUserSchema,
 	UpdateUserSchema,
 	type User,
-	users_table,
+	usersTable,
 } from "../database/schema.js";
-import { create_filter_conditions } from "../utility/create-filter-conditions.js";
+import { createFilterCondition } from "../utility/create-filter-conditions.js";
 import { NotFoundError } from "../utility/errors.js";
 
-const safe_columns = (() => {
-	const { password: _, ...columns } = getTableColumns(users_table);
+const safeColumns = (() => {
+	const { password: _, ...columns } = getTableColumns(usersTable);
 	return columns;
 })();
 
-export const create_user = async (input: unknown) => {
+export const createUser = async (input: unknown) => {
 	const values = parse(CreateUserSchema, input);
 	const [user] = await database
-		.insert(users_table)
+		.insert(usersTable)
 		.values(values)
-		.returning(safe_columns);
+		.returning(safeColumns);
 	if (user === undefined) {
 		throw new Error("Failed to create user");
 	}
 	return user;
 };
 
-export const get_users = async (filter: Record<string, unknown> = {}) => {
-	const conditions = create_filter_conditions(filter, users_table);
+export const getUsers = async (filter: Record<string, unknown> = {}) => {
+	const conditions = createFilterCondition(filter, usersTable);
 	const users = await database
-		.select(safe_columns)
-		.from(users_table)
+		.select(safeColumns)
+		.from(usersTable)
 		.where(and(...conditions));
 	return users;
 };
 
-export const get_user = async (id: User["id"]) => {
+export const getUser = async (id: User["id"]) => {
 	const [user] = await database
-		.select(safe_columns)
-		.from(users_table)
-		.where(eq(users_table.id, id));
+		.select(safeColumns)
+		.from(usersTable)
+		.where(eq(usersTable.id, id));
 	if (user === undefined) {
 		throw new NotFoundError(`User with id ${id} not found`);
 	}
 	return user;
 };
 
-export const update_user = async (id: User["id"], input: unknown) => {
+export const updateUser = async (id: User["id"], input: unknown) => {
 	const values = parse(UpdateUserSchema, input);
 	const [user] = await database
-		.update(users_table)
+		.update(usersTable)
 		.set(values)
-		.where(eq(users_table.id, id))
-		.returning(safe_columns);
+		.where(eq(usersTable.id, id))
+		.returning(safeColumns);
 	if (user === undefined) {
 		throw new NotFoundError(`User with id ${id} not found`);
 	}
 	return user;
 };
 
-export const delete_user = async (id: User["id"]) => {
+export const deleteUser = async (id: User["id"]) => {
 	const [user] = await database
-		.delete(users_table)
-		.where(eq(users_table.id, id))
-		.returning(safe_columns);
+		.delete(usersTable)
+		.where(eq(usersTable.id, id))
+		.returning(safeColumns);
 	if (user === undefined) {
 		throw new NotFoundError(`User with id ${id} not found`);
 	}

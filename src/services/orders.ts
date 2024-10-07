@@ -1,53 +1,50 @@
 import { and, eq } from "drizzle-orm";
-import { parse, partial } from "valibot";
+import { parse } from "valibot";
 import { database } from "../database/database.js";
 import {
 	CreateOrderSchema,
 	type Order,
 	UpdateOrderSchema,
-	orders_table,
+	ordersTable,
 } from "../database/schema.js";
-import { create_filter_conditions } from "../utility/create-filter-conditions.js";
+import { createFilterCondition } from "../utility/create-filter-conditions.js";
 import { NotFoundError } from "../utility/errors.js";
 
-export const create_order = async (input: unknown) => {
+export const createOrder = async (input: unknown) => {
 	const values = parse(CreateOrderSchema, input);
-	const [order] = await database
-		.insert(orders_table)
-		.values(values)
-		.returning();
+	const [order] = await database.insert(ordersTable).values(values).returning();
 	if (order === undefined) {
 		throw new Error("Failed to create order");
 	}
 	return order;
 };
 
-export const get_orders = async (filter: Record<string, unknown> = {}) => {
-	const conditions = create_filter_conditions(filter, orders_table);
+export const getOrders = async (filter: Record<string, unknown> = {}) => {
+	const conditions = createFilterCondition(filter, ordersTable);
 	const orders = await database
 		.select()
-		.from(orders_table)
+		.from(ordersTable)
 		.where(and(...conditions));
 	return orders;
 };
 
-export const get_order = async (id: Order["id"]) => {
+export const getOrder = async (id: Order["id"]) => {
 	const [order] = await database
 		.select()
-		.from(orders_table)
-		.where(eq(orders_table.id, id));
+		.from(ordersTable)
+		.where(eq(ordersTable.id, id));
 	if (order === undefined) {
 		throw new NotFoundError(`Order with id ${id} not found`);
 	}
 	return order;
 };
 
-export const update_order = async (id: Order["id"], input: unknown) => {
+export const updateOrder = async (id: Order["id"], input: unknown) => {
 	const values = parse(UpdateOrderSchema, input);
 	const [order] = await database
-		.update(orders_table)
+		.update(ordersTable)
 		.set(values)
-		.where(eq(orders_table.id, id))
+		.where(eq(ordersTable.id, id))
 		.returning();
 	if (order === undefined) {
 		throw new NotFoundError(`Order with id ${id} not found`);
@@ -55,10 +52,10 @@ export const update_order = async (id: Order["id"], input: unknown) => {
 	return order;
 };
 
-export const delete_order = async (id: Order["id"]) => {
+export const deleteOrder = async (id: Order["id"]) => {
 	const [order] = await database
-		.delete(orders_table)
-		.where(eq(orders_table.id, id))
+		.delete(ordersTable)
+		.where(eq(ordersTable.id, id))
 		.returning();
 	if (order === undefined) {
 		throw new NotFoundError(`Order with id ${id} not found`);

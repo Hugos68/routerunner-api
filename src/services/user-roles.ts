@@ -1,66 +1,67 @@
 import { and, eq } from "drizzle-orm";
-import { parse, partial } from "valibot";
+import { parse } from "valibot";
 import { database } from "../database/database.js";
 import {
 	CreateUserRolesSchema,
 	UpdateUserRolesSchema,
 	type UserRoles,
-	user_roles_table,
+	userRolesTable,
 } from "../database/schema.js";
-import { create_filter_conditions } from "../utility/create-filter-conditions.js";
+import { createFilterCondition } from "../utility/create-filter-conditions.js";
 import { NotFoundError } from "../utility/errors.js";
 
-export const create_user_role = async (input: unknown) => {
+export const createUserRole = async (input: unknown) => {
 	const values = parse(CreateUserRolesSchema, input);
-	const [user_role] = await database
-		.insert(user_roles_table)
+	const [userRole] = await database
+		.insert(userRolesTable)
 		.values(values)
 		.returning();
-	if (user_role === undefined) {
+	if (userRole === undefined) {
 		throw new Error("Failed to create user role");
 	}
-	return user_role;
+	return userRole;
 };
 
-export const get_user_roles = async (filter: Record<string, unknown> = {}) => {
-	const conditions = create_filter_conditions(filter, user_roles_table);
-	const user_roles = await database
+export const getUserRoles = async (filter: Record<string, unknown> = {}) => {
+	const conditions = createFilterCondition(filter, userRolesTable);
+	const userRoles = await database
 		.select()
-		.from(user_roles_table)
+		.from(userRolesTable)
 		.where(and(...conditions));
-	return user_roles;
+	return userRoles;
 };
 
-export const get_user_role = async (id: UserRoles["id"]) => {
-	const [user_role] = await database
+export const getUserRole = async (id: UserRoles["id"]) => {
+	const [userRole] = await database
 		.select()
-		.from(user_roles_table)
-		.where(eq(user_roles_table.id, id));
-	if (user_role === undefined) {
+		.from(userRolesTable)
+		.where(eq(userRolesTable.id, id));
+	if (userRole === undefined) {
 		throw new NotFoundError(`User role with id ${id} not found`);
 	}
-	return user_role;
+	return userRole;
 };
 
-export const update_user_role = async (id: UserRoles["id"], input: unknown) => {
+export const updateUserRole = async (id: UserRoles["id"], input: unknown) => {
 	const values = parse(UpdateUserRolesSchema, input);
-	const [user_role] = await database
-		.update(user_roles_table)
+	const [userRole] = await database
+		.update(userRolesTable)
 		.set(values)
-		.where(eq(user_roles_table.id, id))
+		.where(eq(userRolesTable.id, id))
 		.returning();
-	if (user_role === undefined) {
+	if (userRole === undefined) {
 		throw new NotFoundError(`User role with id ${id} not found`);
 	}
-	return user_role;
+	return userRole;
 };
 
-export const delete_user_role = async (id: UserRoles["id"]) => {
-	const [user_role] = await database
-		.delete(user_roles_table)
-		.where(eq(user_roles_table.id, id));
-	if (user_role === undefined) {
+export const deleteUserRole = async (id: UserRoles["id"]) => {
+	const [userRole] = await database
+		.delete(userRolesTable)
+		.where(eq(userRolesTable.id, id))
+		.returning();
+	if (userRole === undefined) {
 		throw new NotFoundError(`User role with id ${id} not found`);
 	}
-	return user_role;
+	return userRole;
 };

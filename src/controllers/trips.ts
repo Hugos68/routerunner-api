@@ -1,17 +1,17 @@
 import { Hono } from "hono";
 import {
-	create_trip,
-	delete_trip,
-	get_trip,
-	get_trips,
-	update_trip,
+	createTrip,
+	deleteTrip,
+	getTrip,
+	getTrips,
+	updateTrip,
 } from "../services/trips.js";
 import type { Environment } from "../utility/types.js";
 
 export const trips = new Hono<Environment>();
 
 trips.post("/", async (c) => {
-	const trip = await create_trip(await c.req.json());
+	const trip = await createTrip(await c.req.json());
 	return c.json(
 		{
 			data: trip,
@@ -21,7 +21,7 @@ trips.post("/", async (c) => {
 });
 
 trips.get("/", async (c) => {
-	const trips = await get_trips(c.req.query());
+	const trips = await getTrips(c.req.query());
 	return c.json(
 		{
 			data: trips,
@@ -32,7 +32,7 @@ trips.get("/", async (c) => {
 
 trips.get("/:id", async (c) => {
 	const id = c.req.param("id");
-	const trip = await get_trip(id);
+	const trip = await getTrip(id);
 	return c.json(
 		{
 			data: trip,
@@ -43,7 +43,7 @@ trips.get("/:id", async (c) => {
 
 trips.patch("/:id", async (c) => {
 	const id = c.req.param("id");
-	const trip = await update_trip(id, await c.req.json());
+	const trip = await updateTrip(id, await c.req.json());
 	return c.json(
 		{
 			data: trip,
@@ -54,7 +54,7 @@ trips.patch("/:id", async (c) => {
 
 trips.delete("/:id", async (c) => {
 	const id = c.req.param("id");
-	const trip = await delete_trip(id);
+	const trip = await deleteTrip(id);
 	return c.json(
 		{
 			data: trip,

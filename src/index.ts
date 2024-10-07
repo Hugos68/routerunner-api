@@ -5,12 +5,12 @@ import { addresses } from "./controllers/addresses.js";
 import { lines } from "./controllers/lines.js";
 import { notes } from "./controllers/notes.js";
 import { orders } from "./controllers/orders.js";
-import { retour_packagings } from "./controllers/retour-packagings.js";
+import { retourPackagings } from "./controllers/retour-packagings.js";
 import { roles } from "./controllers/roles.js";
 import { sessions } from "./controllers/sessions.js";
 import { trips } from "./controllers/trips.js";
 import { users } from "./controllers/users.js";
-import { on_error } from "./handlers/on-error.js";
+import { onError } from "./handlers/on-error.js";
 import { authentication } from "./middleware/authentication.js";
 
 const app = new Hono().basePath("/api/v1");
@@ -18,7 +18,7 @@ const app = new Hono().basePath("/api/v1");
 /**
  * Handlers
  */
-app.onError(on_error);
+app.onError(onError);
 
 /**
  * Middleware
@@ -43,10 +43,11 @@ app.route("/addresses", addresses);
 app.route("/lines", lines);
 app.route("/notes", notes);
 app.route("/orders", orders);
-app.route("/retour-packagings", retour_packagings);
+app.route("/retour-packagings", retourPackagings);
 app.route("/roles", roles);
 app.route("/sessions", sessions);
 app.route("/trips", trips);
 app.route("/users", users);
 
+// biome-ignore lint/style/noDefaultExport: Required to run the app
 export default app;
