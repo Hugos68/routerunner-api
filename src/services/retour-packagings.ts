@@ -25,11 +25,7 @@ export const create_retour_packaging = async (input: unknown) => {
 export const get_retour_packagings = async (
 	filter: Record<string, unknown>,
 ) => {
-	const conditions = create_filter_conditions(
-		filter,
-		partial(CreateRetourPackagingSchema),
-		retour_packaging_table,
-	);
+	const conditions = create_filter_conditions(filter, retour_packaging_table);
 	const retour_packaging = await database
 		.select()
 		.from(retour_packaging_table)

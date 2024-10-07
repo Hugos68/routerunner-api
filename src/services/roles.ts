@@ -20,11 +20,7 @@ export const create_role = async (input: unknown) => {
 };
 
 export const get_roles = async (filter: Record<string, unknown> = {}) => {
-	const conditions = create_filter_conditions(
-		filter,
-		partial(CreateRoleSchema),
-		roles_table,
-	);
+	const conditions = create_filter_conditions(filter, roles_table);
 	const roles = await database
 		.select()
 		.from(roles_table)

@@ -20,11 +20,7 @@ export const create_address = async (input: unknown) => {
 };
 
 export const get_addresses = async (filter: Record<string, unknown> = {}) => {
-	const conditions = create_filter_conditions(
-		filter,
-		partial(CreateAddressSchema),
-		addresses_table,
-	);
+	const conditions = create_filter_conditions(filter, addresses_table);
 	const addresses = await database
 		.select()
 		.from(addresses_table)

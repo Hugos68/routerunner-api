@@ -19,11 +19,7 @@ export const create_note = async (input: unknown) => {
 };
 
 export const get_notes = async (filter: Record<string, unknown> = {}) => {
-	const conditions = create_filter_conditions(
-		filter,
-		partial(CreateNoteSchema),
-		notes_table,
-	);
+	const conditions = create_filter_conditions(filter, notes_table);
 	const notes = await database
 		.select()
 		.from(notes_table)

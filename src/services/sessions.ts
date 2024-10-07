@@ -1,8 +1,7 @@
 import { and, eq } from "drizzle-orm";
-import { parse, partial, pick } from "valibot";
+import { parse, pick } from "valibot";
 import { database } from "../database/database.js";
 import {
-	CreateSessionSchema,
 	CreateUserSchema,
 	type Session,
 	sessions_table,
@@ -29,7 +28,7 @@ export const create_session = async (input: unknown) => {
 		HASH_CONFIG.algorithm,
 	);
 	if (!password_matches) {
-		throw new BadCredentialsError("Username or password is incorrect");
+		throw new BadCredentialsError();
 	}
 	const [session] = await database
 		.insert(sessions_table)
@@ -44,11 +43,7 @@ export const create_session = async (input: unknown) => {
 };
 
 export const get_sessions = async (filter: Record<string, unknown> = {}) => {
-	const conditions = create_filter_conditions(
-		filter,
-		partial(CreateSessionSchema),
-		sessions_table,
-	);
+	const conditions = create_filter_conditions(filter, sessions_table);
 	const sessions = await database
 		.select()
 		.from(sessions_table)

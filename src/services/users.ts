@@ -28,11 +28,7 @@ export const create_user = async (input: unknown) => {
 };
 
 export const get_users = async (filter: Record<string, unknown> = {}) => {
-	const conditions = create_filter_conditions(
-		filter,
-		partial(CreateUserSchema),
-		users_table,
-	);
+	const conditions = create_filter_conditions(filter, users_table);
 	const users = await database
 		.select(safe_columns)
 		.from(users_table)

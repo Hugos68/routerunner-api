@@ -20,11 +20,7 @@ export const create_trip = async (input: unknown) => {
 };
 
 export const get_trips = async (filter: Record<string, unknown> = {}) => {
-	const conditions = create_filter_conditions(
-		filter,
-		partial(CreateTripSchema),
-		trips_table,
-	);
+	const conditions = create_filter_conditions(filter, trips_table);
 	const trips = await database
 		.select()
 		.from(trips_table)

@@ -1,5 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import { parse, partial } from "valibot";
+import { parse } from "valibot";
 import { database } from "../database/database.js";
 import {
 	CreateLineSchema,
@@ -20,11 +20,7 @@ export const create_line = async (input: unknown) => {
 };
 
 export const get_lines = async (filter: Record<string, unknown>) => {
-	const conditions = create_filter_conditions(
-		filter,
-		partial(CreateLineSchema),
-		lines_table,
-	);
+	const conditions = create_filter_conditions(filter, lines_table);
 	const lines = await database
 		.select()
 		.from(lines_table)

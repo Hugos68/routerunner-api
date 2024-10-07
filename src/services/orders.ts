@@ -23,11 +23,7 @@ export const create_order = async (input: unknown) => {
 };
 
 export const get_orders = async (filter: Record<string, unknown> = {}) => {
-	const conditions = create_filter_conditions(
-		filter,
-		partial(CreateOrderSchema),
-		orders_table,
-	);
+	const conditions = create_filter_conditions(filter, orders_table);
 	const orders = await database
 		.select()
 		.from(orders_table)

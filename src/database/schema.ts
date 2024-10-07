@@ -1,7 +1,7 @@
 import { customType } from "drizzle-orm/pg-core";
 import { integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-valibot";
-import { minLength, partial, pick, string, transform } from "valibot";
+import { minLength, partial, string, transform } from "valibot";
 import { HASH_CONFIG } from "../utility/constants";
 
 const hash = customType<{ data: string }>({

@@ -70,8 +70,6 @@ describe("Addresses", () => {
 
 	test("Delete an address", async () => {
 		const addresses = await get_addresses();
-		console.log(addresses[0]?.id);
-
 		const address = await delete_address(addresses[0]?.id ?? "");
 		expect(address).toBeDefined();
 	});

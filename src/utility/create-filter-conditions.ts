@@ -1,13 +1,18 @@
-import { eq } from "drizzle-orm";
+import { eq, getTableColumns, getTableName } from "drizzle-orm";
 import type { PgTableWithColumns } from "drizzle-orm/pg-core";
-import { type BaseSchema, parse } from "valibot";
+import { FilterError } from "./errors";
 
 export function create_filter_conditions<
-	TSchema extends BaseSchema,
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	TTable extends PgTableWithColumns<any>,
->(filters: Record<string, unknown>, Schema: TSchema, table: TTable) {
-	return Object.entries(parse(Schema, filters))
+>(filters: Record<string, unknown>, table: TTable) {
+	const columns = getTableColumns(table);
+	for (const column of Object.keys(filters)) {
+		if (!(column in columns)) {
+			throw new FilterError(column, getTableName(table));
+		}
+	}
+	return Object.entries(filters)
 		.filter(([_, value]) => value !== undefined)
 		.map(([key, value]) => eq(table[key as keyof TTable], value));
 }
