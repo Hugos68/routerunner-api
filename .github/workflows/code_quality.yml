@@ -4,6 +4,12 @@ on:
   push:
   pull_request:
 
+env:
+  POSTGRES_HOST: localhost
+  POSTGRES_PORT: 5432
+  POSTGRES_USERNAME: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_DATABASE: postgres
 
 jobs:
   lint:
@@ -19,15 +25,13 @@ jobs:
         run: biome ci
   test:
     runs-on: ubuntu-latest
-    env:
-      POSTGRES_HOST: localhost
-      POSTGRES_PORT: 5432
-      POSTGRES_USERNAME: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DATABASE: postgres
     services:
       postgres:
         image: postgres:latest
+        env:
+          POSTGRES_USER: ${{ env.POSTGRES_USERNAME }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ env.POSTGRES_DATABASE }}
         ports:
           - ${{ env.POSTGRES_PORT }}:${{ env.POSTGRES_PORT }}
         options: >-
@@ -38,11 +42,26 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Install Bun
         uses: oven-sh/setup-bun@v1
+
       - name: Install Dependencies
         run: bun install
+
       - name: Run Database Migrations
         run: bun push
+        env:
+          POSTGRES_HOST: ${{ env.POSTGRES_HOST }}
+          POSTGRES_USERNAME: ${{ env.POSTGRES_USERNAME }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          POSTGRES_DATABASE: ${{ env.POSTGRES_DATABASE }}
+          POSTGRES_PORT: ${{ env.POSTGRES_PORT }}
       - name: Run Tests
         run: bun test
+        env:
+          POSTGRES_HOST: ${{ env.POSTGRES_HOST }}
+          POSTGRES_USERNAME: ${{ env.POSTGRES_USERNAME }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          POSTGRES_DATABASE: ${{ env.POSTGRES_DATABASE }}
+          POSTGRES_PORT: ${{ env.POSTGRES_PORT }}
