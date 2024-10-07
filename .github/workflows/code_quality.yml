@@ -1,9 +1,7 @@
 name: Code quality
 
 on:
-  push:
   pull_request:
-
 
 jobs:
   lint:
