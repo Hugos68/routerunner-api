@@ -1,4 +1,6 @@
 import { drizzle } from "drizzle-orm/postgres-js";
+// biome-ignore lint/style/noNamespaceImport: Required by Drizzle
+import * as schema from "./schema.js";
 import postgres from "postgres";
 
 const client = postgres({
@@ -9,4 +11,4 @@ const client = postgres({
 	password: process.env.POSTGRES_PASSWORD as string,
 });
 
-export const database = drizzle(client, { logger: true });
+export const database = drizzle(client, { schema: schema, logger: true });
