@@ -1,16 +1,17 @@
-import { eq } from "drizzle-orm";
-import { parse } from "valibot";
+import { and, eq } from "drizzle-orm";
+import { parse, partial } from "valibot";
 import { database } from "../database/database.js";
 import {
-	CreateUserRoleSchema,
-	UpdateUserRoleSchema,
-	type UserRole,
+	CreateUserRolesSchema,
+	UpdateUserRolesSchema,
+	type UserRoles,
 	user_roles_table,
-} from "../database/tables/user-roles.js";
+} from "../database/schema.js";
+import { create_filter_conditions } from "../utility/create-filter-conditions.js";
 import { NotFoundError } from "../utility/errors.js";
 
 export const create_user_role = async (input: unknown) => {
-	const values = parse(CreateUserRoleSchema, input);
+	const values = parse(CreateUserRolesSchema, input);
 	const [user_role] = await database
 		.insert(user_roles_table)
 		.values(values)
@@ -21,12 +22,20 @@ export const create_user_role = async (input: unknown) => {
 	return user_role;
 };
 
-export const get_user_roles = async () => {
-	const user_roles = await database.select().from(user_roles_table);
+export const get_user_roles = async (filter: Record<string, unknown> = {}) => {
+	const conditions = create_filter_conditions(
+		filter,
+		partial(CreateUserRolesSchema),
+		user_roles_table,
+	);
+	const user_roles = await database
+		.select()
+		.from(user_roles_table)
+		.where(and(...conditions));
 	return user_roles;
 };
 
-export const get_user_role = async (id: UserRole["id"]) => {
+export const get_user_role = async (id: UserRoles["id"]) => {
 	const [user_role] = await database
 		.select()
 		.from(user_roles_table)
@@ -37,8 +46,8 @@ export const get_user_role = async (id: UserRole["id"]) => {
 	return user_role;
 };
 
-export const update_user_role = async (id: UserRole["id"], input: unknown) => {
-	const values = parse(UpdateUserRoleSchema, input);
+export const update_user_role = async (id: UserRoles["id"], input: unknown) => {
+	const values = parse(UpdateUserRolesSchema, input);
 	const [user_role] = await database
 		.update(user_roles_table)
 		.set(values)
@@ -50,7 +59,7 @@ export const update_user_role = async (id: UserRole["id"], input: unknown) => {
 	return user_role;
 };
 
-export const delete_user_role = async (id: UserRole["id"]) => {
+export const delete_user_role = async (id: UserRoles["id"]) => {
 	const [user_role] = await database
 		.delete(user_roles_table)
 		.where(eq(user_roles_table.id, id));

@@ -1,12 +1,13 @@
-import { eq } from "drizzle-orm";
-import { parse } from "valibot";
+import { and, eq } from "drizzle-orm";
+import { parse, partial } from "valibot";
 import { database } from "../database/database.js";
 import {
 	CreateLineSchema,
 	type Line,
 	UpdateLineSchema,
 	lines_table,
-} from "../database/tables/lines.js";
+} from "../database/schema.js";
+import { create_filter_conditions } from "../utility/create-filter-conditions.js";
 import { NotFoundError } from "../utility/errors.js";
 
 export const create_line = async (input: unknown) => {
@@ -18,8 +19,16 @@ export const create_line = async (input: unknown) => {
 	return line;
 };
 
-export const get_lines = async () => {
-	const lines = await database.select().from(lines_table);
+export const get_lines = async (filter: Record<string, unknown>) => {
+	const conditions = create_filter_conditions(
+		filter,
+		partial(CreateLineSchema),
+		lines_table,
+	);
+	const lines = await database
+		.select()
+		.from(lines_table)
+		.where(and(...conditions));
 	return lines;
 };
 

@@ -1,11 +1,10 @@
 name: Code quality
 
 on:
-  push:
   pull_request:
 
 jobs:
-  quality:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -18,12 +17,43 @@ jobs:
         run: biome ci
   test:
     runs-on: ubuntu-latest
+    services:
+       postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Install Bun
         uses: oven-sh/setup-bun@v1
+
       - name: Install Dependencies
         run: bun install
-      - name: Test
+
+      - name: Run Database Migrations
+        run: bun push
+        env:
+          POSTGRES_HOST: localhost
+          POSTGRES_USERNAME: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DATABASE: postgres
+          POSTGRES_PORT: 5432
+      - name: Run Tests
         run: bun test
+        env:
+          POSTGRES_HOST: localhost
+          POSTGRES_USERNAME: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DATABASE: postgres
+          POSTGRES_PORT: 5432

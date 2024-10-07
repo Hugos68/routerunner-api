@@ -1,12 +1,13 @@
-import { eq } from "drizzle-orm";
-import { parse } from "valibot";
+import { and, eq } from "drizzle-orm";
+import { parse, partial } from "valibot";
 import { database } from "../database/database.js";
 import {
 	CreateOrderSchema,
 	type Order,
+	UpdateOrderSchema,
 	orders_table,
-	updateOrderSchema,
-} from "../database/tables/orders.js";
+} from "../database/schema.js";
+import { create_filter_conditions } from "../utility/create-filter-conditions.js";
 import { NotFoundError } from "../utility/errors.js";
 
 export const create_order = async (input: unknown) => {
@@ -21,8 +22,16 @@ export const create_order = async (input: unknown) => {
 	return order;
 };
 
-export const getOrders = async () => {
-	const orders = await database.select().from(orders_table);
+export const get_orders = async (filter: Record<string, unknown> = {}) => {
+	const conditions = create_filter_conditions(
+		filter,
+		partial(CreateOrderSchema),
+		orders_table,
+	);
+	const orders = await database
+		.select()
+		.from(orders_table)
+		.where(and(...conditions));
 	return orders;
 };
 
@@ -38,7 +47,7 @@ export const get_order = async (id: Order["id"]) => {
 };
 
 export const update_order = async (id: Order["id"], input: unknown) => {
-	const values = parse(updateOrderSchema, input);
+	const values = parse(UpdateOrderSchema, input);
 	const [order] = await database
 		.update(orders_table)
 		.set(values)
@@ -53,7 +62,8 @@ export const update_order = async (id: Order["id"], input: unknown) => {
 export const delete_order = async (id: Order["id"]) => {
 	const [order] = await database
 		.delete(orders_table)
-		.where(eq(orders_table.id, id));
+		.where(eq(orders_table.id, id))
+		.returning();
 	if (order === undefined) {
 		throw new NotFoundError(`Order with id ${id} not found`);
 	}

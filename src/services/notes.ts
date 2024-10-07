@@ -1,11 +1,12 @@
-import { eq } from "drizzle-orm";
-import { parse } from "valibot";
+import { and, eq } from "drizzle-orm";
+import { parse, partial } from "valibot";
 import { database } from "../database/database.js";
 import {
 	CreateNoteSchema,
 	type Note,
 	notes_table,
-} from "../database/tables/notes.js";
+} from "../database/schema.js";
+import { create_filter_conditions } from "../utility/create-filter-conditions.js";
 import { NotFoundError } from "../utility/errors.js";
 
 export const create_note = async (input: unknown) => {
@@ -17,8 +18,16 @@ export const create_note = async (input: unknown) => {
 	return note;
 };
 
-export const get_notes = async () => {
-	const notes = await database.select().from(notes_table);
+export const get_notes = async (filter: Record<string, unknown> = {}) => {
+	const conditions = create_filter_conditions(
+		filter,
+		partial(CreateNoteSchema),
+		notes_table,
+	);
+	const notes = await database
+		.select()
+		.from(notes_table)
+		.where(and(...conditions));
 	return notes;
 };
 

@@ -8,40 +8,40 @@ import {
 } from "../services/retour-packagings.js";
 import type { Environment } from "../utility/types.js";
 
-export const retour_packaging = new Hono<Environment>();
+export const retour_packagings = new Hono<Environment>();
 
-retour_packaging.post("/", async (c) => {
+retour_packagings.post("/", async (c) => {
 	const retour_packaging = await create_retour_packaging(await c.req.json());
 	return c.json(
 		{
-			value: [retour_packaging],
+			data: retour_packaging,
 		},
 		201,
 	);
 });
 
-retour_packaging.get("/", async (c) => {
-	const retour_packagings = await get_retour_packagings();
+retour_packagings.get("/", async (c) => {
+	const retour_packagings = await get_retour_packagings(c.req.query());
 	return c.json(
 		{
-			value: retour_packagings,
+			data: retour_packagings,
 		},
 		200,
 	);
 });
 
-retour_packaging.get("/:id", async (c) => {
+retour_packagings.get("/:id", async (c) => {
 	const id = c.req.param("id");
-	const retour_emballages = await get_retour_packaging(id);
+	const retour_packaging = await get_retour_packaging(id);
 	return c.json(
 		{
-			value: [retour_emballages],
+			data: retour_packaging,
 		},
 		200,
 	);
 });
 
-retour_packaging.patch("/:id", async (c) => {
+retour_packagings.patch("/:id", async (c) => {
 	const id = c.req.param("id");
 	const retour_packaging = await update_retour_packaging(
 		id,
@@ -49,18 +49,18 @@ retour_packaging.patch("/:id", async (c) => {
 	);
 	return c.json(
 		{
-			value: [retour_packaging],
+			data: retour_packaging,
 		},
 		200,
 	);
 });
 
-retour_packaging.delete("/:id", async (c) => {
+retour_packagings.delete("/:id", async (c) => {
 	const id = c.req.param("id");
 	const retour_packaging = await delete_retour_packaging(id);
 	return c.json(
 		{
-			value: [retour_packaging],
+			data: retour_packaging,
 		},
 		200,
 	);

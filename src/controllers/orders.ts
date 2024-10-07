@@ -2,8 +2,8 @@ import { Hono } from "hono";
 import {
 	create_order,
 	delete_order,
-	getOrders,
 	get_order,
+	get_orders,
 	update_order,
 } from "../services/orders.js";
 import type { Environment } from "../utility/types.js";
@@ -14,17 +14,17 @@ orders.post("/", async (c) => {
 	const order = await create_order(await c.req.json());
 	return c.json(
 		{
-			value: [order],
+			data: order,
 		},
 		201,
 	);
 });
 
 orders.get("/", async (c) => {
-	const orders = await getOrders();
+	const orders = await get_orders(c.req.query());
 	return c.json(
 		{
-			value: orders,
+			data: orders,
 		},
 		200,
 	);
@@ -35,7 +35,7 @@ orders.get("/:id", async (c) => {
 	const order = await get_order(id);
 	return c.json(
 		{
-			value: [order],
+			data: order,
 		},
 		200,
 	);
@@ -46,7 +46,7 @@ orders.patch("/:id", async (c) => {
 	const order = await update_order(id, await c.req.json());
 	return c.json(
 		{
-			value: [order],
+			data: order,
 		},
 		200,
 	);
@@ -57,7 +57,7 @@ orders.delete("/:id", async (c) => {
 	const order = await delete_order(id);
 	return c.json(
 		{
-			value: [order],
+			data: order,
 		},
 		200,
 	);

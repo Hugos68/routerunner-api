@@ -1,23 +1,27 @@
-import { eq } from "drizzle-orm";
-import { parse } from "valibot";
+import { and, eq } from "drizzle-orm";
+import { parse, partial, pick } from "valibot";
 import { database } from "../database/database.js";
 import {
 	CreateSessionSchema,
+	CreateUserSchema,
 	type Session,
 	sessions_table,
-} from "../database/tables/sessions.js";
-import { users_table } from "../database/tables/users.js";
+} from "../database/schema.js";
+import { users_table } from "../database/schema.js";
 import { HASH_CONFIG } from "../utility/constants.js";
-import { NotFoundError } from "../utility/errors.js";
+import { create_filter_conditions } from "../utility/create-filter-conditions.js";
+import { BadCredentialsError, NotFoundError } from "../utility/errors.js";
 
 export const create_session = async (input: unknown) => {
-	const values = parse(CreateSessionSchema, input);
+	const values = parse(pick(CreateUserSchema, ["username", "password"]), input);
 	const [user] = await database
 		.select()
 		.from(users_table)
-		.where(eq(users_table.email, values.email));
+		.where(eq(users_table.username, values.username));
 	if (user === undefined) {
-		throw new NotFoundError(`User with email ${values.email} not found`);
+		throw new NotFoundError(
+			`User with username "${values.username}" not found`,
+		);
 	}
 	const password_matches = await Bun.password.verify(
 		values.password,
@@ -25,7 +29,7 @@ export const create_session = async (input: unknown) => {
 		HASH_CONFIG.algorithm,
 	);
 	if (!password_matches) {
-		throw new NotFoundError(`User with email ${values.email} not found`);
+		throw new BadCredentialsError("Username or password is incorrect");
 	}
 	const [session] = await database
 		.insert(sessions_table)
@@ -39,8 +43,16 @@ export const create_session = async (input: unknown) => {
 	return session;
 };
 
-export const get_sessions = async () => {
-	const sessions = await database.select().from(sessions_table);
+export const get_sessions = async (filter: Record<string, unknown> = {}) => {
+	const conditions = create_filter_conditions(
+		filter,
+		partial(CreateSessionSchema),
+		sessions_table,
+	);
+	const sessions = await database
+		.select()
+		.from(sessions_table)
+		.where(and(...conditions));
 	return sessions;
 };
 

@@ -19,17 +19,17 @@ sessions.post("/", async (c) => {
 	setCookie(c, SESSION_COOKIE_KEY, session.id, SESSION_COOKIE_CONIG);
 	return c.json(
 		{
-			value: [session],
+			data: session,
 		},
 		201,
 	);
 });
 
 sessions.get("/", async (c) => {
-	const sessions = await get_sessions();
+	const sessions = await get_sessions(c.req.query());
 	return c.json(
 		{
-			value: sessions,
+			data: sessions,
 		},
 		200,
 	);
@@ -40,7 +40,7 @@ sessions.get("/:id", async (c) => {
 	const session = await get_session(id);
 	return c.json(
 		{
-			value: [session],
+			data: session,
 		},
 		200,
 	);
@@ -51,7 +51,7 @@ sessions.delete("/:id", async (c) => {
 	const session = await delete_session(id);
 	return c.json(
 		{
-			value: [session],
+			data: session,
 		},
 		200,
 	);

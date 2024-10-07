@@ -1,12 +1,13 @@
-import { eq } from "drizzle-orm";
-import { parse } from "valibot";
+import { and, eq } from "drizzle-orm";
+import { parse, partial } from "valibot";
 import { database } from "../database/database.js";
 import {
 	CreateTripSchema,
 	type Trip,
 	UpdateTripSchema,
 	trips_table,
-} from "../database/tables/trips.js";
+} from "../database/schema.js";
+import { create_filter_conditions } from "../utility/create-filter-conditions.js";
 import { NotFoundError } from "../utility/errors.js";
 
 export const create_trip = async (input: unknown) => {
@@ -18,8 +19,16 @@ export const create_trip = async (input: unknown) => {
 	return trip;
 };
 
-export const get_trips = async () => {
-	const trips = await database.select().from(trips_table);
+export const get_trips = async (filter: Record<string, unknown> = {}) => {
+	const conditions = create_filter_conditions(
+		filter,
+		partial(CreateTripSchema),
+		trips_table,
+	);
+	const trips = await database
+		.select()
+		.from(trips_table)
+		.where(and(...conditions));
 	return trips;
 };
 

@@ -11,10 +11,10 @@ import type { Environment } from "../utility/types.js";
 export const users = new Hono<Environment>();
 
 users.get("/", async (c) => {
-	const users = await get_users();
+	const users = await get_users(c.req.query());
 	return c.json(
 		{
-			value: users,
+			data: users,
 		},
 		200,
 	);
@@ -25,7 +25,7 @@ users.get("/:id", async (c) => {
 	const user = await get_user(id);
 	return c.json(
 		{
-			value: [user],
+			data: user,
 		},
 		200,
 	);
@@ -35,7 +35,7 @@ users.post("/", async (c) => {
 	const user = await create_user(await c.req.json());
 	return c.json(
 		{
-			value: [user],
+			data: user,
 		},
 		201,
 	);
@@ -46,7 +46,7 @@ users.patch("/:id", async (c) => {
 	const user = await update_user(id, await c.req.json());
 	return c.json(
 		{
-			value: [user],
+			data: user,
 		},
 		200,
 	);
@@ -57,7 +57,7 @@ users.delete("/:id", async (c) => {
 	const user = await delete_user(id);
 	return c.json(
 		{
-			value: [user],
+			data: user,
 		},
 		200,
 	);

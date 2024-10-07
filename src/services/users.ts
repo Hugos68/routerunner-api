@@ -1,13 +1,13 @@
-import { eq, getTableColumns } from "drizzle-orm";
-import { parse } from "valibot";
+import { and, eq, getTableColumns } from "drizzle-orm";
+import { parse, partial } from "valibot";
 import { database } from "../database/database.js";
 import {
 	CreateUserSchema,
 	UpdateUserSchema,
 	type User,
 	users_table,
-} from "../database/tables/users.js";
-import { HASH_CONFIG } from "../utility/constants.js";
+} from "../database/schema.js";
+import { create_filter_conditions } from "../utility/create-filter-conditions.js";
 import { NotFoundError } from "../utility/errors.js";
 
 const safe_columns = (() => {
@@ -17,16 +17,26 @@ const safe_columns = (() => {
 
 export const create_user = async (input: unknown) => {
 	const values = parse(CreateUserSchema, input);
-	values.password = await Bun.password.hash(values.password, HASH_CONFIG);
-	const [user] = await database.insert(users_table).values(values).returning();
+	const [user] = await database
+		.insert(users_table)
+		.values(values)
+		.returning(safe_columns);
 	if (user === undefined) {
 		throw new Error("Failed to create user");
 	}
 	return user;
 };
 
-export const get_users = async () => {
-	const users = await database.select(safe_columns).from(users_table);
+export const get_users = async (filter: Record<string, unknown> = {}) => {
+	const conditions = create_filter_conditions(
+		filter,
+		partial(CreateUserSchema),
+		users_table,
+	);
+	const users = await database
+		.select(safe_columns)
+		.from(users_table)
+		.where(and(...conditions));
 	return users;
 };
 
@@ -43,9 +53,6 @@ export const get_user = async (id: User["id"]) => {
 
 export const update_user = async (id: User["id"], input: unknown) => {
 	const values = parse(UpdateUserSchema, input);
-	if ("password" in values && values.password !== undefined) {
-		values.password = await Bun.password.hash(values.password, HASH_CONFIG);
-	}
 	const [user] = await database
 		.update(users_table)
 		.set(values)

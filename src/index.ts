@@ -1,10 +1,11 @@
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { addresses } from "./controllers/addresses.js";
 import { lines } from "./controllers/lines.js";
 import { notes } from "./controllers/notes.js";
 import { orders } from "./controllers/orders.js";
-import { retour_packaging } from "./controllers/retour-packagings.js";
+import { retour_packagings } from "./controllers/retour-packagings.js";
 import { roles } from "./controllers/roles.js";
 import { sessions } from "./controllers/sessions.js";
 import { trips } from "./controllers/trips.js";
@@ -24,6 +25,16 @@ app.onError(on_error);
  */
 app.use(logger());
 app.use(authentication);
+app.use(
+	"/*",
+	cors({
+		origin: "*", // Frontend URL (your Flutter app)
+		allowMethods: ["GET", "POST", "OPTIONS"], // Allowed HTTP methods
+		allowHeaders: ["Content-Type", "Authorization"], // Allowed headers in requests
+		exposeHeaders: ["Content-Length", "Authorization"], // Headers you want to expose to the frontend
+		credentials: true, // If you need to allow credentials (cookies, authorization headers)
+	}),
+);
 
 /**
  * Routes
@@ -32,7 +43,7 @@ app.route("/addresses", addresses);
 app.route("/lines", lines);
 app.route("/notes", notes);
 app.route("/orders", orders);
-app.route("/retour-packaging", retour_packaging);
+app.route("/retour-packagings", retour_packagings);
 app.route("/roles", roles);
 app.route("/sessions", sessions);
 app.route("/trips", trips);
