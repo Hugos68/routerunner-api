@@ -200,10 +200,8 @@ export const UpdateUserSchema = partial(CreateUserSchema);
 export const CreateRoleSchema = createInsertSchema(roles_table);
 export const UpdateRoleSchema = partial(CreateRoleSchema);
 
-export const CreateSessionSchema = pick(CreateUserSchema, [
-	"username",
-	"password",
-]);
+export const CreateSessionSchema = createInsertSchema(sessions_table);
+export const UpdateSessionSchema = partial(CreateSessionSchema);
 
 export const CreateTripSchema = createInsertSchema(trips_table);
 export const UpdateTripSchema = partial(CreateTripSchema);

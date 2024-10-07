@@ -1,5 +1,5 @@
-import { eq } from "drizzle-orm";
-import { parse } from "valibot";
+import { and, eq } from "drizzle-orm";
+import { parse, partial } from "valibot";
 import { database } from "../database/database.js";
 import {
 	CreateRetourPackagingSchema,
@@ -7,6 +7,7 @@ import {
 	UpdateRetourPackagingSchema,
 	retour_packaging_table,
 } from "../database/schema.js";
+import { create_filter_conditions } from "../utility/create-filter-conditions.js";
 import { NotFoundError } from "../utility/errors.js";
 
 export const create_retour_packaging = async (input: unknown) => {
@@ -21,11 +22,19 @@ export const create_retour_packaging = async (input: unknown) => {
 	return retour_packaging;
 };
 
-export const get_retour_packagings = async () => {
-	const retour_packagings = await database
+export const get_retour_packagings = async (
+	filter: Record<string, unknown>,
+) => {
+	const conditions = create_filter_conditions(
+		filter,
+		partial(CreateRetourPackagingSchema),
+		retour_packaging_table,
+	);
+	const retour_packaging = await database
 		.select()
-		.from(retour_packaging_table);
-	return retour_packagings;
+		.from(retour_packaging_table)
+		.where(and(...conditions));
+	return retour_packaging;
 };
 
 export const get_retour_packaging = async (id: RetourPackaging["id"]) => {

@@ -21,7 +21,7 @@ orders.post("/", async (c) => {
 });
 
 orders.get("/", async (c) => {
-	const orders = await get_orders();
+	const orders = await get_orders(c.req.query());
 	return c.json(
 		{
 			data: orders,

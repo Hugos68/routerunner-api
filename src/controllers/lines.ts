@@ -21,7 +21,7 @@ lines.post("/", async (c) => {
 });
 
 lines.get("/", async (c) => {
-	const lines = await get_lines();
+	const lines = await get_lines(c.req.query());
 	return c.json(
 		{
 			data: lines,

@@ -21,7 +21,7 @@ trips.post("/", async (c) => {
 });
 
 trips.get("/", async (c) => {
-	const trips = await get_trips();
+	const trips = await get_trips(c.req.query());
 	return c.json(
 		{
 			data: trips,

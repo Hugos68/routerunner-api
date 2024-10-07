@@ -21,7 +21,7 @@ roles.post("/", async (c) => {
 });
 
 roles.get("/", async (c) => {
-	const role = await get_roles();
+	const role = await get_roles(c.req.query());
 	return c.json(
 		{
 			data: role,

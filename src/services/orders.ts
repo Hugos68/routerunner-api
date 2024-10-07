@@ -1,5 +1,5 @@
-import { eq } from "drizzle-orm";
-import { parse } from "valibot";
+import { and, eq } from "drizzle-orm";
+import { parse, partial } from "valibot";
 import { database } from "../database/database.js";
 import {
 	CreateOrderSchema,
@@ -7,6 +7,7 @@ import {
 	UpdateOrderSchema,
 	orders_table,
 } from "../database/schema.js";
+import { create_filter_conditions } from "../utility/create-filter-conditions.js";
 import { NotFoundError } from "../utility/errors.js";
 
 export const create_order = async (input: unknown) => {
@@ -21,8 +22,16 @@ export const create_order = async (input: unknown) => {
 	return order;
 };
 
-export const get_orders = async () => {
-	const orders = await database.select().from(orders_table);
+export const get_orders = async (filter: Record<string, unknown> = {}) => {
+	const conditions = create_filter_conditions(
+		filter,
+		partial(CreateOrderSchema),
+		orders_table,
+	);
+	const orders = await database
+		.select()
+		.from(orders_table)
+		.where(and(...conditions));
 	return orders;
 };
 

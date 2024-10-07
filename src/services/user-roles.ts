@@ -1,5 +1,5 @@
-import { eq } from "drizzle-orm";
-import { parse } from "valibot";
+import { and, eq } from "drizzle-orm";
+import { parse, partial } from "valibot";
 import { database } from "../database/database.js";
 import {
 	CreateUserRolesSchema,
@@ -7,6 +7,7 @@ import {
 	type UserRoles,
 	user_roles_table,
 } from "../database/schema.js";
+import { create_filter_conditions } from "../utility/create-filter-conditions.js";
 import { NotFoundError } from "../utility/errors.js";
 
 export const create_user_role = async (input: unknown) => {
@@ -21,8 +22,16 @@ export const create_user_role = async (input: unknown) => {
 	return user_role;
 };
 
-export const get_user_roles = async () => {
-	const user_roles = await database.select().from(user_roles_table);
+export const get_user_roles = async (filter: Record<string, unknown> = {}) => {
+	const conditions = create_filter_conditions(
+		filter,
+		partial(CreateUserRolesSchema),
+		user_roles_table,
+	);
+	const user_roles = await database
+		.select()
+		.from(user_roles_table)
+		.where(and(...conditions));
 	return user_roles;
 };
 

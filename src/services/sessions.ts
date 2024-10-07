@@ -1,17 +1,19 @@
-import { eq } from "drizzle-orm";
-import { parse } from "valibot";
+import { and, eq } from "drizzle-orm";
+import { parse, partial, pick } from "valibot";
 import { database } from "../database/database.js";
 import {
 	CreateSessionSchema,
+	CreateUserSchema,
 	type Session,
 	sessions_table,
 } from "../database/schema.js";
 import { users_table } from "../database/schema.js";
 import { HASH_CONFIG } from "../utility/constants.js";
+import { create_filter_conditions } from "../utility/create-filter-conditions.js";
 import { BadCredentialsError, NotFoundError } from "../utility/errors.js";
 
 export const create_session = async (input: unknown) => {
-	const values = parse(CreateSessionSchema, input);
+	const values = parse(pick(CreateUserSchema, ["username", "password"]), input);
 	const [user] = await database
 		.select()
 		.from(users_table)
@@ -41,8 +43,16 @@ export const create_session = async (input: unknown) => {
 	return session;
 };
 
-export const get_sessions = async () => {
-	const sessions = await database.select().from(sessions_table);
+export const get_sessions = async (filter: Record<string, unknown> = {}) => {
+	const conditions = create_filter_conditions(
+		filter,
+		partial(CreateSessionSchema),
+		sessions_table,
+	);
+	const sessions = await database
+		.select()
+		.from(sessions_table)
+		.where(and(...conditions));
 	return sessions;
 };
 

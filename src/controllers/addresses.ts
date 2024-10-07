@@ -10,8 +10,18 @@ import type { Environment } from "../utility/types.js";
 
 export const addresses = new Hono<Environment>();
 
+addresses.post("/", async (c) => {
+	const address = await create_address(await c.req.json());
+	return c.json(
+		{
+			data: address,
+		},
+		201,
+	);
+});
+
 addresses.get("/", async (c) => {
-	const addresses = await get_addresses();
+	const addresses = await get_addresses(c.req.query());
 	return c.json(
 		{
 			data: addresses,
@@ -28,16 +38,6 @@ addresses.get("/:id", async (c) => {
 			data: address,
 		},
 		200,
-	);
-});
-
-addresses.post("/", async (c) => {
-	const address = await create_address(await c.req.json());
-	return c.json(
-		{
-			data: address,
-		},
-		201,
 	);
 });
 

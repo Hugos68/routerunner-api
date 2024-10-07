@@ -21,7 +21,7 @@ notes.post("/", async (c) => {
 });
 
 notes.get("/", async (c) => {
-	const notes = await get_notes();
+	const notes = await get_notes(c.req.query());
 	return c.json(
 		{
 			data: notes,

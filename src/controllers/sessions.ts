@@ -26,7 +26,7 @@ sessions.post("/", async (c) => {
 });
 
 sessions.get("/", async (c) => {
-	const sessions = await get_sessions();
+	const sessions = await get_sessions(c.req.query());
 	return c.json(
 		{
 			data: sessions,

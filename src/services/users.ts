@@ -1,5 +1,5 @@
-import { eq, getTableColumns } from "drizzle-orm";
-import { parse } from "valibot";
+import { and, eq, getTableColumns } from "drizzle-orm";
+import { parse, partial } from "valibot";
 import { database } from "../database/database.js";
 import {
 	CreateUserSchema,
@@ -7,6 +7,7 @@ import {
 	type User,
 	users_table,
 } from "../database/schema.js";
+import { create_filter_conditions } from "../utility/create-filter-conditions.js";
 import { NotFoundError } from "../utility/errors.js";
 
 const safe_columns = (() => {
@@ -26,8 +27,16 @@ export const create_user = async (input: unknown) => {
 	return user;
 };
 
-export const get_users = async () => {
-	const users = await database.select(safe_columns).from(users_table);
+export const get_users = async (filter: Record<string, unknown> = {}) => {
+	const conditions = create_filter_conditions(
+		filter,
+		partial(CreateUserSchema),
+		users_table,
+	);
+	const users = await database
+		.select(safe_columns)
+		.from(users_table)
+		.where(and(...conditions));
 	return users;
 };
 

@@ -11,7 +11,7 @@ import type { Environment } from "../utility/types.js";
 export const users = new Hono<Environment>();
 
 users.get("/", async (c) => {
-	const users = await get_users();
+	const users = await get_users(c.req.query());
 	return c.json(
 		{
 			data: users,

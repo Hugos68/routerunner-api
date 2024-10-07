@@ -1,5 +1,5 @@
-import { eq } from "drizzle-orm";
-import { parse } from "valibot";
+import { and, eq } from "drizzle-orm";
+import { parse, partial } from "valibot";
 import { database } from "../database/database.js";
 import {
 	type Address,
@@ -7,6 +7,7 @@ import {
 	UpdateAddressSchema,
 	addresses_table,
 } from "../database/schema.js";
+import { create_filter_conditions } from "../utility/create-filter-conditions.js";
 import { NotFoundError } from "../utility/errors.js";
 
 export const create_address = async (input: unknown) => {
@@ -18,8 +19,16 @@ export const create_address = async (input: unknown) => {
 	return address;
 };
 
-export const get_addresses = async () => {
-	const addresses = await database.select().from(addresses_table);
+export const get_addresses = async (filter: Record<string, unknown> = {}) => {
+	const conditions = create_filter_conditions(
+		filter,
+		partial(CreateAddressSchema),
+		addresses_table,
+	);
+	const addresses = await database
+		.select()
+		.from(addresses_table)
+		.where(and(...conditions));
 	return addresses;
 };
 

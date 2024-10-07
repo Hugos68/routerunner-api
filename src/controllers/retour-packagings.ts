@@ -21,7 +21,7 @@ retour_packagings.post("/", async (c) => {
 });
 
 retour_packagings.get("/", async (c) => {
-	const retour_packagings = await get_retour_packagings();
+	const retour_packagings = await get_retour_packagings(c.req.query());
 	return c.json(
 		{
 			data: retour_packagings,
