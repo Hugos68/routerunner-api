@@ -1,7 +1,7 @@
 import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 // biome-ignore lint/style/noNamespaceImport: Required by Drizzle
 import * as schema from "./schema.js";
-import postgres from "postgres";
 
 const client = postgres({
 	host: process.env.POSTGRES_HOST as string,
