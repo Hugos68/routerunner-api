@@ -12,9 +12,9 @@ export class BadCredentialsError extends Error {
 	}
 }
 
-export class FilterError extends Error {
+export class InvalidFilterError extends Error {
 	constructor(column: string, table: string) {
 		super(`The column "${column}" does not exist in the table: "${table}".`);
-		this.name = "FilterError";
+		this.name = "InvalidFilterError";
 	}
 }

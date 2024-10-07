@@ -1,6 +1,6 @@
 import { eq, getTableColumns, getTableName } from "drizzle-orm";
 import type { PgTableWithColumns } from "drizzle-orm/pg-core";
-import { FilterError } from "./errors";
+import { InvalidFilterError } from "./errors";
 
 export function create_filter_conditions<
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -9,7 +9,7 @@ export function create_filter_conditions<
 	const columns = getTableColumns(table);
 	for (const column of Object.keys(filters)) {
 		if (!(column in columns)) {
-			throw new FilterError(column, getTableName(table));
+			throw new InvalidFilterError(column, getTableName(table));
 		}
 	}
 	return Object.entries(filters)

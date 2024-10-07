@@ -1,6 +1,10 @@
 import type { ErrorHandler } from "hono";
 import { ValiError } from "valibot";
-import { BadCredentialsError, NotFoundError } from "../utility/errors.js";
+import {
+	BadCredentialsError,
+	InvalidFilterError,
+	NotFoundError,
+} from "../utility/errors.js";
 
 export const on_error: ErrorHandler = (err, c) => {
 	if (err instanceof ValiError) {
@@ -34,6 +38,17 @@ export const on_error: ErrorHandler = (err, c) => {
 				},
 			},
 			401,
+		);
+	}
+	if (err instanceof InvalidFilterError) {
+		return c.json(
+			{
+				error: {
+					code: err.name,
+					message: err.message,
+				},
+			},
+			400,
 		);
 	}
 	if (err instanceof Error) {
