@@ -1,11 +1,10 @@
 {
 	"name": "trucker_app_backend",
 	"scripts": {
-		"dev": "bun run --hot src/index.ts",
-		"check": "biome check --write",
-		"push": "drizzle-kit push --config=./drizzle.config.ts",
-		"ci:check": "biome check",
-		"push:test": "bun --env-file=.env.test push --config=./drizzle.config.ts"
+		"dev": "bun --hot src/index.ts",
+		"check": "bun biome check --write",
+		"push": "bun --bun drizzle-kit push --config=./drizzle.config.ts",
+		"ci:check": "bun biome check"
 	},
 	"dependencies": {
 		"cors": "^2.8.5",
