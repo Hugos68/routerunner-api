@@ -1,13 +1,22 @@
-import { eq } from "drizzle-orm";
+import { eq, getTableColumns, getTableName } from "drizzle-orm";
 import type { PgTableWithColumns } from "drizzle-orm/pg-core";
-import { type BaseSchema, parse } from "valibot";
+import { InvalidFilterError } from "./errors.ts";
 
-export function create_filter_conditions<
-	TSchema extends BaseSchema,
+export function createFilterConditions(
+	filters: Record<string, unknown>,
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	TTable extends PgTableWithColumns<any>,
->(filters: Record<string, unknown>, Schema: TSchema, table: TTable) {
-	return Object.entries(parse(Schema, filters))
-		.filter(([_, value]) => value !== undefined)
-		.map(([key, value]) => eq(table[key as keyof TTable], value));
+	table: PgTableWithColumns<any>,
+) {
+	const columns = getTableColumns(table);
+	for (const column of Object.keys(filters)) {
+		if (!(column in columns)) {
+			throw new InvalidFilterError(column, getTableName(table));
+		}
+	}
+	return (
+		Object.entries(filters)
+			.filter(([_, value]) => value !== undefined)
+			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+			.map(([key, value]) => eq(table[key as any], value))
+	);
 }

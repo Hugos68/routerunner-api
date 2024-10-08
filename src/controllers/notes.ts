@@ -1,17 +1,17 @@
 import { Hono } from "hono";
 import {
-	create_note,
-	delete_note,
-	get_note,
-	get_notes,
-	update_note,
+	createNote,
+	deleteNote,
+	getNote,
+	getNotes,
+	updateNote,
 } from "../services/notes.js";
 import type { Environment } from "../utility/types.js";
 
 export const notes = new Hono<Environment>();
 
 notes.post("/", async (c) => {
-	const note = await create_note(await c.req.json());
+	const note = await createNote(await c.req.json());
 	return c.json(
 		{
 			data: note,
@@ -21,7 +21,7 @@ notes.post("/", async (c) => {
 });
 
 notes.get("/", async (c) => {
-	const notes = await get_notes(c.req.query());
+	const notes = await getNotes(c.req.query());
 	return c.json(
 		{
 			data: notes,
@@ -32,7 +32,7 @@ notes.get("/", async (c) => {
 
 notes.get("/:id", async (c) => {
 	const id = c.req.param("id");
-	const note = await get_note(id);
+	const note = await getNote(id);
 	return c.json(
 		{
 			data: note,
@@ -43,7 +43,7 @@ notes.get("/:id", async (c) => {
 
 notes.patch("/:id", async (c) => {
 	const id = c.req.param("id");
-	const note = await update_note(id, await c.req.json());
+	const note = await updateNote(id, await c.req.json());
 	return c.json(
 		{
 			data: note,
@@ -54,7 +54,7 @@ notes.patch("/:id", async (c) => {
 
 notes.delete("/:id", async (c) => {
 	const id = c.req.param("id");
-	const note = await delete_note(id);
+	const note = await deleteNote(id);
 	return c.json(
 		{
 			data: note,

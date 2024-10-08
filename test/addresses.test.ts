@@ -1,17 +1,17 @@
 import { describe, expect, test } from "bun:test";
-import * as uuid from "uuid";
+import { v4 } from "uuid";
 import {
-	create_address,
-	delete_address,
-	get_address,
-	get_addresses,
-	update_address,
-} from "../src/services/addresses";
-import { NotFoundError } from "../src/utility/errors";
+	createAddress,
+	deleteAddress,
+	getAddress,
+	getAddresses,
+	updateAddress,
+} from "../src/services/addresses.ts";
+import { NotFoundError } from "../src/utility/errors.ts";
 
 describe("Addresses", () => {
 	test("Create an address", async () => {
-		const address = await create_address({
+		const address = await createAddress({
 			street: "test",
 			number: "123",
 			city: "test",
@@ -23,24 +23,24 @@ describe("Addresses", () => {
 	});
 
 	test("Get all addresses", async () => {
-		const addresses = await get_addresses();
+		const addresses = await getAddresses();
 		expect(addresses).toBeInstanceOf(Array);
 		expect(addresses.length).toBeGreaterThan(0);
 	});
 
 	test("Get an address", async () => {
-		const addresses = await get_addresses();
-		const address = await get_address(addresses[0]?.id ?? "");
+		const addresses = await getAddresses();
+		const address = await getAddress(addresses[0]?.id ?? "");
 		expect(address).toBeDefined();
 	});
 
 	test("Getting an unknown address will throw a NotFoundError", async () => {
-		expect(() => get_address(uuid.v4())).toThrowError(NotFoundError);
+		expect(() => getAddress(v4())).toThrowError(NotFoundError);
 	});
 
 	test("Updating an unknown address will throw a NotFoundError", async () => {
 		expect(() =>
-			update_address(uuid.v4(), {
+			updateAddress(v4(), {
 				street: "test",
 				number: "123",
 				city: "test",
@@ -52,8 +52,8 @@ describe("Addresses", () => {
 	});
 
 	test("Updating an address", async () => {
-		const addresses = await get_addresses();
-		const address = await update_address(addresses[0]?.id ?? "", {
+		const addresses = await getAddresses();
+		const address = await updateAddress(addresses[0]?.id ?? "", {
 			street: "test",
 			number: "123",
 			city: "test",
@@ -65,14 +65,12 @@ describe("Addresses", () => {
 	});
 
 	test("Deleting an unknown address will throw a NotFoundError", async () => {
-		expect(() => delete_address(uuid.v4())).toThrowError(NotFoundError);
+		expect(() => deleteAddress(v4())).toThrowError(NotFoundError);
 	});
 
 	test("Delete an address", async () => {
-		const addresses = await get_addresses();
-		console.log(addresses[0]?.id);
-
-		const address = await delete_address(addresses[0]?.id ?? "");
+		const addresses = await getAddresses();
+		const address = await deleteAddress(addresses[0]?.id ?? "");
 		expect(address).toBeDefined();
 	});
 });

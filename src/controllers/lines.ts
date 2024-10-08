@@ -1,17 +1,17 @@
 import { Hono } from "hono";
 import {
-	create_line,
-	delete_line,
-	get_line,
-	get_lines,
-	update_line,
+	createLine,
+	deleteLine,
+	getLine,
+	getLines,
+	updateLine,
 } from "../services/lines.js";
 import type { Environment } from "../utility/types.js";
 
 export const lines = new Hono<Environment>();
 
 lines.post("/", async (c) => {
-	const line = await create_line(await c.req.json());
+	const line = await createLine(await c.req.json());
 	return c.json(
 		{
 			data: line,
@@ -21,7 +21,7 @@ lines.post("/", async (c) => {
 });
 
 lines.get("/", async (c) => {
-	const lines = await get_lines(c.req.query());
+	const lines = await getLines(c.req.query());
 	return c.json(
 		{
 			data: lines,
@@ -32,7 +32,7 @@ lines.get("/", async (c) => {
 
 lines.get("/:id", async (c) => {
 	const id = c.req.param("id");
-	const line = await get_line(id);
+	const line = await getLine(id);
 	return c.json(
 		{
 			data: line,
@@ -43,7 +43,7 @@ lines.get("/:id", async (c) => {
 
 lines.patch("/:id", async (c) => {
 	const id = c.req.param("id");
-	const line = await update_line(id, await c.req.json());
+	const line = await updateLine(id, await c.req.json());
 	return c.json(
 		{
 			data: line,
@@ -54,7 +54,7 @@ lines.patch("/:id", async (c) => {
 
 lines.delete("/:id", async (c) => {
 	const id = c.req.param("id");
-	const line = await delete_line(id);
+	const line = await deleteLine(id);
 	return c.json(
 		{
 			data: line,

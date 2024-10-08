@@ -1,17 +1,17 @@
 import { Hono } from "hono";
 import {
-	create_user,
-	delete_user,
-	get_user,
-	get_users,
-	update_user,
+	createUser,
+	deleteUser,
+	getUser,
+	getUsers,
+	updateUser,
 } from "../services/users.js";
 import type { Environment } from "../utility/types.js";
 
 export const users = new Hono<Environment>();
 
 users.get("/", async (c) => {
-	const users = await get_users(c.req.query());
+	const users = await getUsers(c.req.query());
 	return c.json(
 		{
 			data: users,
@@ -22,7 +22,7 @@ users.get("/", async (c) => {
 
 users.get("/:id", async (c) => {
 	const id = c.req.param("id");
-	const user = await get_user(id);
+	const user = await getUser(id);
 	return c.json(
 		{
 			data: user,
@@ -32,7 +32,7 @@ users.get("/:id", async (c) => {
 });
 
 users.post("/", async (c) => {
-	const user = await create_user(await c.req.json());
+	const user = await createUser(await c.req.json());
 	return c.json(
 		{
 			data: user,
@@ -43,7 +43,7 @@ users.post("/", async (c) => {
 
 users.patch("/:id", async (c) => {
 	const id = c.req.param("id");
-	const user = await update_user(id, await c.req.json());
+	const user = await updateUser(id, await c.req.json());
 	return c.json(
 		{
 			data: user,
@@ -54,7 +54,7 @@ users.patch("/:id", async (c) => {
 
 users.delete("/:id", async (c) => {
 	const id = c.req.param("id");
-	const user = await delete_user(id);
+	const user = await deleteUser(id);
 	return c.json(
 		{
 			data: user,

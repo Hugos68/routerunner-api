@@ -1,17 +1,17 @@
 import { Hono } from "hono";
 import {
-	create_role,
-	delete_role,
-	get_role,
-	get_roles,
-	update_role,
+	createRole,
+	deleteRole,
+	getRole,
+	getRoles,
+	updateRole,
 } from "../services/roles.js";
 import type { Environment } from "../utility/types.js";
 
 export const roles = new Hono<Environment>();
 
 roles.post("/", async (c) => {
-	const role = await create_role(await c.req.json());
+	const role = await createRole(await c.req.json());
 	return c.json(
 		{
 			data: role,
@@ -21,7 +21,7 @@ roles.post("/", async (c) => {
 });
 
 roles.get("/", async (c) => {
-	const role = await get_roles(c.req.query());
+	const role = await getRoles(c.req.query());
 	return c.json(
 		{
 			data: role,
@@ -32,7 +32,7 @@ roles.get("/", async (c) => {
 
 roles.get("/:id", async (c) => {
 	const id = c.req.param("id");
-	const role = await get_role(id);
+	const role = await getRole(id);
 	return c.json(
 		{
 			data: role,
@@ -43,7 +43,7 @@ roles.get("/:id", async (c) => {
 
 roles.patch("/:id", async (c) => {
 	const id = c.req.param("id");
-	const role = await update_role(id, await c.req.json());
+	const role = await updateRole(id, await c.req.json());
 	return c.json(
 		{
 			data: role,
@@ -54,7 +54,7 @@ roles.patch("/:id", async (c) => {
 
 roles.delete("/:id", async (c) => {
 	const id = c.req.param("id");
-	const role = await delete_role(id);
+	const role = await deleteRole(id);
 	return c.json(
 		{
 			data: role,

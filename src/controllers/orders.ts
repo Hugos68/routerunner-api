@@ -1,17 +1,17 @@
 import { Hono } from "hono";
 import {
-	create_order,
-	delete_order,
-	get_order,
-	get_orders,
-	update_order,
+	createOrder,
+	deleteOrder,
+	getOrder,
+	getOrders,
+	updateOrder,
 } from "../services/orders.js";
 import type { Environment } from "../utility/types.js";
 
 export const orders = new Hono<Environment>();
 
 orders.post("/", async (c) => {
-	const order = await create_order(await c.req.json());
+	const order = await createOrder(await c.req.json());
 	return c.json(
 		{
 			data: order,
@@ -21,7 +21,7 @@ orders.post("/", async (c) => {
 });
 
 orders.get("/", async (c) => {
-	const orders = await get_orders(c.req.query());
+	const orders = await getOrders(c.req.query());
 	return c.json(
 		{
 			data: orders,
@@ -32,7 +32,7 @@ orders.get("/", async (c) => {
 
 orders.get("/:id", async (c) => {
 	const id = c.req.param("id");
-	const order = await get_order(id);
+	const order = await getOrder(id);
 	return c.json(
 		{
 			data: order,
@@ -43,7 +43,7 @@ orders.get("/:id", async (c) => {
 
 orders.patch("/:id", async (c) => {
 	const id = c.req.param("id");
-	const order = await update_order(id, await c.req.json());
+	const order = await updateOrder(id, await c.req.json());
 	return c.json(
 		{
 			data: order,
@@ -54,7 +54,7 @@ orders.patch("/:id", async (c) => {
 
 orders.delete("/:id", async (c) => {
 	const id = c.req.param("id");
-	const order = await delete_order(id);
+	const order = await deleteOrder(id);
 	return c.json(
 		{
 			data: order,

@@ -1,10 +1,10 @@
 import { Hono } from "hono";
 import { setCookie } from "hono/cookie";
 import {
-	create_session,
-	delete_session,
-	get_session,
-	get_sessions,
+	createSession,
+	deleteSession,
+	getSession,
+	getSessions,
 } from "../services/sessions.js";
 import {
 	SESSION_COOKIE_CONIG,
@@ -15,8 +15,11 @@ import type { Environment } from "../utility/types.js";
 export const sessions = new Hono<Environment>();
 
 sessions.post("/", async (c) => {
-	const session = await create_session(await c.req.json());
-	setCookie(c, SESSION_COOKIE_KEY, session.id, SESSION_COOKIE_CONIG);
+	const session = await createSession(await c.req.json());
+	setCookie(c, SESSION_COOKIE_KEY, session.id, {
+		...SESSION_COOKIE_CONIG,
+		expires: session.expiresAt,
+	});
 	return c.json(
 		{
 			data: session,
@@ -26,7 +29,7 @@ sessions.post("/", async (c) => {
 });
 
 sessions.get("/", async (c) => {
-	const sessions = await get_sessions(c.req.query());
+	const sessions = await getSessions(c.req.query());
 	return c.json(
 		{
 			data: sessions,
@@ -37,7 +40,7 @@ sessions.get("/", async (c) => {
 
 sessions.get("/:id", async (c) => {
 	const id = c.req.param("id");
-	const session = await get_session(id);
+	const session = await getSession(id);
 	return c.json(
 		{
 			data: session,
@@ -48,7 +51,7 @@ sessions.get("/:id", async (c) => {
 
 sessions.delete("/:id", async (c) => {
 	const id = c.req.param("id");
-	const session = await delete_session(id);
+	const session = await deleteSession(id);
 	return c.json(
 		{
 			data: session,

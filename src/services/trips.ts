@@ -1,54 +1,50 @@
 import { and, eq } from "drizzle-orm";
-import { parse, partial } from "valibot";
+import { parse } from "valibot";
 import { database } from "../database/database.js";
 import {
 	CreateTripSchema,
 	type Trip,
 	UpdateTripSchema,
-	trips_table,
+	tripsTable,
 } from "../database/schema.js";
-import { create_filter_conditions } from "../utility/create-filter-conditions.js";
+import { createFilterConditions } from "../utility/create-filter-conditions.js";
 import { NotFoundError } from "../utility/errors.js";
 
-export const create_trip = async (input: unknown) => {
+export const createTrip = async (input: unknown) => {
 	const values = parse(CreateTripSchema, input);
-	const [trip] = await database.insert(trips_table).values(values).returning();
+	const [trip] = await database.insert(tripsTable).values(values).returning();
 	if (trip === undefined) {
 		throw new Error("Failed to create trip");
 	}
 	return trip;
 };
 
-export const get_trips = async (filter: Record<string, unknown> = {}) => {
-	const conditions = create_filter_conditions(
-		filter,
-		partial(CreateTripSchema),
-		trips_table,
-	);
+export const getTrips = async (filter: Record<string, unknown> = {}) => {
+	const conditions = createFilterConditions(filter, tripsTable);
 	const trips = await database
 		.select()
-		.from(trips_table)
+		.from(tripsTable)
 		.where(and(...conditions));
 	return trips;
 };
 
-export const get_trip = async (id: Trip["id"]) => {
+export const getTrip = async (id: Trip["id"]) => {
 	const [trip] = await database
 		.select()
-		.from(trips_table)
-		.where(eq(trips_table.id, id));
+		.from(tripsTable)
+		.where(eq(tripsTable.id, id));
 	if (trip === undefined) {
 		throw new NotFoundError(`Trip with id ${id} not found`);
 	}
 	return trip;
 };
 
-export const update_trip = async (id: Trip["id"], input: unknown) => {
+export const updateTrip = async (id: Trip["id"], input: unknown) => {
 	const values = parse(UpdateTripSchema, input);
 	const [trip] = await database
-		.update(trips_table)
+		.update(tripsTable)
 		.set(values)
-		.where(eq(trips_table.id, id))
+		.where(eq(tripsTable.id, id))
 		.returning();
 	if (trip === undefined) {
 		throw new NotFoundError(`Trip with id ${id} not found`);
@@ -56,10 +52,11 @@ export const update_trip = async (id: Trip["id"], input: unknown) => {
 	return trip;
 };
 
-export const delete_trip = async (id: Trip["id"]) => {
+export const deleteTrip = async (id: Trip["id"]) => {
 	const [trip] = await database
-		.delete(trips_table)
-		.where(eq(trips_table.id, id));
+		.delete(tripsTable)
+		.where(eq(tripsTable.id, id))
+		.returning();
 	if (trip === undefined) {
 		throw new NotFoundError(`Trip with id ${id} not found`);
 	}

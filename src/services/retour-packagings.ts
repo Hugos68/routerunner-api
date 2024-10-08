@@ -1,75 +1,70 @@
 import { and, eq } from "drizzle-orm";
-import { parse, partial } from "valibot";
+import { parse } from "valibot";
 import { database } from "../database/database.js";
 import {
 	CreateRetourPackagingSchema,
 	type RetourPackaging,
 	UpdateRetourPackagingSchema,
-	retour_packaging_table,
+	retourPackagingsTable,
 } from "../database/schema.js";
-import { create_filter_conditions } from "../utility/create-filter-conditions.js";
+import { createFilterConditions } from "../utility/create-filter-conditions.js";
 import { NotFoundError } from "../utility/errors.js";
 
-export const create_retour_packaging = async (input: unknown) => {
+export const createRetourPackaging = async (input: unknown) => {
 	const values = parse(CreateRetourPackagingSchema, input);
-	const [retour_packaging] = await database
-		.insert(retour_packaging_table)
+	const [retourPackaging] = await database
+		.insert(retourPackagingsTable)
 		.values(values)
 		.returning();
-	if (retour_packaging === undefined) {
+	if (retourPackaging === undefined) {
 		throw new Error("Failed to create retour packaging");
 	}
-	return retour_packaging;
+	return retourPackaging;
 };
 
-export const get_retour_packagings = async (
-	filter: Record<string, unknown>,
-) => {
-	const conditions = create_filter_conditions(
-		filter,
-		partial(CreateRetourPackagingSchema),
-		retour_packaging_table,
-	);
-	const retour_packaging = await database
+export const getRetourPackagings = async (filter: Record<string, unknown>) => {
+	const conditions = createFilterConditions(filter, retourPackagingsTable);
+	const retourPackaging = await database
 		.select()
-		.from(retour_packaging_table)
+		.from(retourPackagingsTable)
 		.where(and(...conditions));
-	return retour_packaging;
+	return retourPackaging;
 };
 
-export const get_retour_packaging = async (id: RetourPackaging["id"]) => {
-	const [retour_packaging] = await database
+export const getRetourPackaging = async (id: RetourPackaging["id"]) => {
+	const [retourPackaging] = await database
 		.select()
-		.from(retour_packaging_table)
-		.where(eq(retour_packaging_table.id, id));
-	if (retour_packaging === undefined) {
+		.from(retourPackagingsTable)
+		.where(eq(retourPackagingsTable.id, id));
+	if (retourPackaging === undefined) {
 		throw new NotFoundError(`Retour packaging with id ${id} not found`);
 	}
-	return retour_packaging;
+	return retourPackaging;
 };
 
-export const update_retour_packaging = async (
+export const updateRetourPackaging = async (
 	id: RetourPackaging["id"],
 	input: unknown,
 ) => {
 	const values = parse(UpdateRetourPackagingSchema, input);
-	const [retour_packaging] = await database
-		.update(retour_packaging_table)
+	const [retourPackaging] = await database
+		.update(retourPackagingsTable)
 		.set(values)
-		.where(eq(retour_packaging_table.id, id))
+		.where(eq(retourPackagingsTable.id, id))
 		.returning();
-	if (retour_packaging === undefined) {
+	if (retourPackaging === undefined) {
 		throw new NotFoundError(`Retour packaging with id ${id} not found`);
 	}
-	return retour_packaging;
+	return retourPackaging;
 };
 
-export const delete_retour_packaging = async (id: RetourPackaging["id"]) => {
-	const [retour_packaging] = await database
-		.delete(retour_packaging_table)
-		.where(eq(retour_packaging_table.id, id));
-	if (retour_packaging === undefined) {
+export const deleteRetourPackaging = async (id: RetourPackaging["id"]) => {
+	const [retourPackaging] = await database
+		.delete(retourPackagingsTable)
+		.where(eq(retourPackagingsTable.id, id))
+		.returning();
+	if (retourPackaging === undefined) {
 		throw new NotFoundError(`Retour packaging with id ${id} not found`);
 	}
-	return retour_packaging;
+	return retourPackaging;
 };

@@ -1,53 +1,45 @@
 import { and, eq } from "drizzle-orm";
-import { parse, partial } from "valibot";
+import { parse } from "valibot";
 import { database } from "../database/database.js";
-import {
-	CreateNoteSchema,
-	type Note,
-	notes_table,
-} from "../database/schema.js";
-import { create_filter_conditions } from "../utility/create-filter-conditions.js";
+import { CreateNoteSchema, type Note, notesTable } from "../database/schema.js";
+import { createFilterConditions } from "../utility/create-filter-conditions.js";
 import { NotFoundError } from "../utility/errors.js";
 
-export const create_note = async (input: unknown) => {
+export const createNote = async (input: unknown) => {
 	const values = parse(CreateNoteSchema, input);
-	const [note] = await database.insert(notes_table).values(values).returning();
+	const [note] = await database.insert(notesTable).values(values).returning();
 	if (note === undefined) {
 		throw new Error("Failed to create note");
 	}
 	return note;
 };
 
-export const get_notes = async (filter: Record<string, unknown> = {}) => {
-	const conditions = create_filter_conditions(
-		filter,
-		partial(CreateNoteSchema),
-		notes_table,
-	);
+export const getNotes = async (filter: Record<string, unknown> = {}) => {
+	const conditions = createFilterConditions(filter, notesTable);
 	const notes = await database
 		.select()
-		.from(notes_table)
+		.from(notesTable)
 		.where(and(...conditions));
 	return notes;
 };
 
-export const get_note = async (id: Note["id"]) => {
+export const getNote = async (id: Note["id"]) => {
 	const [note] = await database
 		.select()
-		.from(notes_table)
-		.where(eq(notes_table.id, id));
+		.from(notesTable)
+		.where(eq(notesTable.id, id));
 	if (note === undefined) {
 		throw new NotFoundError(`Note with id ${id} not found`);
 	}
 	return note;
 };
 
-export const update_note = async (id: Note["id"], input: unknown) => {
+export const updateNote = async (id: Note["id"], input: unknown) => {
 	const values = parse(CreateNoteSchema, input);
 	const [note] = await database
-		.update(notes_table)
+		.update(notesTable)
 		.set(values)
-		.where(eq(notes_table.id, id))
+		.where(eq(notesTable.id, id))
 		.returning();
 	if (note === undefined) {
 		throw new NotFoundError(`Note with id ${id} not found`);
@@ -55,10 +47,11 @@ export const update_note = async (id: Note["id"], input: unknown) => {
 	return note;
 };
 
-export const delete_note = async (id: Note["id"]) => {
+export const deleteNote = async (id: Note["id"]) => {
 	const [note] = await database
-		.delete(notes_table)
-		.where(eq(notes_table.id, id));
+		.delete(notesTable)
+		.where(eq(notesTable.id, id))
+		.returning();
 	if (note === undefined) {
 		throw new NotFoundError(`Note with id ${id} not found`);
 	}

@@ -1,21 +1,21 @@
 import { describe, expect, test } from "bun:test";
-import * as uuid from "uuid";
-import { get_addresses } from "../src/services/addresses";
+import { v4 } from "uuid";
+import { getAddresses } from "../src/services/addresses.ts";
 import {
-	create_trip,
-	delete_trip,
-	get_trip,
-	get_trips,
-	update_trip,
-} from "../src/services/trips";
-import { get_users } from "../src/services/users";
-import { NotFoundError } from "../src/utility/errors";
+	createTrip,
+	deleteTrip,
+	getTrip,
+	getTrips,
+	updateTrip,
+} from "../src/services/trips.ts";
+import { getUsers } from "../src/services/users.ts";
+import { NotFoundError } from "../src/utility/errors.ts";
 
 describe("Trips", () => {
 	test("Create a trip", async () => {
-		const users = await get_users();
-		const addresses = await get_addresses();
-		const trip = await create_trip({
+		const users = await getUsers();
+		const addresses = await getAddresses();
+		const trip = await createTrip({
 			driverId: users[0]?.id ?? "",
 			startLocation: addresses[0]?.id ?? "",
 			loadingDateTime: new Date().toDateString(),
@@ -23,20 +23,20 @@ describe("Trips", () => {
 		expect(trip).toBeDefined();
 	});
 	test("Get all trips", async () => {
-		const trips = await get_trips();
+		const trips = await getTrips();
 		expect(trips).toBeInstanceOf(Array);
 		expect(trips.length).toBeGreaterThan(0);
 	});
 	test("Get a trip", async () => {
-		const trips = await get_trips();
-		const trip = await get_trip(trips[0]?.id ?? "");
+		const trips = await getTrips();
+		const trip = await getTrip(trips[0]?.id ?? "");
 		expect(trip).toBeDefined();
 	});
 	test("Updating an unknown trip will throw a NotFoundError", async () => {
-		const users = await get_users();
-		const addresses = await get_addresses();
+		const users = await getUsers();
+		const addresses = await getAddresses();
 		expect(() =>
-			update_trip(uuid.v4(), {
+			updateTrip(v4(), {
 				driverId: users[0]?.id ?? "",
 				startLocation: addresses[0]?.id ?? "",
 				loadingDateTime: new Date().toDateString(),
@@ -44,10 +44,10 @@ describe("Trips", () => {
 		).toThrowError(NotFoundError);
 	});
 	test("Updating a trip", async () => {
-		const trips = await get_trips();
-		const users = await get_users();
-		const addresses = await get_addresses();
-		const trip = await update_trip(trips[0]?.id ?? "", {
+		const trips = await getTrips();
+		const users = await getUsers();
+		const addresses = await getAddresses();
+		const trip = await updateTrip(trips[0]?.id ?? "", {
 			driverId: users[0]?.id ?? "",
 			startLocation: addresses[0]?.id ?? "",
 			loadingDateTime: new Date().toDateString(),
@@ -55,11 +55,11 @@ describe("Trips", () => {
 		expect(trip).toBeDefined();
 	});
 	test("Deleting a trip", async () => {
-		const trips = await get_trips();
-		const trip = await delete_trip(trips[0]?.id ?? "");
+		const trips = await getTrips();
+		const trip = await deleteTrip(trips[0]?.id ?? "");
 		expect(trip).toBeDefined();
 	});
 	test("Deleting an unknown trip will throw a NotFoundError", async () => {
-		expect(() => delete_trip(uuid.v4())).toThrowError(NotFoundError);
+		expect(() => deleteTrip(v4())).toThrowError(NotFoundError);
 	});
 });

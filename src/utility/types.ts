@@ -1,19 +1,8 @@
-import type { Role } from "../database/schema.js";
-import type { User } from "../database/schema.js";
-
-interface authenticated {
-	authenticated: true;
-	user: User & {
-		role: Role;
-	};
-}
-
-interface unauthenticated {
-	authenticated: false;
-}
+import type { Session } from "../database/schema.js";
 
 export interface Environment {
+	// biome-ignore lint/style/useNamingConvention:
 	Variables: {
-		session: authenticated | unauthenticated;
+		session: Session | null;
 	};
 }

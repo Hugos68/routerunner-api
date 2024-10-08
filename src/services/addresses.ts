@@ -1,54 +1,50 @@
 import { and, eq } from "drizzle-orm";
-import { parse, partial } from "valibot";
+import { parse } from "valibot";
 import { database } from "../database/database.js";
 import {
 	type Address,
 	CreateAddressSchema,
 	UpdateAddressSchema,
-	addresses_table,
+	addressesTable,
 } from "../database/schema.js";
-import { create_filter_conditions } from "../utility/create-filter-conditions.js";
+import { createFilterConditions } from "../utility/create-filter-conditions.js";
 import { NotFoundError } from "../utility/errors.js";
 
-export const create_address = async (input: unknown) => {
+export const createAddress = async (input: unknown) => {
 	const values = parse(CreateAddressSchema, input);
 	const [address] = await database
-		.insert(addresses_table)
+		.insert(addressesTable)
 		.values(values)
 		.returning();
 	return address;
 };
 
-export const get_addresses = async (filter: Record<string, unknown> = {}) => {
-	const conditions = create_filter_conditions(
-		filter,
-		partial(CreateAddressSchema),
-		addresses_table,
-	);
+export const getAddresses = async (filter: Record<string, unknown> = {}) => {
+	const conditions = createFilterConditions(filter, addressesTable);
 	const addresses = await database
 		.select()
-		.from(addresses_table)
+		.from(addressesTable)
 		.where(and(...conditions));
 	return addresses;
 };
 
-export const get_address = async (id: Address["id"]) => {
+export const getAddress = async (id: Address["id"]) => {
 	const [address] = await database
 		.select()
-		.from(addresses_table)
-		.where(eq(addresses_table.id, id));
+		.from(addressesTable)
+		.where(eq(addressesTable.id, id));
 	if (address === undefined) {
 		throw new NotFoundError(`Address with id ${id} not found`);
 	}
 	return address;
 };
 
-export const update_address = async (id: Address["id"], input: unknown) => {
+export const updateAddress = async (id: Address["id"], input: unknown) => {
 	const values = parse(UpdateAddressSchema, input);
 	const [address] = await database
-		.update(addresses_table)
+		.update(addressesTable)
 		.set(values)
-		.where(eq(addresses_table.id, id))
+		.where(eq(addressesTable.id, id))
 		.returning();
 	if (address === undefined) {
 		throw new NotFoundError(`Address with id ${id} not found`);
@@ -56,10 +52,10 @@ export const update_address = async (id: Address["id"], input: unknown) => {
 	return address;
 };
 
-export const delete_address = async (id: Address["id"]) => {
+export const deleteAddress = async (id: Address["id"]) => {
 	const [address] = await database
-		.delete(addresses_table)
-		.where(eq(addresses_table.id, id))
+		.delete(addressesTable)
+		.where(eq(addressesTable.id, id))
 		.returning();
 	if (address === undefined) {
 		throw new NotFoundError(`Address with id ${id} not found`);

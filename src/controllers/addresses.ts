@@ -1,17 +1,17 @@
 import { Hono } from "hono";
 import {
-	create_address,
-	delete_address,
-	get_address,
-	get_addresses,
-	update_address,
+	createAddress,
+	deleteAddress,
+	getAddress,
+	getAddresses,
+	updateAddress,
 } from "../services/addresses.js";
 import type { Environment } from "../utility/types.js";
 
 export const addresses = new Hono<Environment>();
 
 addresses.post("/", async (c) => {
-	const address = await create_address(await c.req.json());
+	const address = await createAddress(await c.req.json());
 	return c.json(
 		{
 			data: address,
@@ -21,7 +21,7 @@ addresses.post("/", async (c) => {
 });
 
 addresses.get("/", async (c) => {
-	const addresses = await get_addresses(c.req.query());
+	const addresses = await getAddresses(c.req.query());
 	return c.json(
 		{
 			data: addresses,
@@ -32,7 +32,7 @@ addresses.get("/", async (c) => {
 
 addresses.get("/:id", async (c) => {
 	const id = c.req.param("id");
-	const address = await get_address(id);
+	const address = await getAddress(id);
 	return c.json(
 		{
 			data: address,
@@ -43,7 +43,7 @@ addresses.get("/:id", async (c) => {
 
 addresses.patch("/:id", async (c) => {
 	const id = c.req.param("id");
-	const address = await update_address(id, await c.req.json());
+	const address = await updateAddress(id, await c.req.json());
 	return c.json(
 		{
 			data: address,
@@ -54,7 +54,7 @@ addresses.patch("/:id", async (c) => {
 
 addresses.delete("/:id", async (c) => {
 	const id = c.req.param("id");
-	const address = await delete_address(id);
+	const address = await deleteAddress(id);
 	return c.json(
 		{
 			data: address,

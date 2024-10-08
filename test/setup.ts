@@ -1,24 +1,24 @@
 import { beforeEach } from "bun:test";
-import { database } from "../src/database/database";
+import { database } from "../src/database/database.ts";
 import {
-	addresses_table,
-	orders_table,
-	roles_table,
-	trips_table,
-	user_roles_table,
-	users_table,
-} from "../src/database/schema";
+	addressesTable,
+	ordersTable,
+	rolesTable,
+	tripsTable,
+	userRolesTable,
+	usersTable,
+} from "../src/database/schema.ts";
 
 beforeEach(async () => {
-	await database.delete(user_roles_table);
-	await database.delete(users_table);
-	await database.delete(roles_table);
-	await database.delete(addresses_table);
-	await database.delete(orders_table);
-	await database.delete(trips_table);
+	await database.delete(userRolesTable);
+	await database.delete(usersTable);
+	await database.delete(rolesTable);
+	await database.delete(addressesTable);
+	await database.delete(ordersTable);
+	await database.delete(tripsTable);
 
 	const [driver] = await database
-		.insert(users_table)
+		.insert(usersTable)
 		.values({
 			username: "driver",
 			password: "1234567890",
@@ -28,7 +28,7 @@ beforeEach(async () => {
 		throw new Error("Failed to create driver");
 	}
 	const [planner] = await database
-		.insert(users_table)
+		.insert(usersTable)
 		.values({
 			username: "planner",
 			password: "1234567890",
@@ -38,7 +38,7 @@ beforeEach(async () => {
 		throw new Error("Failed to create planner");
 	}
 	const [admin] = await database
-		.insert(users_table)
+		.insert(usersTable)
 		.values({
 			username: "admin",
 			password: "1234567890",
@@ -48,7 +48,7 @@ beforeEach(async () => {
 		throw new Error("Failed to create admin");
 	}
 	const [driverRole] = await database
-		.insert(roles_table)
+		.insert(rolesTable)
 		.values({
 			name: "DRIVER",
 		})
@@ -57,7 +57,7 @@ beforeEach(async () => {
 		throw new Error("Failed to create driver role");
 	}
 	const [plannerRole] = await database
-		.insert(roles_table)
+		.insert(rolesTable)
 		.values({
 			name: "PLANNER",
 		})
@@ -66,7 +66,7 @@ beforeEach(async () => {
 		throw new Error("Failed to create planner role");
 	}
 	const [adminRole] = await database
-		.insert(roles_table)
+		.insert(rolesTable)
 		.values({
 			name: "ADMIN",
 		})
@@ -76,7 +76,7 @@ beforeEach(async () => {
 	}
 
 	const [address1] = await database
-		.insert(addresses_table)
+		.insert(addressesTable)
 		.values({
 			street: "123 Main St",
 			number: "1",
@@ -91,7 +91,7 @@ beforeEach(async () => {
 	}
 
 	const [order1] = await database
-		.insert(orders_table)
+		.insert(ordersTable)
 		.values({
 			quantity: 10,
 			packageType: "Pallet",
@@ -106,7 +106,7 @@ beforeEach(async () => {
 	}
 
 	const [trip1] = await database
-		.insert(trips_table)
+		.insert(tripsTable)
 		.values({
 			driverId: driver.id,
 			startLocation: address1.id,
@@ -117,15 +117,15 @@ beforeEach(async () => {
 		throw new Error("Failed to create trip1");
 	}
 
-	await database.insert(user_roles_table).values({
+	await database.insert(userRolesTable).values({
 		userId: driver.id,
 		roleId: driverRole.id,
 	});
-	await database.insert(user_roles_table).values({
+	await database.insert(userRolesTable).values({
 		userId: planner.id,
 		roleId: plannerRole.id,
 	});
-	await database.insert(user_roles_table).values({
+	await database.insert(userRolesTable).values({
 		userId: admin.id,
 		roleId: adminRole.id,
 	});
