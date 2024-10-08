@@ -1,7 +1,7 @@
-import { sql } from "drizzle-orm";
 import { integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-valibot";
 import { minLength, partial, string, transform } from "valibot";
+import { SESSION_LIFETIME } from "../utility/constants.js";
 import { hash } from "./columns.js";
 
 export const usersTable = pgTable("users", {
@@ -25,7 +25,7 @@ export const sessionsTable = pgTable("sessions", {
 		.unique(),
 	expiresAt: timestamp("expires_at")
 		.notNull()
-		.default(sql`now() + interval '30 days'`),
+		.default(new Date(Date.now() + SESSION_LIFETIME)),
 });
 
 export const tripsTable = pgTable("trips", {

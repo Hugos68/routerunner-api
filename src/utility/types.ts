@@ -1,11 +1,7 @@
-import type { Role } from "../database/schema.js";
-import type { User } from "../database/schema.js";
+import type { Session } from "../database/schema.js";
 
-interface Authenticated {
+interface Authenticated extends Session {
 	authenticated: true;
-	user: User & {
-		role: Role;
-	};
 }
 
 interface Unauthenticated {

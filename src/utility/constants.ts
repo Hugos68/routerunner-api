@@ -13,3 +13,5 @@ export const SESSION_COOKIE_CONIG = {
 	secure: true,
 	httpOnly: true,
 } satisfies CookieOptions;
+
+export const SESSION_LIFETIME = 30 * 24 * 60 * 60 * 1000;
