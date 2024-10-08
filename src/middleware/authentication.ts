@@ -9,9 +9,7 @@ import type { Environment } from "../utility/types.js";
 export const authentication = createMiddleware<Environment>(async (c, next) => {
 	const sessionId = getCookie(c, SESSION_COOKIE_KEY);
 	if (sessionId === undefined) {
-		c.set("session", {
-			authenticated: false,
-		});
+		c.set("session", null);
 		await next();
 		return;
 	}
@@ -20,30 +18,21 @@ export const authentication = createMiddleware<Environment>(async (c, next) => {
 		.from(sessionsTable)
 		.where(eq(sessionsTable.id, sessionId));
 	if (session === undefined) {
-		c.set("session", {
-			authenticated: false,
-		});
+		c.set("session", null);
 		await next();
 		return;
 	}
 	const expired = session.expiresAt < new Date();
 	if (expired) {
 		await database.delete(sessionsTable).where(eq(sessionsTable.id, sessionId));
-		c.set("session", {
-			authenticated: false,
-		});
+		c.set("session", null);
 		await next();
 		return;
 	}
-
 	await database
 		.update(sessionsTable)
 		.set({ expiresAt: new Date(Date.now() + SESSION_LIFETIME) })
 		.where(eq(sessionsTable.id, sessionId));
-
-	c.set("session", {
-		authenticated: true,
-		...session,
-	});
+	c.set("session", session);
 	await next();
 });
