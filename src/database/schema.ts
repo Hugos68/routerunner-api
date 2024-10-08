@@ -1,17 +1,8 @@
-import { customType } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 import { integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-valibot";
 import { minLength, partial, string, transform } from "valibot";
-import { HASH_CONFIG } from "../utility/constants.ts";
-
-const hash = customType<{ data: string }>({
-	dataType: () => {
-		return "text";
-	},
-	toDriver: (value) => {
-		return Bun.password.hashSync(value, HASH_CONFIG);
-	},
-});
+import { hash } from "./columns.js";
 
 export const usersTable = pgTable("users", {
 	id: uuid("id").primaryKey().defaultRandom(),
@@ -32,6 +23,9 @@ export const sessionsTable = pgTable("sessions", {
 		.notNull()
 		.references(() => usersTable.id)
 		.unique(),
+	expiresAt: timestamp("expires_at")
+		.notNull()
+		.default(sql`now() + interval '30 days'`),
 });
 
 export const tripsTable = pgTable("trips", {

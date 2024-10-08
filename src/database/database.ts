@@ -11,4 +11,8 @@ const client = postgres({
 	password: process.env.POSTGRES_PASSWORD as string,
 });
 
-export const database = drizzle(client, { schema: schema, logger: true });
+export const database = drizzle(client, {
+	schema: schema,
+	logger: true,
+	casing: "snake_case",
+});
