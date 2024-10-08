@@ -31,7 +31,7 @@ app.use(
 	"/*",
 	cors({
 		origin: "*", // Frontend URL (your Flutter app)
-		allowMethods: ["GET", "POST", "OPTIONS"], // Allowed HTTP methods
+		allowMethods: ["GET", "POST", "OPTIONS", "DELETE"], // Allowed HTTP methods
 		allowHeaders: ["Content-Type", "Authorization"], // Allowed headers in requests
 		exposeHeaders: ["Content-Length", "Authorization"], // Headers you want to expose to the frontend
 		credentials: true, // If you need to allow credentials (cookies, authorization headers)
