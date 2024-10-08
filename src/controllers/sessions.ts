@@ -16,7 +16,10 @@ export const sessions = new Hono<Environment>();
 
 sessions.post("/", async (c) => {
 	const session = await createSession(await c.req.json());
-	setCookie(c, SESSION_COOKIE_KEY, session.id, SESSION_COOKIE_CONIG);
+	setCookie(c, SESSION_COOKIE_KEY, session.id, {
+		...SESSION_COOKIE_CONIG,
+		expires: session.expiresAt,
+	});
 	return c.json(
 		{
 			data: session,
