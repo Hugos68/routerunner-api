@@ -97,6 +97,9 @@ export const notesTable = pgTable("notes", {
 	id: uuid("id").primaryKey().defaultRandom(),
 	content: text("content").notNull(),
 	photo: text("photo"),
+	orderId: uuid("order_id")
+		.references(() => ordersTable.id)
+		.notNull(),
 });
 
 export const retourPackagingsTable = pgTable("retour_packagings", {
