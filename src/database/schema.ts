@@ -8,6 +8,9 @@ export const usersTable = pgTable("users", {
 	id: uuid("id").primaryKey().defaultRandom(),
 	username: text("username").unique().notNull(),
 	password: hash("password").notNull(),
+	roleId: uuid("role_id")
+		.references(() => rolesTable.id)
+		.notNull(),
 });
 
 export const rolesTable = pgTable("roles", {
@@ -64,6 +67,9 @@ export const ordersTable = pgTable("orders", {
 	}).notNull(),
 	deliveryInstructions: text("delivery_instructions").notNull(),
 	status: text("status", { enum: ["GESLOTEN", "OPEN"] }),
+	tripId: uuid("trip_id")
+		.references(() => tripsTable.id)
+		.notNull(),
 });
 
 export const linesTable = pgTable("lines", {
@@ -72,6 +78,9 @@ export const linesTable = pgTable("lines", {
 	quantity: integer("quantity").notNull(),
 	productName: text("product_name").notNull(),
 	packageType: text("package_type").notNull(),
+	orderId: uuid("order_id")
+		.references(() => ordersTable.id)
+		.notNull(),
 });
 
 export const addressesTable = pgTable("addresses", {
@@ -94,72 +103,9 @@ export const retourPackagingsTable = pgTable("retour_packagings", {
 	id: uuid("id").primaryKey().defaultRandom(),
 	quantity: integer("quantity").notNull(),
 	packageType: text("package_type").notNull(),
-});
-
-export const orderLinesTable = pgTable("order_lines", {
-	id: uuid("id").primaryKey().defaultRandom(),
 	orderId: uuid("order_id")
-		.notNull()
-		.references(() => ordersTable.id),
-	lineId: uuid("line_id")
-		.notNull()
-		.references(() => linesTable.id),
-});
-
-export const orderTripsTable = pgTable("order_trips", {
-	id: uuid("id").primaryKey().defaultRandom(),
-	orderId: uuid("order_id")
-		.notNull()
-		.references(() => ordersTable.id, {
-			onDelete: "cascade",
-			onUpdate: "cascade",
-		}),
-	tripId: uuid("trip_id")
-		.notNull()
-		.references(() => tripsTable.id, {
-			onDelete: "cascade",
-			onUpdate: "cascade",
-		}),
-});
-
-export const retourPackagingOrdersTable = pgTable("retour_packaging_orders", {
-	id: uuid("id").primaryKey().defaultRandom(),
-	retourPackagingId: uuid("retour_packaging_id")
-		.notNull()
-		.references(() => retourPackagingsTable.id),
-	orderId: uuid("order_id")
-		.notNull()
-		.references(() => ordersTable.id),
-});
-
-export const tripDriversTable = pgTable("trip_drivers", {
-	id: uuid("id").primaryKey().defaultRandom(),
-	driverId: uuid("driver_id")
-		.notNull()
-		.references(() => usersTable.id, {
-			onDelete: "cascade",
-			onUpdate: "cascade",
-		}),
-	tripId: uuid("trip_id")
-		.notNull()
-		.references(() => tripsTable.id),
-});
-
-export const userRolesTable = pgTable("user_roles", {
-	id: uuid("id").primaryKey().defaultRandom(),
-	userId: uuid("user_id")
-		.notNull()
-		.references(() => usersTable.id, {
-			onDelete: "cascade",
-			onUpdate: "cascade",
-		})
-		.unique(),
-	roleId: uuid("role_id")
-		.notNull()
-		.references(() => rolesTable.id, {
-			onDelete: "cascade",
-			onUpdate: "cascade",
-		}),
+		.references(() => ordersTable.id)
+		.notNull(),
 });
 
 export type User = typeof usersTable.$inferSelect;
@@ -171,12 +117,6 @@ export type Line = typeof linesTable.$inferSelect;
 export type Address = typeof addressesTable.$inferSelect;
 export type Note = typeof notesTable.$inferSelect;
 export type RetourPackaging = typeof retourPackagingsTable.$inferSelect;
-export type OrderLine = typeof orderLinesTable.$inferSelect;
-export type OrderTrip = typeof orderTripsTable.$inferSelect;
-export type RetourPackagingOrders =
-	typeof retourPackagingOrdersTable.$inferSelect;
-export type TripDrivers = typeof tripDriversTable.$inferSelect;
-export type UserRoles = typeof userRolesTable.$inferSelect;
 
 export const CreateUserSchema = transform(
 	createInsertSchema(usersTable, {
@@ -213,15 +153,3 @@ export const CreateRetourPackagingSchema = createInsertSchema(
 	retourPackagingsTable,
 );
 export const UpdateRetourPackagingSchema = partial(CreateRetourPackagingSchema);
-
-export const CreateOrderLineSchema = createInsertSchema(orderLinesTable);
-export const UpdateOrderLineSchema = partial(CreateOrderLineSchema);
-
-export const CreateOrderTripSchema = createInsertSchema(orderTripsTable);
-export const UpdateOrderTripSchema = partial(CreateOrderTripSchema);
-
-export const CreateTripDriverSchema = createInsertSchema(tripDriversTable);
-export const UpdateTripDriverSchema = partial(CreateTripDriverSchema);
-
-export const CreateUserRolesSchema = createInsertSchema(userRolesTable);
-export const UpdateUserRolesSchema = partial(CreateUserRolesSchema);

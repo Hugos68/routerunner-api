@@ -5,48 +5,15 @@ import {
 	ordersTable,
 	rolesTable,
 	tripsTable,
-	userRolesTable,
 	usersTable,
 } from "../src/database/schema.ts";
 
 beforeEach(async () => {
-	await database.delete(userRolesTable);
 	await database.delete(usersTable);
 	await database.delete(rolesTable);
 	await database.delete(addressesTable);
 	await database.delete(ordersTable);
 	await database.delete(tripsTable);
-
-	const [driver] = await database
-		.insert(usersTable)
-		.values({
-			username: "driver",
-			password: "1234567890",
-		})
-		.returning();
-	if (driver === undefined) {
-		throw new Error("Failed to create driver");
-	}
-	const [planner] = await database
-		.insert(usersTable)
-		.values({
-			username: "planner",
-			password: "1234567890",
-		})
-		.returning();
-	if (planner === undefined) {
-		throw new Error("Failed to create planner");
-	}
-	const [admin] = await database
-		.insert(usersTable)
-		.values({
-			username: "admin",
-			password: "1234567890",
-		})
-		.returning();
-	if (admin === undefined) {
-		throw new Error("Failed to create admin");
-	}
 	const [driverRole] = await database
 		.insert(rolesTable)
 		.values({
@@ -75,6 +42,40 @@ beforeEach(async () => {
 		throw new Error("Failed to create admin role");
 	}
 
+	const [driver] = await database
+		.insert(usersTable)
+		.values({
+			username: "driver",
+			password: "1234567890",
+			roleId: driverRole.id,
+		})
+		.returning();
+	if (driver === undefined) {
+		throw new Error("Failed to create driver");
+	}
+	const [planner] = await database
+		.insert(usersTable)
+		.values({
+			username: "planner",
+			password: "1234567890",
+			roleId: plannerRole.id,
+		})
+		.returning();
+	if (planner === undefined) {
+		throw new Error("Failed to create planner");
+	}
+	const [admin] = await database
+		.insert(usersTable)
+		.values({
+			username: "admin",
+			password: "1234567890",
+			roleId: adminRole.id,
+		})
+		.returning();
+	if (admin === undefined) {
+		throw new Error("Failed to create admin");
+	}
+
 	const [address1] = await database
 		.insert(addressesTable)
 		.values({
@@ -89,22 +90,6 @@ beforeEach(async () => {
 	if (address1 === undefined) {
 		throw new Error("Failed to create address1");
 	}
-
-	const [order1] = await database
-		.insert(ordersTable)
-		.values({
-			quantity: 10,
-			packageType: "Pallet",
-			unloadingAddress: address1.id,
-			unloadingDateTime: new Date().toDateString(),
-			deliveryInstructions: "Handle with care",
-			status: "OPEN",
-		})
-		.returning();
-	if (order1 === undefined) {
-		throw new Error("Failed to create order1");
-	}
-
 	const [trip1] = await database
 		.insert(tripsTable)
 		.values({
@@ -116,17 +101,19 @@ beforeEach(async () => {
 	if (trip1 === undefined) {
 		throw new Error("Failed to create trip1");
 	}
-
-	await database.insert(userRolesTable).values({
-		userId: driver.id,
-		roleId: driverRole.id,
-	});
-	await database.insert(userRolesTable).values({
-		userId: planner.id,
-		roleId: plannerRole.id,
-	});
-	await database.insert(userRolesTable).values({
-		userId: admin.id,
-		roleId: adminRole.id,
-	});
+	const [order1] = await database
+		.insert(ordersTable)
+		.values({
+			quantity: 10,
+			packageType: "Pallet",
+			unloadingAddress: address1.id,
+			unloadingDateTime: new Date().toDateString(),
+			deliveryInstructions: "Handle with care",
+			status: "OPEN",
+			tripId: trip1.id,
+		})
+		.returning();
+	if (order1 === undefined) {
+		throw new Error("Failed to create order1");
+	}
 });

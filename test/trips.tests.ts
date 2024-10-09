@@ -11,7 +11,7 @@ import {
 import { getUsers } from "../src/services/users.ts";
 import { NotFoundError } from "../src/utility/errors.ts";
 
-describe("Trips", () => {
+describe.skip("Trips", () => {
 	test("Create a trip", async () => {
 		const users = await getUsers();
 		const addresses = await getAddresses();

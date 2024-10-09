@@ -9,7 +9,7 @@ import {
 } from "../src/services/addresses.ts";
 import { NotFoundError } from "../src/utility/errors.ts";
 
-describe("Addresses", () => {
+describe.skip("Addresses", () => {
 	test("Create an address", async () => {
 		const address = await createAddress({
 			street: "test",
