@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { authorization } from "../middleware/authorization.js";
 import {
 	createAddress,
 	deleteAddress,
@@ -10,7 +11,7 @@ import type { Environment } from "../utility/types.js";
 
 export const addresses = new Hono<Environment>();
 
-addresses.post("/", async (c) => {
+addresses.post("/", authorization("PLANNER", "ADMIN"), async (c) => {
 	const address = await createAddress(await c.req.json());
 	return c.json(
 		{
@@ -20,7 +21,7 @@ addresses.post("/", async (c) => {
 	);
 });
 
-addresses.get("/", async (c) => {
+addresses.get("/", authorization("DRIVER", "PLANNER", "ADMIN"), async (c) => {
 	const addresses = await getAddresses(c.req.query());
 	return c.json(
 		{
@@ -30,18 +31,22 @@ addresses.get("/", async (c) => {
 	);
 });
 
-addresses.get("/:id", async (c) => {
-	const id = c.req.param("id");
-	const address = await getAddress(id);
-	return c.json(
-		{
-			data: address,
-		},
-		200,
-	);
-});
+addresses.get(
+	"/:id",
+	authorization("DRIVER", "PLANNER", "ADMIN"),
+	async (c) => {
+		const id = c.req.param("id");
+		const address = await getAddress(id);
+		return c.json(
+			{
+				data: address,
+			},
+			200,
+		);
+	},
+);
 
-addresses.patch("/:id", async (c) => {
+addresses.patch("/:id", authorization("PLANNER", "ADMIN"), async (c) => {
 	const id = c.req.param("id");
 	const address = await updateAddress(id, await c.req.json());
 	return c.json(
@@ -52,7 +57,7 @@ addresses.patch("/:id", async (c) => {
 	);
 });
 
-addresses.delete("/:id", async (c) => {
+addresses.delete("/:id", authorization("PLANNER", "ADMIN"), async (c) => {
 	const id = c.req.param("id");
 	const address = await deleteAddress(id);
 	return c.json(

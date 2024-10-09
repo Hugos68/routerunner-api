@@ -42,7 +42,7 @@ export const getUser = async (id: User["id"]) => {
 		.from(usersTable)
 		.where(eq(usersTable.id, id));
 	if (user === undefined) {
-		throw new NotFoundError(`User with id ${id} not found`);
+		throw new NotFoundError();
 	}
 	return user;
 };
@@ -55,7 +55,7 @@ export const updateUser = async (id: User["id"], input: unknown) => {
 		.where(eq(usersTable.id, id))
 		.returning(safeColumns);
 	if (user === undefined) {
-		throw new NotFoundError(`User with id ${id} not found`);
+		throw new NotFoundError();
 	}
 	return user;
 };
@@ -66,7 +66,7 @@ export const deleteUser = async (id: User["id"]) => {
 		.where(eq(usersTable.id, id))
 		.returning(safeColumns);
 	if (user === undefined) {
-		throw new NotFoundError(`User with id ${id} not found`);
+		throw new NotFoundError();
 	}
 	return user;
 };

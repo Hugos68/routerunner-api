@@ -1,6 +1,6 @@
 export class NotFoundError extends Error {
-	constructor(message: string) {
-		super(message);
+	constructor() {
+		super("Resource not found");
 		this.name = "NotFoundError";
 	}
 }
@@ -13,8 +13,17 @@ export class BadCredentialsError extends Error {
 }
 
 export class InvalidFilterError extends Error {
-	constructor(column: string, table: string) {
-		super(`The column "${column}" does not exist in the table: "${table}".`);
+	constructor(property: string, resource: string) {
+		super(
+			`The property "${property}" does not exist in the resource: "${resource}".`,
+		);
 		this.name = "InvalidFilterError";
+	}
+}
+
+export class UnauthorizedError extends Error {
+	constructor() {
+		super("Unauthorized");
+		this.name = "UnauthorizedError";
 	}
 }

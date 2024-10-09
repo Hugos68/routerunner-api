@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { authorization } from "../middleware/authorization.js";
 import {
 	createTrip,
 	deleteTrip,
@@ -10,7 +11,7 @@ import type { Environment } from "../utility/types.js";
 
 export const trips = new Hono<Environment>();
 
-trips.post("/", async (c) => {
+trips.post("/", authorization("DRIVER", "PLANNER", "ADMIN"), async (c) => {
 	const trip = await createTrip(await c.req.json());
 	return c.json(
 		{
@@ -20,7 +21,7 @@ trips.post("/", async (c) => {
 	);
 });
 
-trips.get("/", async (c) => {
+trips.get("/", authorization("DRIVER", "PLANNER", "ADMIN"), async (c) => {
 	const trips = await getTrips(c.req.query());
 	return c.json(
 		{
@@ -30,7 +31,7 @@ trips.get("/", async (c) => {
 	);
 });
 
-trips.get("/:id", async (c) => {
+trips.get("/:id", authorization("DRIVER", "PLANNER", "ADMIN"), async (c) => {
 	const id = c.req.param("id");
 	const trip = await getTrip(id);
 	return c.json(
@@ -41,7 +42,7 @@ trips.get("/:id", async (c) => {
 	);
 });
 
-trips.patch("/:id", async (c) => {
+trips.patch("/:id", authorization("DRIVER", "PLANNER", "ADMIN"), async (c) => {
 	const id = c.req.param("id");
 	const trip = await updateTrip(id, await c.req.json());
 	return c.json(
@@ -52,7 +53,7 @@ trips.patch("/:id", async (c) => {
 	);
 });
 
-trips.delete("/:id", async (c) => {
+trips.delete("/:id", authorization("DRIVER", "PLANNER", "ADMIN"), async (c) => {
 	const id = c.req.param("id");
 	const trip = await deleteTrip(id);
 	return c.json(

@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { authorization } from "../middleware/authorization.js";
 import {
 	createLine,
 	deleteLine,
@@ -10,7 +11,7 @@ import type { Environment } from "../utility/types.js";
 
 export const lines = new Hono<Environment>();
 
-lines.post("/", async (c) => {
+lines.post("/", authorization("PLANNER", "ADMIN"), async (c) => {
 	const line = await createLine(await c.req.json());
 	return c.json(
 		{
@@ -20,7 +21,7 @@ lines.post("/", async (c) => {
 	);
 });
 
-lines.get("/", async (c) => {
+lines.get("/", authorization("DRIVER", "PLANNER", "ADMIN"), async (c) => {
 	const lines = await getLines(c.req.query());
 	return c.json(
 		{
@@ -30,7 +31,7 @@ lines.get("/", async (c) => {
 	);
 });
 
-lines.get("/:id", async (c) => {
+lines.get("/:id", authorization("DRIVER", "PLANNER", "ADMIN"), async (c) => {
 	const id = c.req.param("id");
 	const line = await getLine(id);
 	return c.json(
@@ -41,7 +42,7 @@ lines.get("/:id", async (c) => {
 	);
 });
 
-lines.patch("/:id", async (c) => {
+lines.patch("/:id", authorization("PLANNER", "ADMIN"), async (c) => {
 	const id = c.req.param("id");
 	const line = await updateLine(id, await c.req.json());
 	return c.json(
@@ -52,7 +53,7 @@ lines.patch("/:id", async (c) => {
 	);
 });
 
-lines.delete("/:id", async (c) => {
+lines.delete("/:id", authorization("PLANNER", "ADMIN"), async (c) => {
 	const id = c.req.param("id");
 	const line = await deleteLine(id);
 	return c.json(

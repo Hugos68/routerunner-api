@@ -57,7 +57,7 @@ export const getSession = async (id: Session["id"]) => {
 		.from(sessionsTable)
 		.where(eq(sessionsTable.id, id));
 	if (session === undefined) {
-		throw new NotFoundError(`Session with id ${id} not found`);
+		throw new NotFoundError();
 	}
 	return session;
 };
@@ -68,7 +68,7 @@ export const deleteSession = async (id: Session["id"]) => {
 		.where(eq(sessionsTable.id, id))
 		.returning();
 	if (session === undefined) {
-		throw new NotFoundError(`Session with id ${id} not found`);
+		throw new NotFoundError();
 	}
 	return session;
 };

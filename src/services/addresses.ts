@@ -34,7 +34,7 @@ export const getAddress = async (id: Address["id"]) => {
 		.from(addressesTable)
 		.where(eq(addressesTable.id, id));
 	if (address === undefined) {
-		throw new NotFoundError(`Address with id ${id} not found`);
+		throw new NotFoundError();
 	}
 	return address;
 };
@@ -47,7 +47,7 @@ export const updateAddress = async (id: Address["id"], input: unknown) => {
 		.where(eq(addressesTable.id, id))
 		.returning();
 	if (address === undefined) {
-		throw new NotFoundError(`Address with id ${id} not found`);
+		throw new NotFoundError();
 	}
 	return address;
 };
@@ -58,7 +58,7 @@ export const deleteAddress = async (id: Address["id"]) => {
 		.where(eq(addressesTable.id, id))
 		.returning();
 	if (address === undefined) {
-		throw new NotFoundError(`Address with id ${id} not found`);
+		throw new NotFoundError();
 	}
 	return address;
 };

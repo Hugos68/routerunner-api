@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { authorization } from "../middleware/authorization.js";
 import {
 	createNote,
 	deleteNote,
@@ -10,7 +11,7 @@ import type { Environment } from "../utility/types.js";
 
 export const notes = new Hono<Environment>();
 
-notes.post("/", async (c) => {
+notes.post("/", authorization("DRIVER", "PLANNER", "ADMIN"), async (c) => {
 	const note = await createNote(await c.req.json());
 	return c.json(
 		{
@@ -20,7 +21,7 @@ notes.post("/", async (c) => {
 	);
 });
 
-notes.get("/", async (c) => {
+notes.get("/", authorization("DRIVER", "PLANNER", "ADMIN"), async (c) => {
 	const notes = await getNotes(c.req.query());
 	return c.json(
 		{
@@ -30,7 +31,7 @@ notes.get("/", async (c) => {
 	);
 });
 
-notes.get("/:id", async (c) => {
+notes.get("/:id", authorization("DRIVER", "PLANNER", "ADMIN"), async (c) => {
 	const id = c.req.param("id");
 	const note = await getNote(id);
 	return c.json(
@@ -41,7 +42,7 @@ notes.get("/:id", async (c) => {
 	);
 });
 
-notes.patch("/:id", async (c) => {
+notes.patch("/:id", authorization("DRIVER", "PLANNER", "ADMIN"), async (c) => {
 	const id = c.req.param("id");
 	const note = await updateNote(id, await c.req.json());
 	return c.json(
@@ -52,7 +53,7 @@ notes.patch("/:id", async (c) => {
 	);
 });
 
-notes.delete("/:id", async (c) => {
+notes.delete("/:id", authorization("DRIVER", "PLANNER", "ADMIN"), async (c) => {
 	const id = c.req.param("id");
 	const note = await deleteNote(id);
 	return c.json(

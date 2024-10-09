@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { setCookie } from "hono/cookie";
+import { authorization } from "../middleware/authorization.js";
 import {
 	createSession,
 	deleteSession,
@@ -14,7 +15,7 @@ import type { Environment } from "../utility/types.js";
 
 export const sessions = new Hono<Environment>();
 
-sessions.post("/", async (c) => {
+sessions.post("/", authorization("DRIVER", "PLANNER", "ADMIN"), async (c) => {
 	const session = await createSession(await c.req.json());
 	setCookie(c, SESSION_COOKIE_KEY, session.id, {
 		...SESSION_COOKIE_CONIG,
@@ -28,7 +29,7 @@ sessions.post("/", async (c) => {
 	);
 });
 
-sessions.get("/", async (c) => {
+sessions.get("/", authorization("ADMIN"), async (c) => {
 	const sessions = await getSessions(c.req.query());
 	return c.json(
 		{
@@ -38,7 +39,7 @@ sessions.get("/", async (c) => {
 	);
 });
 
-sessions.get("/:id", async (c) => {
+sessions.get("/:id", authorization("DRIVER", "PLANNER", "ADMIN"), async (c) => {
 	const id = c.req.param("id");
 	const session = await getSession(id);
 	return c.json(
@@ -49,13 +50,17 @@ sessions.get("/:id", async (c) => {
 	);
 });
 
-sessions.delete("/:id", async (c) => {
-	const id = c.req.param("id");
-	const session = await deleteSession(id);
-	return c.json(
-		{
-			data: session,
-		},
-		200,
-	);
-});
+sessions.delete(
+	"/:id",
+	authorization("DRIVER", "PLANNER", "ADMIN"),
+	async (c) => {
+		const id = c.req.param("id");
+		const session = await deleteSession(id);
+		return c.json(
+			{
+				data: session,
+			},
+			200,
+		);
+	},
+);
