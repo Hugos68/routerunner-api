@@ -4,6 +4,7 @@ export class RouterunnerResponse {
 		name: string;
 		message: string;
 	} | null;
+	timestamp: Date;
 
 	constructor(
 		data: unknown | null,
@@ -11,6 +12,7 @@ export class RouterunnerResponse {
 	) {
 		this.data = data;
 		this.error = error;
+		this.timestamp = new Date();
 	}
 
 	static data(data: unknown | null) {
