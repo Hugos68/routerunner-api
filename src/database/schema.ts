@@ -24,7 +24,10 @@ export const sessionsTable = pgTable("sessions", {
 	id: uuid("id").primaryKey().defaultRandom(),
 	userId: uuid("user_id")
 		.notNull()
-		.references(() => usersTable.id)
+		.references(() => usersTable.id, {
+			onDelete: "cascade",
+			onUpdate: "cascade",
+		})
 		.unique(),
 	expiresAt: timestamp("expires_at")
 		.notNull()
@@ -68,7 +71,10 @@ export const ordersTable = pgTable("orders", {
 	deliveryInstructions: text("delivery_instructions").notNull(),
 	status: text("status", { enum: ["GESLOTEN", "OPEN"] }),
 	tripId: uuid("trip_id")
-		.references(() => tripsTable.id)
+		.references(() => tripsTable.id, {
+			onDelete: "cascade",
+			onUpdate: "cascade",
+		})
 		.notNull(),
 });
 
@@ -79,7 +85,10 @@ export const linesTable = pgTable("lines", {
 	productName: text("product_name").notNull(),
 	packageType: text("package_type").notNull(),
 	orderId: uuid("order_id")
-		.references(() => ordersTable.id)
+		.references(() => ordersTable.id, {
+			onDelete: "cascade",
+			onUpdate: "cascade",
+		})
 		.notNull(),
 });
 
@@ -98,7 +107,10 @@ export const notesTable = pgTable("notes", {
 	content: text("content").notNull(),
 	photo: text("photo"),
 	orderId: uuid("order_id")
-		.references(() => ordersTable.id)
+		.references(() => ordersTable.id, {
+			onDelete: "cascade",
+			onUpdate: "cascade",
+		})
 		.notNull(),
 });
 
@@ -107,7 +119,10 @@ export const retourPackagingsTable = pgTable("retour_packagings", {
 	quantity: integer("quantity").notNull(),
 	packageType: text("package_type").notNull(),
 	orderId: uuid("order_id")
-		.references(() => ordersTable.id)
+		.references(() => ordersTable.id, {
+			onDelete: "cascade",
+			onUpdate: "cascade",
+		})
 		.notNull(),
 });
 
