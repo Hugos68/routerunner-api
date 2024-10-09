@@ -9,7 +9,7 @@ import {
 import { usersTable } from "../database/schema.js";
 import { HASH_CONFIG } from "../utility/constants.js";
 import { createFilterConditions } from "../utility/create-filter-conditions.js";
-import { BadCredentialsError, NotFoundError } from "../utility/errors.js";
+import { NotFoundError, UnauthorizedError } from "../utility/errors.js";
 
 export const createSession = async (input: unknown) => {
 	const values = parse(pick(CreateUserSchema, ["username", "password"]), input);
@@ -26,7 +26,7 @@ export const createSession = async (input: unknown) => {
 		HASH_CONFIG.algorithm,
 	);
 	if (!passwordMatches) {
-		throw new BadCredentialsError();
+		throw new UnauthorizedError();
 	}
 	const [session] = await database
 		.insert(sessionsTable)

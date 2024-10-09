@@ -1,71 +1,40 @@
 import type { ErrorHandler } from "hono";
+import type { StatusCode } from "hono/utils/http-status";
 import { ValiError } from "valibot";
 import {
-	BadCredentialsError,
 	InvalidFilterError,
 	NotFoundError,
-} from "../utility/errors.js";
+	UnauthorizedError,
+} from "../utility/errors.ts";
+
+const errorStatusCodeMap = new Map<unknown, StatusCode>([
+	[ValiError, 400],
+	[InvalidFilterError, 400],
+	[UnauthorizedError, 401],
+	[NotFoundError, 404],
+	[Error, 500],
+]);
 
 export const onError: ErrorHandler = (err, c) => {
-	if (err instanceof ValiError) {
-		return c.json(
-			{
-				error: {
-					code: err.name,
-					message: err.message,
-				},
-			},
-			400,
-		);
-	}
-	if (err instanceof NotFoundError) {
-		return c.json(
-			{
-				error: {
-					code: err.name,
-					message: err.message,
-				},
-			},
-			404,
-		);
-	}
-	if (err instanceof BadCredentialsError) {
-		return c.json(
-			{
-				error: {
-					code: err.name,
-					message: err.message,
-				},
-			},
-			401,
-		);
-	}
-	if (err instanceof InvalidFilterError) {
-		return c.json(
-			{
-				error: {
-					code: err.name,
-					message: err.message,
-				},
-			},
-			400,
-		);
-	}
 	if (err instanceof Error) {
+		const statusCode = errorStatusCodeMap.get(err) || 500;
 		return c.json(
 			{
 				error: {
-					code: err.name,
+					name: err.name,
 					message: err.message,
 				},
 			},
-			500,
+			statusCode,
 		);
 	}
-	return c.json({
-		error: {
-			code: "Unknown",
-			message: "An unknown error occurred",
+	return c.json(
+		{
+			error: {
+				code: "Unknown",
+				message: "An unknown error occurred",
+			},
 		},
-	});
+		500,
+	);
 };

@@ -5,13 +5,6 @@ export class NotFoundError extends Error {
 	}
 }
 
-export class BadCredentialsError extends Error {
-	constructor() {
-		super("The provided credentials are incorrect.");
-		this.name = "BadCredentialsError";
-	}
-}
-
 export class InvalidFilterError extends Error {
 	constructor(property: string, resource: string) {
 		super(
