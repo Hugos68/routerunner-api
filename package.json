@@ -3,6 +3,7 @@
 	"scripts": {
 		"dev": "bun --hot src/index.ts",
 		"drizzle:push": "bun --bun drizzle-kit push",
+		"drizzle:studio": "bun --bun drizzle-kit studio",
 		"drizzle:seed": "bun run src/database/seed.ts",
 		"biome:check": "bun biome check --write",
 		"biome:ci": "bun biome ci"
