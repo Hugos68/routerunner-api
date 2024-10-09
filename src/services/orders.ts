@@ -34,7 +34,7 @@ export const getOrder = async (id: Order["id"]) => {
 		.from(ordersTable)
 		.where(eq(ordersTable.id, id));
 	if (order === undefined) {
-		throw new NotFoundError(`Order with id ${id} not found`);
+		throw new NotFoundError();
 	}
 	return order;
 };
@@ -47,7 +47,7 @@ export const updateOrder = async (id: Order["id"], input: unknown) => {
 		.where(eq(ordersTable.id, id))
 		.returning();
 	if (order === undefined) {
-		throw new NotFoundError(`Order with id ${id} not found`);
+		throw new NotFoundError();
 	}
 	return order;
 };
@@ -58,7 +58,7 @@ export const deleteOrder = async (id: Order["id"]) => {
 		.where(eq(ordersTable.id, id))
 		.returning();
 	if (order === undefined) {
-		throw new NotFoundError(`Order with id ${id} not found`);
+		throw new NotFoundError();
 	}
 	return order;
 };

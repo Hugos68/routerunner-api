@@ -34,7 +34,7 @@ export const getTrip = async (id: Trip["id"]) => {
 		.from(tripsTable)
 		.where(eq(tripsTable.id, id));
 	if (trip === undefined) {
-		throw new NotFoundError(`Trip with id ${id} not found`);
+		throw new NotFoundError();
 	}
 	return trip;
 };
@@ -47,7 +47,7 @@ export const updateTrip = async (id: Trip["id"], input: unknown) => {
 		.where(eq(tripsTable.id, id))
 		.returning();
 	if (trip === undefined) {
-		throw new NotFoundError(`Trip with id ${id} not found`);
+		throw new NotFoundError();
 	}
 	return trip;
 };
@@ -58,7 +58,7 @@ export const deleteTrip = async (id: Trip["id"]) => {
 		.where(eq(tripsTable.id, id))
 		.returning();
 	if (trip === undefined) {
-		throw new NotFoundError(`Trip with id ${id} not found`);
+		throw new NotFoundError();
 	}
 	return trip;
 };

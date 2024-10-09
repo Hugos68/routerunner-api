@@ -9,7 +9,7 @@ import {
 import { usersTable } from "../database/schema.js";
 import { HASH_CONFIG } from "../utility/constants.js";
 import { createFilterConditions } from "../utility/create-filter-conditions.js";
-import { BadCredentialsError, NotFoundError } from "../utility/errors.js";
+import { NotFoundError, UnauthorizedError } from "../utility/errors.js";
 
 export const createSession = async (input: unknown) => {
 	const values = parse(pick(CreateUserSchema, ["username", "password"]), input);
@@ -18,9 +18,7 @@ export const createSession = async (input: unknown) => {
 		.from(usersTable)
 		.where(eq(usersTable.username, values.username));
 	if (user === undefined) {
-		throw new NotFoundError(
-			`User with username "${values.username}" not found`,
-		);
+		throw new NotFoundError();
 	}
 	const passwordMatches = await Bun.password.verify(
 		values.password,
@@ -28,7 +26,7 @@ export const createSession = async (input: unknown) => {
 		HASH_CONFIG.algorithm,
 	);
 	if (!passwordMatches) {
-		throw new BadCredentialsError();
+		throw new UnauthorizedError();
 	}
 	const [session] = await database
 		.insert(sessionsTable)
@@ -57,7 +55,7 @@ export const getSession = async (id: Session["id"]) => {
 		.from(sessionsTable)
 		.where(eq(sessionsTable.id, id));
 	if (session === undefined) {
-		throw new NotFoundError(`Session with id ${id} not found`);
+		throw new NotFoundError();
 	}
 	return session;
 };
@@ -68,7 +66,7 @@ export const deleteSession = async (id: Session["id"]) => {
 		.where(eq(sessionsTable.id, id))
 		.returning();
 	if (session === undefined) {
-		throw new NotFoundError(`Session with id ${id} not found`);
+		throw new NotFoundError();
 	}
 	return session;
 };

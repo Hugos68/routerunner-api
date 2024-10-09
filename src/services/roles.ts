@@ -34,7 +34,7 @@ export const getRole = async (id: Role["id"]) => {
 		.from(rolesTable)
 		.where(eq(rolesTable.id, id));
 	if (role === undefined) {
-		throw new NotFoundError(`Role with id ${id} not found`);
+		throw new NotFoundError();
 	}
 	return role;
 };
@@ -47,7 +47,7 @@ export const updateRole = async (id: Role["id"], input: unknown) => {
 		.where(eq(rolesTable.id, id))
 		.returning();
 	if (role === undefined) {
-		throw new NotFoundError(`Role with id ${id} not found`);
+		throw new NotFoundError();
 	}
 	return role;
 };
@@ -55,7 +55,7 @@ export const updateRole = async (id: Role["id"], input: unknown) => {
 export const deleteRole = async (id: Role["id"]) => {
 	const [role] = await database.delete(rolesTable).where(eq(rolesTable.id, id));
 	if (role === undefined) {
-		throw new NotFoundError(`Role with id ${id} not found`);
+		throw new NotFoundError();
 	}
 	return role;
 };

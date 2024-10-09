@@ -29,7 +29,7 @@ export const getNote = async (id: Note["id"]) => {
 		.from(notesTable)
 		.where(eq(notesTable.id, id));
 	if (note === undefined) {
-		throw new NotFoundError(`Note with id ${id} not found`);
+		throw new NotFoundError();
 	}
 	return note;
 };
@@ -42,7 +42,7 @@ export const updateNote = async (id: Note["id"], input: unknown) => {
 		.where(eq(notesTable.id, id))
 		.returning();
 	if (note === undefined) {
-		throw new NotFoundError(`Note with id ${id} not found`);
+		throw new NotFoundError();
 	}
 	return note;
 };
@@ -53,7 +53,7 @@ export const deleteNote = async (id: Note["id"]) => {
 		.where(eq(notesTable.id, id))
 		.returning();
 	if (note === undefined) {
-		throw new NotFoundError(`Note with id ${id} not found`);
+		throw new NotFoundError();
 	}
 	return note;
 };

@@ -37,7 +37,7 @@ export const getRetourPackaging = async (id: RetourPackaging["id"]) => {
 		.from(retourPackagingsTable)
 		.where(eq(retourPackagingsTable.id, id));
 	if (retourPackaging === undefined) {
-		throw new NotFoundError(`Retour packaging with id ${id} not found`);
+		throw new NotFoundError();
 	}
 	return retourPackaging;
 };
@@ -53,7 +53,7 @@ export const updateRetourPackaging = async (
 		.where(eq(retourPackagingsTable.id, id))
 		.returning();
 	if (retourPackaging === undefined) {
-		throw new NotFoundError(`Retour packaging with id ${id} not found`);
+		throw new NotFoundError();
 	}
 	return retourPackaging;
 };
@@ -64,7 +64,7 @@ export const deleteRetourPackaging = async (id: RetourPackaging["id"]) => {
 		.where(eq(retourPackagingsTable.id, id))
 		.returning();
 	if (retourPackaging === undefined) {
-		throw new NotFoundError(`Retour packaging with id ${id} not found`);
+		throw new NotFoundError();
 	}
 	return retourPackaging;
 };

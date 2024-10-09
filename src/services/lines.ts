@@ -34,7 +34,7 @@ export const getLine = async (id: Line["id"]) => {
 		.from(linesTable)
 		.where(eq(linesTable.id, id));
 	if (line === undefined) {
-		throw new NotFoundError(`Line with id ${id} not found`);
+		throw new NotFoundError();
 	}
 	return line;
 };
@@ -47,7 +47,7 @@ export const updateLine = async (id: Line["id"], input: unknown) => {
 		.where(eq(linesTable.id, id))
 		.returning();
 	if (line === undefined) {
-		throw new NotFoundError(`Line with id ${id} not found`);
+		throw new NotFoundError();
 	}
 	return line;
 };
@@ -58,7 +58,7 @@ export const deleteLine = async (id: Line["id"]) => {
 		.where(eq(linesTable.id, id))
 		.returning();
 	if (line === undefined) {
-		throw new NotFoundError(`Line with id ${id} not found`);
+		throw new NotFoundError();
 	}
 	return line;
 };

@@ -1,5 +1,5 @@
 {
-	"name": "trucker_app_backend",
+	"name": "routerunner",
 	"scripts": {
 		"dev": "bun --hot src/index.ts",
 		"check": "bun biome check --write",
