@@ -3,9 +3,9 @@
 	"scripts": {
 		"dev": "bun --hot src/index.ts",
 		"check": "bun biome check --write",
-		"push": "bun --bun drizzle-kit push --config=./drizzle.config.ts",
+		"database:push": "bun --bun drizzle-kit push --config=./drizzle.config.ts",
 		"ci:check": "bun biome check",
-		"seed": "bun run src/database/seed.ts "
+		"database:seed": "bun run src/database/seed.ts "
 	},
 	"dependencies": {
 		"cors": "^2.8.5",
