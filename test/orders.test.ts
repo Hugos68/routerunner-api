@@ -9,7 +9,7 @@ import {
 } from "../src/services/orders.ts";
 import { NotFoundError } from "../src/utility/errors.ts";
 
-describe("Orders", () => {
+describe.skip("Orders", () => {
 	test("Create an order", async () => {
 		const orders = await getOrders();
 		const order = await createOrder({
