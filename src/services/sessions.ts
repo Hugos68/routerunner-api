@@ -18,9 +18,7 @@ export const createSession = async (input: unknown) => {
 		.from(usersTable)
 		.where(eq(usersTable.username, values.username));
 	if (user === undefined) {
-		throw new NotFoundError(
-			`User with username "${values.username}" not found`,
-		);
+		throw new NotFoundError();
 	}
 	const passwordMatches = await Bun.password.verify(
 		values.password,
