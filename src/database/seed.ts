@@ -1,4 +1,4 @@
-import { database } from "./database";
+import { database } from "./database.ts";
 import {
 	addressesTable,
 	linesTable,
@@ -6,7 +6,8 @@ import {
 	rolesTable,
 	tripsTable,
 	usersTable,
-} from "./schema";
+} from "./schema.ts";
+
 await database.delete(usersTable);
 await database.delete(rolesTable);
 await database.delete(addressesTable);
@@ -179,4 +180,4 @@ await database.insert(linesTable).values({
 	productName: "Peren",
 });
 
-console.log("Database seeded");
+process.exit(0);
