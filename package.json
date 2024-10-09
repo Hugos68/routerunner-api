@@ -5,8 +5,7 @@
 		"drizzle:push": "bun --bun drizzle-kit push",
 		"drizzle:studio": "bun --bun drizzle-kit studio",
 		"drizzle:seed": "bun run src/database/seed.ts",
-		"biome:check": "bun biome check --write",
-		"biome:ci": "bun biome ci"
+		"biome:check": "bun biome check --write"
 	},
 	"dependencies": {
 		"drizzle-orm": "^0.34.1",
