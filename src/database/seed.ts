@@ -43,18 +43,15 @@ const [driver] = await database
 if (driver === undefined) {
 	throw new Error("Failed to create driver");
 }
+await database.insert(usersTable).values({
+	username: "planner",
+	password: "1234567890",
+	roleId: plannerRole.id,
+});
+
 await database
 	.insert(usersTable)
-	.values({
-		username: "planner",
-		password: "1234567890",
-		roleId: plannerRole.id,
-	})
-	.returning();
-await database
-	.insert(usersTable)
-	.values({ username: "admin", password: "1234567890", roleId: adminRole.id })
-	.returning();
+	.values({ username: "admin", password: "1234567890", roleId: adminRole.id });
 
 const [address] = await database
 	.insert(addressesTable)
@@ -158,37 +155,28 @@ if (order2 === undefined) {
 	throw new Error("Failed to create order2");
 }
 
-await database
-	.insert(linesTable)
-	.values({
-		palletId: "1",
-		quantity: 10,
-		packageType: "Kratten",
-		orderId: order1.id,
-		productName: "Bananen",
-	})
-	.returning();
+await database.insert(linesTable).values({
+	palletId: "1",
+	quantity: 10,
+	packageType: "Kratten",
+	orderId: order1.id,
+	productName: "Bananen",
+});
 
-await database
-	.insert(linesTable)
-	.values({
-		palletId: "2",
-		quantity: 20,
-		packageType: "Collie",
-		orderId: order2.id,
-		productName: "Appels",
-	})
-	.returning();
+await database.insert(linesTable).values({
+	palletId: "2",
+	quantity: 20,
+	packageType: "Collie",
+	orderId: order2.id,
+	productName: "Appels",
+});
 
-await database
-	.insert(linesTable)
-	.values({
-		palletId: "3",
-		quantity: 30,
-		packageType: "Dozen",
-		orderId: order2.id,
-		productName: "Peren",
-	})
-	.returning();
+await database.insert(linesTable).values({
+	palletId: "3",
+	quantity: 30,
+	packageType: "Dozen",
+	orderId: order2.id,
+	productName: "Peren",
+});
 
 console.log("Database seeded");

@@ -107,7 +107,10 @@ export const notesTable = pgTable("notes", {
 	content: text("content").notNull(),
 	photo: text("photo"),
 	orderId: uuid("order_id")
-		.references(() => ordersTable.id)
+		.references(() => ordersTable.id, {
+			onDelete: "cascade",
+			onUpdate: "cascade",
+		})
 		.notNull(),
 });
 
@@ -116,7 +119,10 @@ export const retourPackagingsTable = pgTable("retour_packagings", {
 	quantity: integer("quantity").notNull(),
 	packageType: text("package_type").notNull(),
 	orderId: uuid("order_id")
-		.references(() => ordersTable.id)
+		.references(() => ordersTable.id, {
+			onDelete: "cascade",
+			onUpdate: "cascade",
+		})
 		.notNull(),
 });
 
