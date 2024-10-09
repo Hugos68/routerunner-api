@@ -27,16 +27,7 @@ app.notFound(notFound);
  */
 app.use(logger());
 app.use(authentication);
-app.use(
-	"/*",
-	cors({
-		origin: "*",
-		allowMethods: ["GET", "POST", "OPTIONS", "DELETE"],
-		allowHeaders: ["Content-Type", "Authorization"],
-		exposeHeaders: ["Content-Length", "Authorization"],
-		credentials: true,
-	}),
-);
+app.use("/*", cors());
 
 /**
  * Routes
