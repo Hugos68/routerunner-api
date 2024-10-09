@@ -12,7 +12,7 @@ import type { Environment } from "../utility/types.js";
 
 export const trips = new Hono<Environment>();
 
-trips.post("/", authorization("DRIVER", "PLANNER", "ADMIN"), async (c) => {
+trips.post("/", authorization("PLANNER", "ADMIN"), async (c) => {
 	const trip = await createTrip(await c.req.json());
 	return c.json(RouterunnerResponse.data(trip), 201);
 });
@@ -28,13 +28,13 @@ trips.get("/:id", authorization("DRIVER", "PLANNER", "ADMIN"), async (c) => {
 	return c.json(RouterunnerResponse.data(trip), 200);
 });
 
-trips.patch("/:id", authorization("DRIVER", "PLANNER", "ADMIN"), async (c) => {
+trips.patch("/:id", authorization("PLANNER", "ADMIN"), async (c) => {
 	const id = c.req.param("id");
 	const trip = await updateTrip(id, await c.req.json());
 	return c.json(RouterunnerResponse.data(trip), 200);
 });
 
-trips.delete("/:id", authorization("DRIVER", "PLANNER", "ADMIN"), async (c) => {
+trips.delete("/:id", authorization("PLANNER", "ADMIN"), async (c) => {
 	const id = c.req.param("id");
 	const trip = await deleteTrip(id);
 	return c.json(RouterunnerResponse.data(trip), 200);
