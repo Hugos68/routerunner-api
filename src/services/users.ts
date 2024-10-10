@@ -1,9 +1,9 @@
 import { eq } from "drizzle-orm";
 import { database } from "../database/database.ts";
 import { usersTable } from "../database/tables/users.ts";
+import type { Actor } from "../types/actor.ts";
 import type { User, UserToCreate, UserToUpdate } from "../types/users.ts";
 import { NotFoundError, UnauthorizedError } from "../utility/errors.ts";
-import type { Actor } from "../types/actor.ts";
 
 export const getUser = async (actor: Actor, id: User["id"]) => {
 	if (actor === null || actor.role.name !== "ADMIN" || id !== actor.id) {
