@@ -1,16 +1,12 @@
 import { eq } from "drizzle-orm";
 import { database } from "../database/database.ts";
 import { usersTable } from "../database/tables/users.ts";
-import type { ServiceContext } from "../types/service-context.ts";
 import type { User, UserToCreate, UserToUpdate } from "../types/users.ts";
 import { NotFoundError, UnauthorizedError } from "../utility/errors.ts";
+import type { Actor } from "../types/actor.ts";
 
-export const getUser = async (ctx: ServiceContext, id: User["id"]) => {
-	if (
-		ctx.session === null ||
-		ctx.session.user.role.name !== "ADMIN" ||
-		id !== ctx.session.user.id
-	) {
+export const getUser = async (actor: Actor, id: User["id"]) => {
+	if (actor === null || actor.role.name !== "ADMIN" || id !== actor.id) {
 		throw new UnauthorizedError();
 	}
 	const [user] = await database
@@ -23,8 +19,8 @@ export const getUser = async (ctx: ServiceContext, id: User["id"]) => {
 	return user;
 };
 
-export const getUsers = async (ctx: ServiceContext) => {
-	if (ctx.session === null || ctx.session.user.role.name !== "ADMIN") {
+export const getUsers = async (actor: Actor) => {
+	if (actor === null || actor.role.name !== "ADMIN") {
 		throw new UnauthorizedError();
 	}
 	const users = await database.select().from(usersTable);
@@ -32,10 +28,10 @@ export const getUsers = async (ctx: ServiceContext) => {
 };
 
 export const createUser = async (
-	ctx: ServiceContext,
+	caller: Actor | null,
 	userToCreate: UserToCreate,
 ) => {
-	if (ctx.session === null || ctx.session.user.role.name !== "ADMIN") {
+	if (caller === null || caller.role.name !== "ADMIN") {
 		throw new UnauthorizedError();
 	}
 	const [user] = await database.insert(usersTable).values(userToCreate);
@@ -46,15 +42,11 @@ export const createUser = async (
 };
 
 export const updateUser = async (
-	ctx: ServiceContext,
+	actor: Actor,
 	id: User["id"],
 	userToUpdate: UserToUpdate,
 ) => {
-	if (
-		ctx.session === null ||
-		ctx.session.user.role.name !== "ADMIN" ||
-		id !== ctx.session.user.id
-	) {
+	if (actor === null || actor.role.name !== "ADMIN" || id !== actor.id) {
 		throw new UnauthorizedError();
 	}
 	const [user] = await database
@@ -68,12 +60,8 @@ export const updateUser = async (
 	return user;
 };
 
-export const deleteUser = async (ctx: ServiceContext, id: User["id"]) => {
-	if (
-		ctx.session === null ||
-		ctx.session.user.role.name !== "ADMIN" ||
-		id !== ctx.session.user.id
-	) {
+export const deleteUser = async (actor: Actor, id: User["id"]) => {
+	if (actor === null || actor.role.name !== "ADMIN" || id !== actor.id) {
 		throw new UnauthorizedError();
 	}
 	const [user] = await database

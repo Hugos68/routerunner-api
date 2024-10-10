@@ -11,7 +11,7 @@ import { SESSION_COOKIE_KEY, SESSION_LIFETIME } from "../utility/constants.js";
 export const authentication = createMiddleware<Environment>(async (c, next) => {
 	const sessionId = getCookie(c, SESSION_COOKIE_KEY);
 	if (sessionId === undefined) {
-		c.set("session", null);
+		c.set("actor", null);
 		await next();
 		return;
 	}
@@ -27,14 +27,14 @@ export const authentication = createMiddleware<Environment>(async (c, next) => {
 		.innerJoin(rolesTable, eq(rolesTable.id, usersTable.roleId));
 
 	if (result === undefined) {
-		c.set("session", null);
+		c.set("actor", null);
 		await next();
 		return;
 	}
 	const expired = result.session.expiresAt < new Date();
 	if (expired) {
 		await database.delete(sessionsTable).where(eq(sessionsTable.id, sessionId));
-		c.set("session", null);
+		c.set("actor", null);
 		await next();
 		return;
 	}
@@ -42,11 +42,9 @@ export const authentication = createMiddleware<Environment>(async (c, next) => {
 		.update(sessionsTable)
 		.set({ expiresAt: new Date(Date.now() + SESSION_LIFETIME) })
 		.where(eq(sessionsTable.id, sessionId));
-	c.set("session", {
-		user: {
-			...result.user,
-			role: result.role,
-		},
+	c.set("actor", {
+		...result.user,
+		role: result.role,
 	});
 	await next();
 });

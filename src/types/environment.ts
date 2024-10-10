@@ -1,11 +1,8 @@
-import type { Role } from "./roles.ts";
-import type { User } from "./users.ts";
+import type { Actor } from "./actor.ts";
 
 export interface Environment {
 	// biome-ignore lint/style/useNamingConvention:
 	Variables: {
-		session: {
-			user: User & { role: Role };
-		} | null;
+		actor: Actor | null;
 	};
 }
