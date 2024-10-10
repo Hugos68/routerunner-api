@@ -2,7 +2,7 @@ import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
-import { users } from "./controllers/users.ts";
+import users from "./controllers/users.ts";
 
 const app = new OpenAPIHono().basePath("/api/v1");
 
@@ -29,5 +29,4 @@ app.doc("/doc", {
 });
 app.get("/ui", swaggerUI({ url: "/api/v1/doc" }));
 
-// biome-ignore lint/style/noDefaultExport: Required to run the app
 export default app;

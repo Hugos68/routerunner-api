@@ -1,16 +1,15 @@
 import { eq } from "drizzle-orm";
 import { database } from "../database/database.ts";
 import { usersTable } from "../database/tables/users.ts";
-import { CreateUserSchema, UpdateUserSchema } from "../schemas/users.ts";
 import type { ServiceContext } from "../types/service-context.ts";
-import type { User } from "../types/users.ts";
+import type { User, UserToCreate, UserToUpdate } from "../types/users.ts";
 import { NotFoundError, UnauthorizedError } from "../utility/errors.ts";
 
-export const getUser = async (context: ServiceContext, id: User["id"]) => {
+export const getUser = async (ctx: ServiceContext, id: User["id"]) => {
 	if (
-		context.session === null ||
-		context.session.user.role.name !== "ADMIN" ||
-		id !== context.session.user.id
+		ctx.session === null ||
+		ctx.session.user.role.name !== "ADMIN" ||
+		id !== ctx.session.user.id
 	) {
 		throw new UnauthorizedError();
 	}
@@ -24,45 +23,65 @@ export const getUser = async (context: ServiceContext, id: User["id"]) => {
 	return user;
 };
 
-export const getUsers = async (context: ServiceContext) => {
-	if (context.session === null || context.session.user.role.name !== "ADMIN") {
+export const getUsers = async (ctx: ServiceContext) => {
+	if (ctx.session === null || ctx.session.user.role.name !== "ADMIN") {
 		throw new UnauthorizedError();
 	}
 	const users = await database.select().from(usersTable);
 	return users;
 };
 
-export const createUser = async (context: ServiceContext, payload: unknown) => {
-	if (context.session === null || context.session.user.role.name !== "ADMIN") {
+export const createUser = async (
+	ctx: ServiceContext,
+	userToCreate: UserToCreate,
+) => {
+	if (ctx.session === null || ctx.session.user.role.name !== "ADMIN") {
 		throw new UnauthorizedError();
 	}
-	const user = CreateUserSchema.parse(payload);
-	await database.insert(usersTable).values(user);
+	const [user] = await database.insert(usersTable).values(userToCreate);
+	if (user === undefined) {
+		throw new Error("Failed to create user");
+	}
+	return user;
 };
 
 export const updateUser = async (
-	context: ServiceContext,
+	ctx: ServiceContext,
 	id: User["id"],
-	input: unknown,
+	userToUpdate: UserToUpdate,
 ) => {
 	if (
-		context.session === null ||
-		context.session.user.role.name !== "ADMIN" ||
-		id !== context.session.user.id
+		ctx.session === null ||
+		ctx.session.user.role.name !== "ADMIN" ||
+		id !== ctx.session.user.id
 	) {
 		throw new UnauthorizedError();
 	}
-	const user = UpdateUserSchema.parse(input);
-	await database.update(usersTable).set(user).where(eq(usersTable.id, id));
+	const [user] = await database
+		.update(usersTable)
+		.set(userToUpdate)
+		.where(eq(usersTable.id, id))
+		.returning();
+	if (user === undefined) {
+		throw new Error("Failed to update user");
+	}
+	return user;
 };
 
-export const deleteUser = async (context: ServiceContext, id: User["id"]) => {
+export const deleteUser = async (ctx: ServiceContext, id: User["id"]) => {
 	if (
-		context.session === null ||
-		context.session.user.role.name !== "ADMIN" ||
-		id !== context.session.user.id
+		ctx.session === null ||
+		ctx.session.user.role.name !== "ADMIN" ||
+		id !== ctx.session.user.id
 	) {
 		throw new UnauthorizedError();
 	}
-	await database.delete(usersTable).where(eq(usersTable.id, id));
+	const [user] = await database
+		.delete(usersTable)
+		.where(eq(usersTable.id, id))
+		.returning();
+	if (user === undefined) {
+		throw new Error("Failed to delete user");
+	}
+	return user;
 };

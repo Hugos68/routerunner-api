@@ -1,5 +1,5 @@
+import { z } from "@hono/zod-openapi";
 import { createSelectSchema } from "drizzle-zod";
-import { z } from "zod";
 import { usersTable } from "../database/tables/users.ts";
 
 export const UserSchema = createSelectSchema(usersTable, {
