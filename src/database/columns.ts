@@ -2,7 +2,7 @@ import { customType } from "drizzle-orm/pg-core";
 import { HASH_CONFIG } from "../utility/constants.js";
 
 export const hash = customType<{ data: string }>({
-	dataType: () => {
+	dataType() {
 		return "text";
 	},
 	toDriver: (value) => {

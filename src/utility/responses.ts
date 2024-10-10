@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export class RouterunnerResponse {
 	data: unknown | null;
 	error: {
@@ -23,3 +25,22 @@ export class RouterunnerResponse {
 		return new RouterunnerResponse(null, error);
 	}
 }
+
+export const createOkResponseSchema = (DataSchema?: z.Schema) => {
+	return z.object({
+		data: DataSchema ? DataSchema : z.null(),
+		error: z.null(),
+		timestamp: z.date(),
+	});
+};
+
+export const createErrorResponseSchema = () => {
+	return z.object({
+		data: z.null(),
+		error: z.object({
+			name: z.string(),
+			message: z.string(),
+		}),
+		timestamp: z.date(),
+	});
+};

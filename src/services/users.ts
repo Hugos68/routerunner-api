@@ -1,44 +1,21 @@
-import { and, eq, getTableColumns } from "drizzle-orm";
-import { parse } from "valibot";
-import { database } from "../database/database.js";
-import {
-	CreateUserSchema,
-	UpdateUserSchema,
-	type User,
-	usersTable,
-} from "../database/schema.js";
-import { createFilterConditions } from "../utility/create-filter-conditions.js";
-import { NotFoundError } from "../utility/errors.js";
+import { eq } from "drizzle-orm";
+import { database } from "../database/database.ts";
+import { usersTable } from "../database/tables/users.ts";
+import { CreateUserSchema, UpdateUserSchema } from "../schemas/users.ts";
+import type { ServiceContext } from "../types/service-context.ts";
+import type { User } from "../types/users.ts";
+import { NotFoundError, UnauthorizedError } from "../utility/errors.ts";
 
-const safeColumns = (() => {
-	const { password: _, ...columns } = getTableColumns(usersTable);
-	return columns;
-})();
-
-export const createUser = async (input: unknown) => {
-	const values = parse(CreateUserSchema, input);
-	const [user] = await database
-		.insert(usersTable)
-		.values(values)
-		.returning(safeColumns);
-	if (user === undefined) {
-		throw new Error("Failed to create user");
+export const getUser = async (context: ServiceContext, id: User["id"]) => {
+	if (
+		context.session === null ||
+		context.session.user.role.name !== "ADMIN" ||
+		id !== context.session.user.id
+	) {
+		throw new UnauthorizedError();
 	}
-	return user;
-};
-
-export const getUsers = async (filter: Record<string, unknown> = {}) => {
-	const conditions = createFilterConditions(filter, usersTable);
-	const users = await database
-		.select(safeColumns)
-		.from(usersTable)
-		.where(and(...conditions));
-	return users;
-};
-
-export const getUser = async (id: User["id"]) => {
 	const [user] = await database
-		.select(safeColumns)
+		.select()
 		.from(usersTable)
 		.where(eq(usersTable.id, id));
 	if (user === undefined) {
@@ -47,26 +24,45 @@ export const getUser = async (id: User["id"]) => {
 	return user;
 };
 
-export const updateUser = async (id: User["id"], input: unknown) => {
-	const values = parse(UpdateUserSchema, input);
-	const [user] = await database
-		.update(usersTable)
-		.set(values)
-		.where(eq(usersTable.id, id))
-		.returning(safeColumns);
-	if (user === undefined) {
-		throw new NotFoundError();
+export const getUsers = async (context: ServiceContext) => {
+	if (context.session === null || context.session.user.role.name !== "ADMIN") {
+		throw new UnauthorizedError();
 	}
-	return user;
+	const users = await database.select().from(usersTable);
+	return users;
 };
 
-export const deleteUser = async (id: User["id"]) => {
-	const [user] = await database
-		.delete(usersTable)
-		.where(eq(usersTable.id, id))
-		.returning(safeColumns);
-	if (user === undefined) {
-		throw new NotFoundError();
+export const createUser = async (context: ServiceContext, payload: unknown) => {
+	if (context.session === null || context.session.user.role.name !== "ADMIN") {
+		throw new UnauthorizedError();
 	}
-	return user;
+	const user = CreateUserSchema.parse(payload);
+	await database.insert(usersTable).values(user);
+};
+
+export const updateUser = async (
+	context: ServiceContext,
+	id: User["id"],
+	input: unknown,
+) => {
+	if (
+		context.session === null ||
+		context.session.user.role.name !== "ADMIN" ||
+		id !== context.session.user.id
+	) {
+		throw new UnauthorizedError();
+	}
+	const user = UpdateUserSchema.parse(input);
+	await database.update(usersTable).set(user).where(eq(usersTable.id, id));
+};
+
+export const deleteUser = async (context: ServiceContext, id: User["id"]) => {
+	if (
+		context.session === null ||
+		context.session.user.role.name !== "ADMIN" ||
+		id !== context.session.user.id
+	) {
+		throw new UnauthorizedError();
+	}
+	await database.delete(usersTable).where(eq(usersTable.id, id));
 };

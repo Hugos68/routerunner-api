@@ -1,12 +1,10 @@
 import { database } from "./database.ts";
-import {
-	addressesTable,
-	linesTable,
-	ordersTable,
-	rolesTable,
-	tripsTable,
-	usersTable,
-} from "./schema.ts";
+import { addressesTable } from "./tables/addresses.ts";
+import { linesTable } from "./tables/lines.ts";
+import { ordersTable } from "./tables/orders.ts";
+import { rolesTable } from "./tables/roles.ts";
+import { tripsTable } from "./tables/trips.ts";
+import { usersTable } from "./tables/users.ts";
 
 await database.delete(usersTable);
 await database.delete(rolesTable);
