@@ -1,3 +1,8 @@
-import type { sessionsTable } from "../database/tables/sessions.ts";
+import type { z } from "zod";
+import type {
+	CreateSessionSchema,
+	SessionSchema,
+} from "../schemas/sessions.ts";
 
-export type Session = typeof sessionsTable.$inferSelect;
+export type Session = z.infer<typeof SessionSchema>;
+export type SessionToCreate = z.infer<typeof CreateSessionSchema>;
