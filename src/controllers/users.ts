@@ -123,7 +123,7 @@ app.openapi(
 						schema: ErrorSchema,
 					},
 				},
-				description: "Resource not found",
+				description: "User not found",
 			},
 		},
 	}),
