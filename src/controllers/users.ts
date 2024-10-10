@@ -6,6 +6,7 @@ import {
 } from "../schemas/users.ts";
 import {
 	createUser,
+	deleteUser,
 	getUser,
 	getUsers,
 	updateUser,
@@ -33,7 +34,7 @@ app.openapi(
 						schema: CreateUserSchema,
 					},
 				},
-				description: "Create user",
+				description: "User to create",
 			},
 		},
 		responses: {
@@ -43,7 +44,7 @@ app.openapi(
 						schema: createOkSchema(UserSchema),
 					},
 				},
-				description: "OK",
+				description: "User created",
 			},
 			401: {
 				content: {
@@ -74,7 +75,7 @@ app.openapi(
 						schema: createOkSchema(UserSchema.array()),
 					},
 				},
-				description: "OK",
+				description: "Users retrieved",
 			},
 			401: {
 				content: {
@@ -107,7 +108,7 @@ app.openapi(
 						schema: createOkSchema(UserSchema),
 					},
 				},
-				description: "Get the user",
+				description: "User retrieved",
 			},
 			401: {
 				content: {
@@ -148,7 +149,7 @@ app.openapi(
 						schema: UpdateUserSchema,
 					},
 				},
-				description: "Create user",
+				description: "User to update",
 			},
 		},
 		responses: {
@@ -158,7 +159,7 @@ app.openapi(
 						schema: createOkSchema(UserSchema),
 					},
 				},
-				description: "Get the user",
+				description: "User updated",
 			},
 			401: {
 				content: {
@@ -184,6 +185,48 @@ app.openapi(
 		const userToUpdate = c.req.valid("json");
 		const user = await updateUser(actor, id, userToUpdate);
 		return c.json(RouterunnerResponse.ok(user), 200);
+	},
+);
+
+app.openapi(
+	createRoute({
+		method: "delete",
+		path: "/:id",
+		request: {
+			params: ParamsSchema,
+		},
+		responses: {
+			204: {
+				content: {
+					"application/json": {
+						schema: createOkSchema(UserSchema),
+					},
+				},
+				description: "User deleted",
+			},
+			401: {
+				content: {
+					"application/json": {
+						schema: ErrorSchema,
+					},
+				},
+				description: "Unauthorized",
+			},
+			404: {
+				content: {
+					"application/json": {
+						schema: ErrorSchema,
+					},
+				},
+				description: "User not found",
+			},
+		},
+	}),
+	async (c) => {
+		const actor = c.get("actor");
+		const id = c.req.param("id");
+		const user = await deleteUser(actor, id);
+		return c.json(RouterunnerResponse.ok(user), 204);
 	},
 );
 
