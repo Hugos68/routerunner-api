@@ -6,7 +6,7 @@ import type { Actor } from "../types/actor.ts";
 import type { Session, SessionToCreate } from "../types/session.ts";
 import {
 	BadCredentialsError,
-	NotFoundError,
+	ResourceNotFoundError,
 	UnauthorizedError,
 } from "../utility/errors.ts";
 
@@ -49,24 +49,23 @@ export const getSessions = async (actor: Actor) => {
 };
 
 export const getSession = async (actor: Actor, id: Session["id"]) => {
-	if (actor === null || actor.role.name !== "ADMIN" || id !== actor.id) {
-		throw new UnauthorizedError();
+	if (actor === null || actor.role.name !== "ADMIN" || actor.id !== id) {
+		throw new ResourceNotFoundError();
 	}
 	const [session] = await database
 		.select()
 		.from(sessionsTable)
 		.where(eq(sessionsTable.id, id));
 	if (session === undefined) {
-		throw new NotFoundError();
+		throw new ResourceNotFoundError();
 	}
 	return session;
 };
 
 export const deleteSession = async (actor: Actor, id: Session["id"]) => {
-	if (actor === null || actor.role.name !== "ADMIN" || id !== actor.id) {
-		throw new UnauthorizedError();
+	if (actor === null || actor.role.name !== "ADMIN" || actor.id !== id) {
+		throw new ResourceNotFoundError();
 	}
-
 	const [session] = await database
 		.delete(sessionsTable)
 		.where(eq(sessionsTable.id, id))

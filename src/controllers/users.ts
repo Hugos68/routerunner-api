@@ -17,9 +17,10 @@ import {
 	ErrorSchema,
 	RouterunnerResponse,
 	createOkSchema,
-} from "../utility/responses.ts";
+} from "../utility/response.ts";
 
 const app = new OpenAPIHono<Environment>();
+
 app.openapi(
 	createRoute({
 		method: "post",
@@ -122,7 +123,7 @@ app.openapi(
 						schema: ErrorSchema,
 					},
 				},
-				description: "User not found",
+				description: "Resource not found",
 			},
 		},
 	}),

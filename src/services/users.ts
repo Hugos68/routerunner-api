@@ -3,29 +3,7 @@ import { database } from "../database/database.ts";
 import { usersTable } from "../database/tables/users.ts";
 import type { Actor } from "../types/actor.ts";
 import type { User, UserToCreate, UserToUpdate } from "../types/users.ts";
-import { NotFoundError, UnauthorizedError } from "../utility/errors.ts";
-
-export const getUser = async (actor: Actor, id: User["id"]) => {
-	if (actor === null || actor.role.name !== "ADMIN" || id !== actor.id) {
-		throw new UnauthorizedError();
-	}
-	const [user] = await database
-		.select()
-		.from(usersTable)
-		.where(eq(usersTable.id, id));
-	if (user === undefined) {
-		throw new NotFoundError();
-	}
-	return user;
-};
-
-export const getUsers = async (actor: Actor) => {
-	if (actor === null || actor.role.name !== "ADMIN") {
-		throw new UnauthorizedError();
-	}
-	const users = await database.select().from(usersTable);
-	return users;
-};
+import { ResourceNotFoundError, UnauthorizedError } from "../utility/errors.ts";
 
 export const createUser = async (
 	caller: Actor | null,
@@ -41,13 +19,35 @@ export const createUser = async (
 	return user;
 };
 
+export const getUser = async (actor: Actor, id: User["id"]) => {
+	if (actor === null || actor.role.name !== "ADMIN" || id !== actor.id) {
+		throw new ResourceNotFoundError();
+	}
+	const [user] = await database
+		.select()
+		.from(usersTable)
+		.where(eq(usersTable.id, id));
+	if (user === undefined) {
+		throw new ResourceNotFoundError();
+	}
+	return user;
+};
+
+export const getUsers = async (actor: Actor) => {
+	if (actor === null || actor.role.name !== "ADMIN") {
+		throw new UnauthorizedError();
+	}
+	const users = await database.select().from(usersTable);
+	return users;
+};
+
 export const updateUser = async (
 	actor: Actor,
 	id: User["id"],
 	userToUpdate: UserToUpdate,
 ) => {
 	if (actor === null || actor.role.name !== "ADMIN" || id !== actor.id) {
-		throw new UnauthorizedError();
+		throw new ResourceNotFoundError();
 	}
 	const [user] = await database
 		.update(usersTable)
@@ -62,7 +62,7 @@ export const updateUser = async (
 
 export const deleteUser = async (actor: Actor, id: User["id"]) => {
 	if (actor === null || actor.role.name !== "ADMIN" || id !== actor.id) {
-		throw new UnauthorizedError();
+		throw new ResourceNotFoundError();
 	}
 	const [user] = await database
 		.delete(usersTable)

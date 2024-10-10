@@ -10,6 +10,5 @@ const client = postgres({
 });
 
 export const database = drizzle(client, {
-	logger: true,
 	casing: "snake_case",
 });
