@@ -1,9 +1,14 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { database } from "../database/database.ts";
 import { sessionsTable } from "../database/tables/sessions.ts";
 import { usersTable } from "../database/tables/users.ts";
 import type { Actor } from "../types/actor.ts";
-import type { Session, SessionToCreate } from "../types/session.ts";
+import type {
+	Session,
+	SessionQuery,
+	SessionToCreate,
+} from "../types/session.ts";
+import { createFilterConditions } from "../utility/create-filter-conditions.ts";
 import {
 	BadCredentialsError,
 	ResourceNotFoundError,
@@ -40,11 +45,14 @@ export const createSession = async (
 	return session;
 };
 
-export const getSessions = async (actor: Actor) => {
+export const getSessions = async (actor: Actor, query: SessionQuery) => {
 	if (actor === null || actor.role.name !== "ADMIN") {
 		throw new UnauthorizedError();
 	}
-	const sessions = await database.select().from(sessionsTable);
+	const sessions = await database
+		.select()
+		.from(sessionsTable)
+		.where(and(...createFilterConditions(query, sessionsTable)));
 	return sessions;
 };
 

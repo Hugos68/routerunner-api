@@ -2,6 +2,7 @@ import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
+import sessions from "./controllers/sessions.ts";
 import users from "./controllers/users.ts";
 import { notFound } from "./handlers/not-found.ts";
 import { onError } from "./handlers/on-error.ts";
@@ -28,6 +29,7 @@ app.notFound(notFound);
  * Routes
  */
 app.route("/users", users);
+app.route("/sessions", sessions);
 
 /**
  * OpenAPI

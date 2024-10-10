@@ -8,3 +8,4 @@ export const CreateSessionSchema = UserSchema.pick({
 	password: true,
 });
 export const SessionParamsSchema = SessionSchema.pick({ id: true });
+export const SessionQuerySchema = SessionSchema.partial();

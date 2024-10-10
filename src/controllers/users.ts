@@ -13,16 +13,14 @@ import {
 	updateUser,
 } from "../services/users.ts";
 import type { Environment } from "../types/environment.ts";
-import {
-	ErrorSchema,
-	RouterunnerResponse,
-	createOkSchema,
-} from "../utility/response.ts";
+import { createCommonOpenApiResponses } from "../utility/common-open-api-responses.ts";
+import { RouterunnerResponse, createOkSchema } from "../utility/response.ts";
 
 const app = new OpenAPIHono<Environment>();
 
 app.openapi(
 	createRoute({
+		tags: ["users"],
 		method: "post",
 		path: "/",
 		request: {
@@ -45,14 +43,7 @@ app.openapi(
 				},
 				description: "User created",
 			},
-			401: {
-				content: {
-					"application/json": {
-						schema: ErrorSchema,
-					},
-				},
-				description: "Unauthorized",
-			},
+			...createCommonOpenApiResponses("User"),
 		},
 	}),
 	async (c) => {
@@ -65,6 +56,7 @@ app.openapi(
 
 app.openapi(
 	createRoute({
+		tags: ["users"],
 		method: "get",
 		path: "/",
 		responses: {
@@ -76,14 +68,7 @@ app.openapi(
 				},
 				description: "Users retrieved",
 			},
-			401: {
-				content: {
-					"application/json": {
-						schema: ErrorSchema,
-					},
-				},
-				description: "Unauthorized",
-			},
+			...createCommonOpenApiResponses("User"),
 		},
 	}),
 	async (c) => {
@@ -95,6 +80,7 @@ app.openapi(
 
 app.openapi(
 	createRoute({
+		tags: ["users"],
 		method: "get",
 		path: "/:id",
 		request: {
@@ -109,22 +95,7 @@ app.openapi(
 				},
 				description: "User retrieved",
 			},
-			401: {
-				content: {
-					"application/json": {
-						schema: ErrorSchema,
-					},
-				},
-				description: "Unauthorized",
-			},
-			404: {
-				content: {
-					"application/json": {
-						schema: ErrorSchema,
-					},
-				},
-				description: "User not found",
-			},
+			...createCommonOpenApiResponses("User"),
 		},
 	}),
 	async (c) => {
@@ -137,6 +108,7 @@ app.openapi(
 
 app.openapi(
 	createRoute({
+		tags: ["users"],
 		method: "patch",
 		path: "/:id",
 		request: {
@@ -160,22 +132,7 @@ app.openapi(
 				},
 				description: "User updated",
 			},
-			401: {
-				content: {
-					"application/json": {
-						schema: ErrorSchema,
-					},
-				},
-				description: "Unauthorized",
-			},
-			404: {
-				content: {
-					"application/json": {
-						schema: ErrorSchema,
-					},
-				},
-				description: "User not found",
-			},
+			...createCommonOpenApiResponses("User"),
 		},
 	}),
 	async (c) => {
@@ -189,6 +146,7 @@ app.openapi(
 
 app.openapi(
 	createRoute({
+		tags: ["users"],
 		method: "delete",
 		path: "/:id",
 		request: {
@@ -203,22 +161,7 @@ app.openapi(
 				},
 				description: "User deleted",
 			},
-			401: {
-				content: {
-					"application/json": {
-						schema: ErrorSchema,
-					},
-				},
-				description: "Unauthorized",
-			},
-			404: {
-				content: {
-					"application/json": {
-						schema: ErrorSchema,
-					},
-				},
-				description: "User not found",
-			},
+			...createCommonOpenApiResponses("User"),
 		},
 	}),
 	async (c) => {
