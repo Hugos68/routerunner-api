@@ -1,14 +1,14 @@
 import { eq } from "drizzle-orm";
 import { database } from "../database/database.ts";
+import { sessionsTable } from "../database/tables/sessions.ts";
+import { usersTable } from "../database/tables/users.ts";
 import type { Actor } from "../types/actor.ts";
+import type { Session, SessionToCreate } from "../types/session.ts";
 import {
 	BadCredentialsError,
 	NotFoundError,
 	UnauthorizedError,
 } from "../utility/errors.ts";
-import type { Session, SessionToCreate } from "../types/session.ts";
-import { sessionsTable } from "../database/tables/sessions.ts";
-import { usersTable } from "../database/tables/users.ts";
 
 export const createSession = async (
 	actor: Actor | null,
