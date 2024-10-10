@@ -13,7 +13,7 @@ import {
 	updateUser,
 } from "../services/users.ts";
 import type { Environment } from "../types/environment.ts";
-import { createCommonOpenApiResponses } from "../utility/common-open-api-responses.ts";
+import { createResponses } from "../utility/create-responses.ts";
 import { RouterunnerResponse, createOkSchema } from "../utility/response.ts";
 
 const app = new OpenAPIHono<Environment>();
@@ -43,7 +43,7 @@ app.openapi(
 				},
 				description: "User created",
 			},
-			...createCommonOpenApiResponses("User"),
+			...createResponses("User"),
 		},
 	}),
 	async (c) => {
@@ -68,7 +68,7 @@ app.openapi(
 				},
 				description: "Users retrieved",
 			},
-			...createCommonOpenApiResponses("User"),
+			...createResponses("User"),
 		},
 	}),
 	async (c) => {
@@ -95,7 +95,7 @@ app.openapi(
 				},
 				description: "User retrieved",
 			},
-			...createCommonOpenApiResponses("User"),
+			...createResponses("User"),
 		},
 	}),
 	async (c) => {
@@ -132,7 +132,7 @@ app.openapi(
 				},
 				description: "User updated",
 			},
-			...createCommonOpenApiResponses("User"),
+			...createResponses("User"),
 		},
 	}),
 	async (c) => {
@@ -161,7 +161,7 @@ app.openapi(
 				},
 				description: "User deleted",
 			},
-			...createCommonOpenApiResponses("User"),
+			...createResponses("User"),
 		},
 	}),
 	async (c) => {

@@ -1,6 +1,6 @@
 import { ErrorSchema } from "./response.ts";
 
-export function createCommonOpenApiResponses(resource: string) {
+export function createResponses(resource: string) {
 	return {
 		400: {
 			content: {
