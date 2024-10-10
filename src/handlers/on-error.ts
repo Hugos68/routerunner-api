@@ -1,8 +1,10 @@
 import type { ErrorHandler } from "hono";
 import type { StatusCode } from "hono/utils/http-status";
+import { PostgresError } from "postgres";
 import { ValiError } from "valibot";
 import {
-	InvalidFilterError,
+	BadCredentialsError,
+	InvalidFilterError as BadFilterError,
 	NotFoundError,
 	UnauthorizedError,
 } from "../utility/errors.ts";
@@ -10,7 +12,9 @@ import { RouterunnerResponse } from "../utility/responses.ts";
 
 const errorStatusCodeMap = new Map<unknown, StatusCode>([
 	[ValiError, 400],
-	[InvalidFilterError, 400],
+	[BadFilterError, 400],
+	[PostgresError, 400],
+	[BadCredentialsError, 401],
 	[UnauthorizedError, 401],
 	[NotFoundError, 404],
 	[Error, 500],

@@ -20,3 +20,10 @@ export class UnauthorizedError extends Error {
 		this.name = "UnauthorizedError";
 	}
 }
+
+export class BadCredentialsError extends Error {
+	constructor() {
+		super("The provided credentials are invalid");
+		this.name = "BadCredentialsError";
+	}
+}
