@@ -2,6 +2,7 @@ import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
 import {
 	CreateUserSchema,
 	UpdateUserSchema,
+	UserParamsSchema,
 	UserSchema,
 } from "../schemas/users.ts";
 import {
@@ -19,9 +20,6 @@ import {
 } from "../utility/responses.ts";
 
 const app = new OpenAPIHono<Environment>();
-
-const ParamsSchema = UserSchema.pick({ id: true });
-
 app.openapi(
 	createRoute({
 		method: "post",
@@ -99,7 +97,7 @@ app.openapi(
 		method: "get",
 		path: "/:id",
 		request: {
-			params: ParamsSchema,
+			params: UserParamsSchema,
 		},
 		responses: {
 			200: {
@@ -141,7 +139,7 @@ app.openapi(
 		method: "patch",
 		path: "/:id",
 		request: {
-			params: ParamsSchema,
+			params: UserParamsSchema,
 			body: {
 				required: true,
 				content: {
@@ -193,7 +191,7 @@ app.openapi(
 		method: "delete",
 		path: "/:id",
 		request: {
-			params: ParamsSchema,
+			params: UserParamsSchema,
 		},
 		responses: {
 			204: {
@@ -226,7 +224,7 @@ app.openapi(
 		const actor = c.get("actor");
 		const id = c.req.param("id");
 		const user = await deleteUser(actor, id);
-		return c.json(RouterunnerResponse.ok(user), 204);
+		return c.json(RouterunnerResponse.ok(user), 200);
 	},
 );
 
