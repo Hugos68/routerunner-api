@@ -4,18 +4,20 @@ import { notesTable } from "../database/tables/notes.ts";
 import type { Actor } from "../types/actor.ts";
 import type { Note, NoteToCreate, NoteToUpdate } from "../types/note.ts";
 import { authorize } from "../utility/authorize.ts";
-import { ResourceNotFoundError } from "../utility/errors.ts";
+import { ResourceNotFoundError, UnauthorizedError } from "../utility/errors.ts";
 
 export const getNotes = async (actor: Actor) => {
-	authorize(actor).isAuthenticated();
+	authorize(actor)
+		.hasRole("DRIVER", "PLANNER", "ADMIN")
+		.orElseThrow(new ResourceNotFoundError());
 	const notes = await database.select().from(notesTable);
 	return notes;
 };
 
 export const getNote = async (actor: Actor, id: Note["id"]) => {
 	authorize(actor)
-		.isAuthenticated()
-		.throwCustomError(new ResourceNotFoundError());
+		.hasRole("DRIVER", "PLANNER", "ADMIN")
+		.orElseThrow(new ResourceNotFoundError());
 	const [note] = await database
 		.select()
 		.from(notesTable)
@@ -27,7 +29,9 @@ export const getNote = async (actor: Actor, id: Note["id"]) => {
 };
 
 export const createNote = async (actor: Actor, noteToCreate: NoteToCreate) => {
-	authorize(actor).isAuthenticated();
+	authorize(actor)
+		.hasRole("DRIVER", "PLANNER", "ADMIN")
+		.orElseThrow(new UnauthorizedError());
 	const [note] = await database
 		.insert(notesTable)
 		.values(noteToCreate)
@@ -44,8 +48,8 @@ export const updateNote = async (
 	noteToUpdate: NoteToUpdate,
 ) => {
 	authorize(actor)
-		.isAuthenticated()
-		.throwCustomError(new ResourceNotFoundError());
+		.hasRole("DRIVER", "PLANNER", "ADMIN")
+		.orElseThrow(new ResourceNotFoundError());
 	const [note] = await database
 		.update(notesTable)
 		.set(noteToUpdate)
@@ -59,8 +63,8 @@ export const updateNote = async (
 
 export const deleteNote = async (actor: Actor, id: Note["id"]) => {
 	authorize(actor)
-		.isAuthenticated()
-		.throwCustomError(new ResourceNotFoundError());
+		.hasRole("DRIVER", "PLANNER", "ADMIN")
+		.orElseThrow(new ResourceNotFoundError());
 	const [note] = await database
 		.delete(notesTable)
 		.where(eq(notesTable.id, id))

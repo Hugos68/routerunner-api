@@ -13,13 +13,10 @@ import { createFilterConditions } from "../utility/create-filter-conditions.ts";
 import {
 	BadCredentialsError,
 	ResourceNotFoundError,
+	UnauthorizedError,
 } from "../utility/errors.ts";
 
-export const createSession = async (
-	actor: Actor | null,
-	sessionToCreate: SessionToCreate,
-) => {
-	authorize(actor).isAuthenticated();
+export const createSession = async (sessionToCreate: SessionToCreate) => {
 	const [user] = await database
 		.select()
 		.from(usersTable)
@@ -33,6 +30,15 @@ export const createSession = async (
 	);
 	if (!passwordMatches) {
 		throw new BadCredentialsError();
+	}
+	const [existingSession] = await database
+		.select()
+		.from(sessionsTable)
+		.where(eq(sessionsTable.userId, user.id));
+	if (existingSession !== undefined) {
+		await database
+			.delete(sessionsTable)
+			.where(eq(sessionsTable.id, existingSession.id));
 	}
 	const [session] = await database
 		.insert(sessionsTable)
@@ -48,7 +54,7 @@ export const createSession = async (
 };
 
 export const getSessions = async (actor: Actor, query: SessionQuery) => {
-	authorize(actor).hasRoles("ADMIN");
+	authorize(actor).hasRole("ADMIN").orElseThrow(new UnauthorizedError());
 	const sessions = await database
 		.select()
 		.from(sessionsTable)
@@ -57,9 +63,7 @@ export const getSessions = async (actor: Actor, query: SessionQuery) => {
 };
 
 export const getSession = async (actor: Actor, id: Session["id"]) => {
-	authorize(actor)
-		.hasRoles("ADMIN")
-		.throwCustomError(new ResourceNotFoundError());
+	authorize(actor).hasRole("ADMIN").orElseThrow(new ResourceNotFoundError());
 	const [session] = await database
 		.select()
 		.from(sessionsTable)
@@ -71,15 +75,25 @@ export const getSession = async (actor: Actor, id: Session["id"]) => {
 };
 
 export const deleteSession = async (actor: Actor, id: Session["id"]) => {
-	authorize(actor)
-		.hasRoles("ADMIN")
-		.throwCustomError(new ResourceNotFoundError());
 	const [session] = await database
+		.select()
+		.from(sessionsTable)
+		.where(eq(sessionsTable.id, id));
+	if (session === undefined) {
+		throw new ResourceNotFoundError();
+	}
+	authorize(actor)
+		.hasRole("PLANNER", "DRIVER")
+		.satisfies(() => session.userId === actor?.id)
+		.or()
+		.hasRole("ADMIN")
+		.orElseThrow(new ResourceNotFoundError());
+	const [deletedSession] = await database
 		.delete(sessionsTable)
 		.where(eq(sessionsTable.id, id))
 		.returning();
-	if (session === undefined) {
+	if (deletedSession === undefined) {
 		throw new Error("Failed to delete session");
 	}
-	return session;
+	return deletedSession;
 };

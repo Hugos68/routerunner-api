@@ -1,17 +1,22 @@
-import { eq } from "drizzle-orm";
+import { eq, getTableColumns } from "drizzle-orm";
 import { database } from "../database/database.ts";
 import { usersTable } from "../database/tables/users.ts";
 import type { Actor } from "../types/actor.ts";
 import type { User, UserToCreate, UserToUpdate } from "../types/user.ts";
 import { authorize } from "../utility/authorize.ts";
-import { ResourceNotFoundError } from "../utility/errors.ts";
+import { ResourceNotFoundError, UnauthorizedError } from "../utility/errors.ts";
+
+const { password: _, ...columns } = getTableColumns(usersTable);
 
 export const createUser = async (
-	caller: Actor | null,
+	actor: Actor | null,
 	userToCreate: UserToCreate,
 ) => {
-	authorize(caller).hasRoles("ADMIN");
-	const [user] = await database.insert(usersTable).values(userToCreate);
+	authorize(actor).hasRole("ADMIN").orElseThrow(new UnauthorizedError());
+	const [user] = await database
+		.insert(usersTable)
+		.values(userToCreate)
+		.returning(columns);
 	if (user === undefined) {
 		throw new Error("Failed to create user");
 	}
@@ -19,22 +24,25 @@ export const createUser = async (
 };
 
 export const getUser = async (actor: Actor, id: User["id"]) => {
-	authorize(actor)
-		.isAuthenticated()
-		.throwCustomError(new ResourceNotFoundError());
 	const [user] = await database
-		.select()
+		.select(columns)
 		.from(usersTable)
 		.where(eq(usersTable.id, id));
 	if (user === undefined) {
 		throw new ResourceNotFoundError();
 	}
+	authorize(actor)
+		.hasRole("DRIVER", "PLANNER")
+		.satisfies(() => actor?.id === user.id)
+		.or()
+		.hasRole("ADMIN")
+		.orElseThrow(new ResourceNotFoundError());
 	return user;
 };
 
 export const getUsers = async (actor: Actor) => {
-	authorize(actor).hasRoles("ADMIN");
-	const users = await database.select().from(usersTable);
+	authorize(actor).hasRole("ADMIN").orElseThrow(new UnauthorizedError());
+	const users = await database.select(columns).from(usersTable);
 	return users;
 };
 
@@ -43,30 +51,50 @@ export const updateUser = async (
 	id: User["id"],
 	userToUpdate: UserToUpdate,
 ) => {
-	authorize(actor)
-		.hasRoles("ADMIN")
-		.throwCustomError(new ResourceNotFoundError());
 	const [user] = await database
+		.select(columns)
+		.from(usersTable)
+		.where(eq(usersTable.id, id));
+	if (user === undefined) {
+		throw new ResourceNotFoundError();
+	}
+	authorize(actor)
+		.hasRole("DRIVER", "PLANNER")
+		.satisfies(() => actor?.id === user.id)
+		.or()
+		.hasRole("ADMIN")
+		.orElseThrow(new ResourceNotFoundError());
+	const [updatedUser] = await database
 		.update(usersTable)
 		.set(userToUpdate)
 		.where(eq(usersTable.id, id))
-		.returning();
-	if (user === undefined) {
+		.returning(columns);
+	if (updatedUser === undefined) {
 		throw new Error("Failed to update user");
 	}
-	return user;
+	return updatedUser;
 };
 
 export const deleteUser = async (actor: Actor, id: User["id"]) => {
-	authorize(actor)
-		.hasRoles("ADMIN")
-		.throwCustomError(new ResourceNotFoundError());
 	const [user] = await database
+		.select(columns)
+		.from(usersTable)
+		.where(eq(usersTable.id, id));
+	if (user === undefined) {
+		throw new ResourceNotFoundError();
+	}
+	authorize(actor)
+		.hasRole("DRIVER", "PLANNER")
+		.satisfies(() => actor?.id === user.id)
+		.or()
+		.hasRole("ADMIN")
+		.orElseThrow(new ResourceNotFoundError());
+	const [deletedUser] = await database
 		.delete(usersTable)
 		.where(eq(usersTable.id, id))
-		.returning();
-	if (user === undefined) {
+		.returning(columns);
+	if (deletedUser === undefined) {
 		throw new Error("Failed to delete user");
 	}
-	return user;
+	return deletedUser;
 };
