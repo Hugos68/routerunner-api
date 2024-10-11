@@ -1,6 +1,6 @@
 import { ErrorSchema } from "./response.ts";
 
-export function createResponses(resource: string) {
+export function createErrorResponses(resource: string) {
 	return {
 		400: {
 			content: {

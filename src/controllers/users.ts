@@ -13,7 +13,7 @@ import {
 	updateUser,
 } from "../services/users.ts";
 import type { Environment } from "../types/environment.ts";
-import { createResponses as createErrorResponses } from "../utility/create-responses.ts";
+import { createErrorResponses } from "../utility/create-error-responses.ts";
 import { RouterunnerResponse, createOkSchema } from "../utility/response.ts";
 
 const app = new OpenAPIHono<Environment>();

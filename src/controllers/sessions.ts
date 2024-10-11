@@ -12,7 +12,7 @@ import {
 	getSessions,
 } from "../services/sessions.ts";
 import type { Environment } from "../types/environment.ts";
-import { createResponses } from "../utility/create-responses.ts";
+import { createErrorResponses } from "../utility/create-error-responses.ts";
 import { RouterunnerResponse, createOkSchema } from "../utility/response.ts";
 
 const app = new OpenAPIHono<Environment>();
@@ -42,7 +42,7 @@ app.openapi(
 				},
 				description: "Session created",
 			},
-			...createResponses("User"),
+			...createErrorResponses("User"),
 		},
 	}),
 	async (c) => {
@@ -70,7 +70,7 @@ app.openapi(
 				},
 				description: "Sessions retrieved",
 			},
-			...createResponses("User"),
+			...createErrorResponses("User"),
 		},
 	}),
 	async (c) => {
@@ -98,7 +98,7 @@ app.openapi(
 				},
 				description: "Session retrieved",
 			},
-			...createResponses("User"),
+			...createErrorResponses("User"),
 		},
 	}),
 	async (c) => {
@@ -126,7 +126,7 @@ app.openapi(
 				},
 				description: "Session deleted",
 			},
-			...createResponses("User"),
+			...createErrorResponses("User"),
 		},
 	}),
 	async (c) => {

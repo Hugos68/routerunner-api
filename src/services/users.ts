@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { database } from "../database/database.ts";
 import { usersTable } from "../database/tables/users.ts";
 import type { Actor } from "../types/actor.ts";
-import type { User, UserToCreate, UserToUpdate } from "../types/users.ts";
+import type { User, UserToCreate, UserToUpdate } from "../types/user.ts";
 import { ResourceNotFoundError, UnauthorizedError } from "../utility/errors.ts";
 
 export const createUser = async (
