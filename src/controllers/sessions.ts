@@ -1,5 +1,6 @@
 import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
 import { setCookie } from "hono/cookie";
+import { validationHook } from "../handlers/validation-hook.ts";
 import {
 	CreateSessionSchema,
 	SessionParamsSchema,
@@ -17,7 +18,7 @@ import { SESSION_COOKIE_KEY } from "../utility/constants.ts";
 import { createErrorResponses } from "../utility/create-error-responses.ts";
 import { RouterunnerResponse, createOkSchema } from "../utility/response.ts";
 
-const app = new OpenAPIHono<Environment>();
+const app = new OpenAPIHono<Environment>({ defaultHook: validationHook });
 
 app.openapi(
 	createRoute({

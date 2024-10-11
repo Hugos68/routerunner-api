@@ -1,4 +1,5 @@
 import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
+import { validationHook } from "../handlers/validation-hook.ts";
 import {
 	CreateRoleSchema,
 	RoleParamsSchema,
@@ -17,7 +18,7 @@ import type { Environment } from "../types/environment.ts";
 import { createErrorResponses } from "../utility/create-error-responses.ts";
 import { RouterunnerResponse, createOkSchema } from "../utility/response.ts";
 
-const app = new OpenAPIHono<Environment>();
+const app = new OpenAPIHono<Environment>({ defaultHook: validationHook });
 
 app.openapi(
 	createRoute({

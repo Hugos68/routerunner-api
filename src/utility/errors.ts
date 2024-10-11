@@ -1,5 +1,6 @@
+import type { OpenAPIHonoOptions } from "@hono/zod-openapi";
 import type { StatusCode } from "hono/utils/http-status";
-import type { ZodError } from "zod";
+import type { Environment } from "../types/environment.ts";
 
 export class RouterunnerError extends Error {
 	constructor(message: string) {
@@ -30,8 +31,23 @@ export class UnauthorizedError extends RouterunnerError {
 }
 
 export class ValidationError extends RouterunnerError {
-	constructor(zodError: ZodError) {
-		super(zodError.message);
+	constructor(
+		result: Parameters<
+			Required<OpenAPIHonoOptions<Environment>>["defaultHook"]
+		>[0],
+	) {
+		if (result.success) {
+			throw new Error("Unexpected success from validation hook");
+		}
+		const issue = result.error.errors.at(0);
+		if (issue) {
+			super(
+				`${issue.message} for "${issue.path.join(".")}" in ${result.target}`,
+			);
+		} else {
+			super("Validation failed");
+		}
+
 		this.name = "ValidationError";
 	}
 }
