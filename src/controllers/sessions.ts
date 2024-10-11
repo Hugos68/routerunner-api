@@ -50,7 +50,6 @@ app.openapi(
 	}),
 	async (c) => {
 		const actor = c.get("actor");
-
 		const sessionToCreate = c.req.valid("json");
 		const session = await createSession(actor, sessionToCreate);
 		setCookie(c, SESSION_COOKIE_KEY, session.id);
