@@ -2,7 +2,14 @@ import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
+import addresses from "./controllers/addresses.ts";
+import lines from "./controllers/lines.ts";
+import notes from "./controllers/notes.ts";
+import orders from "./controllers/orders.ts";
+import retourPackagings from "./controllers/retour-packagings.ts";
+import roles from "./controllers/roles.ts";
 import sessions from "./controllers/sessions.ts";
+import trips from "./controllers/trips.ts";
 import users from "./controllers/users.ts";
 import { notFound } from "./handlers/not-found.ts";
 import { onError } from "./handlers/on-error.ts";
@@ -30,6 +37,13 @@ app.notFound(notFound);
  */
 app.route("/users", users);
 app.route("/sessions", sessions);
+app.route("/trips", trips);
+app.route("/orders", orders);
+app.route("/addresses", addresses);
+app.route("/lines", lines);
+app.route("/notes", notes);
+app.route("/retour-packagings", retourPackagings);
+app.route("/roles", roles);
 
 /**
  * OpenAPI

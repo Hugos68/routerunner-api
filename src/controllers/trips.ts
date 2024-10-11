@@ -1,18 +1,17 @@
 import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
 import {
-	CreateUserSchema,
-	UpdateUserSchema,
-	UserParamsSchema,
-	UserQuerySchema,
-	UserSchema,
-} from "../schemas/users.ts";
+	CreateTripSchema,
+	TripParamsSchema,
+	TripQuerySchema,
+	TripSchema,
+} from "../schemas/trips.ts";
 import {
-	createUser,
-	deleteUser,
-	getUser,
-	getUsers,
-	updateUser,
-} from "../services/users.ts";
+	createTrip,
+	deleteTrip,
+	getTrip,
+	getTrips,
+	updateTrip,
+} from "../services/trips.ts";
 import type { Environment } from "../types/environment.ts";
 import { createErrorResponses } from "../utility/create-error-responses.ts";
 import { RouterunnerResponse, createOkSchema } from "../utility/response.ts";
@@ -21,7 +20,7 @@ const app = new OpenAPIHono<Environment>();
 
 app.openapi(
 	createRoute({
-		tags: ["users"],
+		tags: ["trips"],
 		method: "post",
 		path: "/",
 		request: {
@@ -29,151 +28,151 @@ app.openapi(
 				required: true,
 				content: {
 					"application/json": {
-						schema: CreateUserSchema,
+						schema: CreateTripSchema,
 					},
 				},
-				description: "User to create",
+				description: "Trip to create",
 			},
 		},
 		responses: {
 			201: {
 				content: {
 					"application/json": {
-						schema: createOkSchema(UserSchema),
+						schema: createOkSchema(TripSchema),
 					},
 				},
-				description: "User created",
+				description: "Trip created",
 			},
-			...createErrorResponses("User"),
+			...createErrorResponses("Trip"),
 		},
 	}),
 	async (c) => {
 		const actor = c.get("actor");
-		const userToCreate = c.req.valid("json");
-		const user = await createUser(actor, userToCreate);
-		return c.json(RouterunnerResponse.ok(user), 201);
+		const tripToCreate = c.req.valid("json");
+		const trip = await createTrip(actor, tripToCreate);
+		return c.json(RouterunnerResponse.ok(trip), 201);
 	},
 );
 
 app.openapi(
 	createRoute({
-		tags: ["users"],
+		tags: ["trips"],
 		method: "get",
 		path: "/",
 		request: {
-			query: UserQuerySchema,
+			query: TripQuerySchema,
 		},
+
 		responses: {
 			200: {
 				content: {
 					"application/json": {
-						schema: createOkSchema(UserSchema.array()),
+						schema: createOkSchema(TripSchema.array()),
 					},
 				},
-				description: "Users retrieved",
+				description: "Trips found",
 			},
-			...createErrorResponses("User"),
+			...createErrorResponses("Trip"),
 		},
 	}),
 	async (c) => {
 		const actor = c.get("actor");
-		const users = await getUsers(actor);
-		return c.json(RouterunnerResponse.ok(users), 200);
+		const trips = await getTrips(actor);
+		return c.json(RouterunnerResponse.ok(trips));
 	},
 );
 
 app.openapi(
 	createRoute({
-		tags: ["users"],
+		tags: ["trips"],
 		method: "get",
 		path: "/:id",
 		request: {
-			params: UserParamsSchema,
+			params: TripParamsSchema,
 		},
 		responses: {
 			200: {
 				content: {
 					"application/json": {
-						schema: createOkSchema(UserSchema),
+						schema: createOkSchema(TripSchema),
 					},
 				},
-				description: "User retrieved",
+				description: "Trip found",
 			},
-			...createErrorResponses("User"),
+			...createErrorResponses("Trip"),
 		},
 	}),
 	async (c) => {
 		const actor = c.get("actor");
 		const id = c.req.param("id");
-		const user = await getUser(actor, id);
-		return c.json(RouterunnerResponse.ok(user), 200);
+		const trip = await getTrip(actor, id);
+		return c.json(RouterunnerResponse.ok(trip));
 	},
 );
 
 app.openapi(
 	createRoute({
-		tags: ["users"],
+		tags: ["trips"],
 		method: "patch",
 		path: "/:id",
 		request: {
-			params: UserParamsSchema,
+			params: TripParamsSchema,
 			body: {
 				required: true,
 				content: {
 					"application/json": {
-						schema: UpdateUserSchema,
+						schema: TripSchema,
 					},
 				},
-				description: "User to update",
+				description: "Trip to update",
 			},
 		},
 		responses: {
 			200: {
 				content: {
 					"application/json": {
-						schema: createOkSchema(UserSchema),
+						schema: createOkSchema(TripSchema),
 					},
 				},
-				description: "User updated",
+				description: "Trip updated",
 			},
-			...createErrorResponses("User"),
+			...createErrorResponses("Trip"),
 		},
 	}),
 	async (c) => {
 		const actor = c.get("actor");
 		const id = c.req.param("id");
-		const userToUpdate = c.req.valid("json");
-		const user = await updateUser(actor, id, userToUpdate);
-		return c.json(RouterunnerResponse.ok(user), 200);
+		const tripToUpdate = c.req.valid("json");
+		const trip = await updateTrip(actor, id, tripToUpdate);
+		return c.json(RouterunnerResponse.ok(trip));
 	},
 );
 
 app.openapi(
 	createRoute({
-		tags: ["users"],
+		tags: ["trips"],
 		method: "delete",
 		path: "/:id",
 		request: {
-			params: UserParamsSchema,
+			params: TripParamsSchema,
 		},
 		responses: {
 			200: {
 				content: {
 					"application/json": {
-						schema: createOkSchema(UserSchema),
+						schema: createOkSchema(TripSchema),
 					},
 				},
-				description: "User deleted",
+				description: "Trip deleted",
 			},
-			...createErrorResponses("User"),
+			...createErrorResponses("Trip"),
 		},
 	}),
 	async (c) => {
 		const actor = c.get("actor");
 		const id = c.req.param("id");
-		const user = await deleteUser(actor, id);
-		return c.json(RouterunnerResponse.ok(user), 200);
+		const trip = await deleteTrip(actor, id);
+		return c.json(RouterunnerResponse.ok(trip));
 	},
 );
-
 export default app;

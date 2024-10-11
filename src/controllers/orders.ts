@@ -1,18 +1,17 @@
 import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
 import {
-	CreateUserSchema,
-	UpdateUserSchema,
-	UserParamsSchema,
-	UserQuerySchema,
-	UserSchema,
-} from "../schemas/users.ts";
+	CreateOrderSchema,
+	OrderParamsSchema,
+	OrderQuerySchema,
+	OrderSchema,
+} from "../schemas/orders.ts";
 import {
-	createUser,
-	deleteUser,
-	getUser,
-	getUsers,
-	updateUser,
-} from "../services/users.ts";
+	createOrder,
+	deleteOrder,
+	getOrder,
+	getOrders,
+	updateOrder,
+} from "../services/orders.ts";
 import type { Environment } from "../types/environment.ts";
 import { createErrorResponses } from "../utility/create-error-responses.ts";
 import { RouterunnerResponse, createOkSchema } from "../utility/response.ts";
@@ -21,7 +20,7 @@ const app = new OpenAPIHono<Environment>();
 
 app.openapi(
 	createRoute({
-		tags: ["users"],
+		tags: ["orders"],
 		method: "post",
 		path: "/",
 		request: {
@@ -29,150 +28,150 @@ app.openapi(
 				required: true,
 				content: {
 					"application/json": {
-						schema: CreateUserSchema,
+						schema: CreateOrderSchema,
 					},
 				},
-				description: "User to create",
+				description: "Order to create",
 			},
 		},
 		responses: {
 			201: {
 				content: {
 					"application/json": {
-						schema: createOkSchema(UserSchema),
+						schema: createOkSchema(OrderSchema),
 					},
 				},
-				description: "User created",
+				description: "Order created",
 			},
-			...createErrorResponses("User"),
+			...createErrorResponses("Order"),
 		},
 	}),
 	async (c) => {
 		const actor = c.get("actor");
-		const userToCreate = c.req.valid("json");
-		const user = await createUser(actor, userToCreate);
-		return c.json(RouterunnerResponse.ok(user), 201);
+		const orderToCreate = c.req.valid("json");
+		const order = await createOrder(actor, orderToCreate);
+		return c.json(RouterunnerResponse.ok(order), 201);
 	},
 );
 
 app.openapi(
 	createRoute({
-		tags: ["users"],
+		tags: ["orders"],
 		method: "get",
 		path: "/",
 		request: {
-			query: UserQuerySchema,
+			query: OrderQuerySchema,
 		},
 		responses: {
 			200: {
 				content: {
 					"application/json": {
-						schema: createOkSchema(UserSchema.array()),
+						schema: createOkSchema(OrderSchema),
 					},
 				},
-				description: "Users retrieved",
+				description: "Order found",
 			},
-			...createErrorResponses("User"),
+			...createErrorResponses("Order"),
 		},
 	}),
 	async (c) => {
 		const actor = c.get("actor");
-		const users = await getUsers(actor);
-		return c.json(RouterunnerResponse.ok(users), 200);
+		const order = await getOrders(actor);
+		return c.json(RouterunnerResponse.ok(order));
 	},
 );
 
 app.openapi(
 	createRoute({
-		tags: ["users"],
+		tags: ["orders"],
 		method: "get",
 		path: "/:id",
 		request: {
-			params: UserParamsSchema,
+			params: OrderParamsSchema,
 		},
 		responses: {
 			200: {
 				content: {
 					"application/json": {
-						schema: createOkSchema(UserSchema),
+						schema: createOkSchema(OrderSchema),
 					},
 				},
-				description: "User retrieved",
+				description: "Order found",
 			},
-			...createErrorResponses("User"),
+			...createErrorResponses("Order"),
 		},
 	}),
 	async (c) => {
 		const actor = c.get("actor");
 		const id = c.req.param("id");
-		const user = await getUser(actor, id);
-		return c.json(RouterunnerResponse.ok(user), 200);
+		const order = await getOrder(actor, id);
+		return c.json(RouterunnerResponse.ok(order));
 	},
 );
 
 app.openapi(
 	createRoute({
-		tags: ["users"],
-		method: "patch",
+		tags: ["orders"],
+		method: "put",
 		path: "/:id",
 		request: {
-			params: UserParamsSchema,
+			params: OrderParamsSchema,
 			body: {
 				required: true,
 				content: {
 					"application/json": {
-						schema: UpdateUserSchema,
+						schema: CreateOrderSchema,
 					},
 				},
-				description: "User to update",
+				description: "Order to update",
 			},
 		},
 		responses: {
 			200: {
 				content: {
 					"application/json": {
-						schema: createOkSchema(UserSchema),
+						schema: createOkSchema(OrderSchema),
 					},
 				},
-				description: "User updated",
+				description: "Order updated",
 			},
-			...createErrorResponses("User"),
+			...createErrorResponses("Order"),
 		},
 	}),
 	async (c) => {
 		const actor = c.get("actor");
+		const orderToUpdate = c.req.valid("json");
 		const id = c.req.param("id");
-		const userToUpdate = c.req.valid("json");
-		const user = await updateUser(actor, id, userToUpdate);
-		return c.json(RouterunnerResponse.ok(user), 200);
+		const order = await updateOrder(actor, id, orderToUpdate);
+		return c.json(RouterunnerResponse.ok(order));
 	},
 );
 
 app.openapi(
 	createRoute({
-		tags: ["users"],
+		tags: ["orders"],
 		method: "delete",
 		path: "/:id",
 		request: {
-			params: UserParamsSchema,
+			params: OrderParamsSchema,
 		},
 		responses: {
 			200: {
 				content: {
 					"application/json": {
-						schema: createOkSchema(UserSchema),
+						schema: createOkSchema(OrderSchema),
 					},
 				},
-				description: "User deleted",
+				description: "Order deleted",
 			},
-			...createErrorResponses("User"),
+			...createErrorResponses("Order"),
 		},
 	}),
 	async (c) => {
 		const actor = c.get("actor");
 		const id = c.req.param("id");
-		const user = await deleteUser(actor, id);
-		return c.json(RouterunnerResponse.ok(user), 200);
+		const order = await deleteOrder(actor, id);
+		return c.json(RouterunnerResponse.ok(order));
 	},
 );
 

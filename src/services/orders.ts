@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { database } from "../database/database.ts";
 import { ordersTable } from "../database/tables/orders.ts";
 import type { Actor } from "../types/actor.ts";
-import type { Order } from "../types/order.ts";
+import type { Order, OrderToCreate, OrderToUpdate } from "../types/order.ts";
 import { authorize } from "../utility/authorize.ts";
 import { ResourceNotFoundError } from "../utility/errors.ts";
 
@@ -26,7 +26,10 @@ export const getOrder = async (actor: Actor, id: Order["id"]) => {
 	return order;
 };
 
-export const createOrder = async (actor: Actor, orderToCreate: Order) => {
+export const createOrder = async (
+	actor: Actor,
+	orderToCreate: OrderToCreate,
+) => {
 	authorize(actor).hasRoles("ADMIN", "PLANNER");
 	const [order] = await database
 		.insert(ordersTable)
@@ -41,7 +44,7 @@ export const createOrder = async (actor: Actor, orderToCreate: Order) => {
 export const updateOrder = async (
 	actor: Actor,
 	id: Order["id"],
-	orderToUpdate: Order,
+	orderToUpdate: OrderToUpdate,
 ) => {
 	authorize(actor)
 		.isAuthenticated()
