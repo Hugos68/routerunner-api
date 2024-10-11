@@ -2,7 +2,7 @@ import type { Actor } from "../types/actor.ts";
 import type { Role } from "../types/role.ts";
 import { UnauthorizedError } from "./errors.ts";
 
-export const ensure = <T extends Error>(actor: Actor | null) => {
+export const authorize = <T extends Error>(actor: Actor | null) => {
 	let isAuthorized = true;
 	let customError: T | null = null;
 
