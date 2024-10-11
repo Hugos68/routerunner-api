@@ -1,5 +1,6 @@
 import type { Actor } from "../types/actor.ts";
 import type { Role } from "../types/role.ts";
+import { UnauthorizedError } from "./errors.ts";
 
 export const ensure = <T extends Error>(actor: Actor | null) => {
 	let isAuthorized = true;
@@ -14,26 +15,28 @@ export const ensure = <T extends Error>(actor: Actor | null) => {
 			if (customError) {
 				throw customError;
 			}
-			throw new Error("Unauthorized");
+			throw new UnauthorizedError();
 		}
 	};
 
-	return {
+	const createChain = () => ({
 		isAuthenticated: () => {
 			checkAndUpdateAuth(actor !== null);
-			return this;
+			return createChain();
 		},
 		hasRoles: (...roles: Role["name"][]) => {
 			checkAndUpdateAuth(actor !== null && roles.includes(actor.role.name));
-			return this;
+			return createChain();
 		},
-		refine: (callback: (actor: Actor | null) => boolean) => {
+		when: (callback: (actor: Actor | null) => boolean) => {
 			checkAndUpdateAuth(callback(actor));
-			return this;
+			return createChain();
 		},
-		orElseThrow: (error: T) => {
+		throwCustomError: (error: T) => {
 			customError = error;
 			throwIfUnauthorized();
 		},
-	};
+	});
+
+	return createChain();
 };
