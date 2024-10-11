@@ -18,6 +18,7 @@ export function createResponses(resource: string) {
 			},
 			description: "Unauthorized",
 		},
+
 		404: {
 			content: {
 				"application/json": {
@@ -25,6 +26,14 @@ export function createResponses(resource: string) {
 				},
 			},
 			description: `${resource} not found`,
+		},
+		422: {
+			content: {
+				"application/json": {
+					schema: ErrorSchema,
+				},
+			},
+			description: "Unprocessable content",
 		},
 	};
 }
