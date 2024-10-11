@@ -1,70 +1,86 @@
-import { and, eq } from "drizzle-orm";
-import { parse } from "valibot";
-import { database } from "../database/database.js";
-import {
-	CreateRetourPackagingSchema,
-	type RetourPackaging,
-	UpdateRetourPackagingSchema,
-	retourPackagingsTable,
-} from "../database/schema.js";
-import { createFilterConditions } from "../utility/create-filter-conditions.js";
-import { NotFoundError } from "../utility/errors.js";
+import { eq } from "drizzle-orm";
+import { database } from "../database/database.ts";
+import { retourPackagingsTable } from "../database/tables/retour-packagings.ts";
+import type { Actor } from "../types/actor.ts";
+import type {
+	RetourPackaging,
+	RetourPackagingToCreate,
+	RetourPackagingToUpdate,
+} from "../types/retour-packaging.ts";
+import { ResourceNotFoundError } from "../utility/errors.ts";
 
-export const createRetourPackaging = async (input: unknown) => {
-	const values = parse(CreateRetourPackagingSchema, input);
-	const [retourPackaging] = await database
-		.insert(retourPackagingsTable)
-		.values(values)
-		.returning();
-	if (retourPackaging === undefined) {
-		throw new Error("Failed to create retour packaging");
-	}
-	return retourPackaging;
+import { authorize } from "../utility/authorize.ts";
+
+export const getRetourPackagings = async (actor: Actor) => {
+	authorize(actor).isAuthenticated();
+	const retourPackagings = await database.select().from(retourPackagingsTable);
+	return retourPackagings;
 };
 
-export const getRetourPackagings = async (filter: Record<string, unknown>) => {
-	const conditions = createFilterConditions(filter, retourPackagingsTable);
-	const retourPackaging = await database
-		.select()
-		.from(retourPackagingsTable)
-		.where(and(...conditions));
-	return retourPackaging;
-};
-
-export const getRetourPackaging = async (id: RetourPackaging["id"]) => {
+export const getRetourPackaging = async (
+	actor: Actor,
+	id: RetourPackaging["id"],
+) => {
+	authorize(actor)
+		.isAuthenticated()
+		.throwCustomError(new ResourceNotFoundError());
 	const [retourPackaging] = await database
 		.select()
 		.from(retourPackagingsTable)
 		.where(eq(retourPackagingsTable.id, id));
 	if (retourPackaging === undefined) {
-		throw new NotFoundError();
+		throw new ResourceNotFoundError();
+	}
+	return retourPackaging;
+};
+
+export const createRetourPackaging = async (
+	actor: Actor,
+	retourPackagingToCreate: RetourPackagingToCreate,
+) => {
+	authorize(actor).isAuthenticated();
+	const [retourPackaging] = await database
+		.insert(retourPackagingsTable)
+		.values(retourPackagingToCreate)
+		.returning();
+	if (retourPackaging === undefined) {
+		throw new Error("Failed to create retourPackaging");
 	}
 	return retourPackaging;
 };
 
 export const updateRetourPackaging = async (
+	actor: Actor,
 	id: RetourPackaging["id"],
-	input: unknown,
+	retourPackagingToUpdate: RetourPackagingToUpdate,
 ) => {
-	const values = parse(UpdateRetourPackagingSchema, input);
+	authorize(actor)
+		.isAuthenticated()
+		.throwCustomError(new ResourceNotFoundError());
 	const [retourPackaging] = await database
 		.update(retourPackagingsTable)
-		.set(values)
+		.set(retourPackagingToUpdate)
 		.where(eq(retourPackagingsTable.id, id))
 		.returning();
 	if (retourPackaging === undefined) {
-		throw new NotFoundError();
+		throw new Error("Failed to update retourPackaging");
 	}
 	return retourPackaging;
 };
 
-export const deleteRetourPackaging = async (id: RetourPackaging["id"]) => {
+export const deleteRetourPackaging = async (
+	actor: Actor,
+	id: RetourPackaging["id"],
+) => {
+	authorize(actor)
+		.isAuthenticated()
+		.throwCustomError(new ResourceNotFoundError());
 	const [retourPackaging] = await database
 		.delete(retourPackagingsTable)
 		.where(eq(retourPackagingsTable.id, id))
 		.returning();
 	if (retourPackaging === undefined) {
-		throw new NotFoundError();
+		throw new Error("Failed to delete retourPackaging");
 	}
 	return retourPackaging;
 };

@@ -1,29 +1,35 @@
 import { and, eq } from "drizzle-orm";
-import { parse, pick } from "valibot";
-import { database } from "../database/database.js";
+import { database } from "../database/database.ts";
+import { sessionsTable } from "../database/tables/sessions.ts";
+import { usersTable } from "../database/tables/users.ts";
+import type { Actor } from "../types/actor.ts";
+import type {
+	Session,
+	SessionQuery,
+	SessionToCreate,
+} from "../types/session.ts";
+import { authorize } from "../utility/authorize.ts";
+import { createFilterConditions } from "../utility/create-filter-conditions.ts";
 import {
-	CreateUserSchema,
-	type Session,
-	sessionsTable,
-} from "../database/schema.js";
-import { usersTable } from "../database/schema.js";
-import { HASH_CONFIG } from "../utility/constants.js";
-import { createFilterConditions } from "../utility/create-filter-conditions.js";
-import { BadCredentialsError, NotFoundError } from "../utility/errors.js";
+	BadCredentialsError,
+	ResourceNotFoundError,
+} from "../utility/errors.ts";
 
-export const createSession = async (input: unknown) => {
-	const values = parse(pick(CreateUserSchema, ["username", "password"]), input);
+export const createSession = async (
+	actor: Actor | null,
+	sessionToCreate: SessionToCreate,
+) => {
+	authorize(actor).isAuthenticated();
 	const [user] = await database
 		.select()
 		.from(usersTable)
-		.where(eq(usersTable.username, values.username));
+		.where(eq(usersTable.username, sessionToCreate.username));
 	if (user === undefined) {
 		throw new BadCredentialsError();
 	}
 	const passwordMatches = await Bun.password.verify(
-		values.password,
+		sessionToCreate.password,
 		user.password,
-		HASH_CONFIG.algorithm,
 	);
 	if (!passwordMatches) {
 		throw new BadCredentialsError();
@@ -34,39 +40,46 @@ export const createSession = async (input: unknown) => {
 			userId: user.id,
 		})
 		.returning();
+
 	if (session === undefined) {
 		throw new Error("Failed to create session");
 	}
 	return session;
 };
 
-export const getSessions = async (filter: Record<string, unknown> = {}) => {
-	const conditions = createFilterConditions(filter, sessionsTable);
+export const getSessions = async (actor: Actor, query: SessionQuery) => {
+	authorize(actor).hasRoles("ADMIN");
 	const sessions = await database
 		.select()
 		.from(sessionsTable)
-		.where(and(...conditions));
+		.where(and(...createFilterConditions(query, sessionsTable)));
 	return sessions;
 };
 
-export const getSession = async (id: Session["id"]) => {
+export const getSession = async (actor: Actor, id: Session["id"]) => {
+	authorize(actor)
+		.hasRoles("ADMIN")
+		.throwCustomError(new ResourceNotFoundError());
 	const [session] = await database
 		.select()
 		.from(sessionsTable)
 		.where(eq(sessionsTable.id, id));
 	if (session === undefined) {
-		throw new NotFoundError();
+		throw new ResourceNotFoundError();
 	}
 	return session;
 };
 
-export const deleteSession = async (id: Session["id"]) => {
+export const deleteSession = async (actor: Actor, id: Session["id"]) => {
+	authorize(actor)
+		.hasRoles("ADMIN")
+		.throwCustomError(new ResourceNotFoundError());
 	const [session] = await database
 		.delete(sessionsTable)
 		.where(eq(sessionsTable.id, id))
 		.returning();
 	if (session === undefined) {
-		throw new NotFoundError();
+		throw new Error("Failed to delete session");
 	}
 	return session;
 };

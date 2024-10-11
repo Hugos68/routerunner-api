@@ -1,6 +1,6 @@
 import type { NotFoundHandler } from "hono";
-import { NotFoundError } from "../utility/errors.js";
+import { ResourceNotFoundError } from "../utility/errors.ts";
 
 export const notFound: NotFoundHandler = () => {
-	throw new NotFoundError();
+	throw new ResourceNotFoundError();
 };

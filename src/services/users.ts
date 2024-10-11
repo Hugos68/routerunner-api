@@ -1,72 +1,72 @@
-import { and, eq, getTableColumns } from "drizzle-orm";
-import { parse } from "valibot";
-import { database } from "../database/database.js";
-import {
-	CreateUserSchema,
-	UpdateUserSchema,
-	type User,
-	usersTable,
-} from "../database/schema.js";
-import { createFilterConditions } from "../utility/create-filter-conditions.js";
-import { NotFoundError } from "../utility/errors.js";
+import { eq } from "drizzle-orm";
+import { database } from "../database/database.ts";
+import { usersTable } from "../database/tables/users.ts";
+import type { Actor } from "../types/actor.ts";
+import type { User, UserToCreate, UserToUpdate } from "../types/user.ts";
+import { authorize } from "../utility/authorize.ts";
+import { ResourceNotFoundError } from "../utility/errors.ts";
 
-const safeColumns = (() => {
-	const { password: _, ...columns } = getTableColumns(usersTable);
-	return columns;
-})();
-
-export const createUser = async (input: unknown) => {
-	const values = parse(CreateUserSchema, input);
-	const [user] = await database
-		.insert(usersTable)
-		.values(values)
-		.returning(safeColumns);
+export const createUser = async (
+	caller: Actor | null,
+	userToCreate: UserToCreate,
+) => {
+	authorize(caller).hasRoles("ADMIN");
+	const [user] = await database.insert(usersTable).values(userToCreate);
 	if (user === undefined) {
 		throw new Error("Failed to create user");
 	}
 	return user;
 };
 
-export const getUsers = async (filter: Record<string, unknown> = {}) => {
-	const conditions = createFilterConditions(filter, usersTable);
-	const users = await database
-		.select(safeColumns)
-		.from(usersTable)
-		.where(and(...conditions));
-	return users;
-};
-
-export const getUser = async (id: User["id"]) => {
+export const getUser = async (actor: Actor, id: User["id"]) => {
+	authorize(actor)
+		.isAuthenticated()
+		.throwCustomError(new ResourceNotFoundError());
 	const [user] = await database
-		.select(safeColumns)
+		.select()
 		.from(usersTable)
 		.where(eq(usersTable.id, id));
 	if (user === undefined) {
-		throw new NotFoundError();
+		throw new ResourceNotFoundError();
 	}
 	return user;
 };
 
-export const updateUser = async (id: User["id"], input: unknown) => {
-	const values = parse(UpdateUserSchema, input);
+export const getUsers = async (actor: Actor) => {
+	authorize(actor).hasRoles("ADMIN");
+	const users = await database.select().from(usersTable);
+	return users;
+};
+
+export const updateUser = async (
+	actor: Actor,
+	id: User["id"],
+	userToUpdate: UserToUpdate,
+) => {
+	authorize(actor)
+		.hasRoles("ADMIN")
+		.throwCustomError(new ResourceNotFoundError());
 	const [user] = await database
 		.update(usersTable)
-		.set(values)
+		.set(userToUpdate)
 		.where(eq(usersTable.id, id))
-		.returning(safeColumns);
+		.returning();
 	if (user === undefined) {
-		throw new NotFoundError();
+		throw new Error("Failed to update user");
 	}
 	return user;
 };
 
-export const deleteUser = async (id: User["id"]) => {
+export const deleteUser = async (actor: Actor, id: User["id"]) => {
+	authorize(actor)
+		.hasRoles("ADMIN")
+		.throwCustomError(new ResourceNotFoundError());
 	const [user] = await database
 		.delete(usersTable)
 		.where(eq(usersTable.id, id))
-		.returning(safeColumns);
+		.returning();
 	if (user === undefined) {
-		throw new NotFoundError();
+		throw new Error("Failed to delete user");
 	}
 	return user;
 };

@@ -1,64 +1,75 @@
-import { and, eq } from "drizzle-orm";
-import { parse } from "valibot";
-import { database } from "../database/database.js";
-import {
-	CreateOrderSchema,
-	type Order,
-	UpdateOrderSchema,
-	ordersTable,
-} from "../database/schema.js";
-import { createFilterConditions } from "../utility/create-filter-conditions.js";
-import { NotFoundError } from "../utility/errors.js";
+import { eq } from "drizzle-orm";
+import { database } from "../database/database.ts";
+import { ordersTable } from "../database/tables/orders.ts";
+import type { Actor } from "../types/actor.ts";
+import type { Order, OrderToCreate, OrderToUpdate } from "../types/order.ts";
+import { authorize } from "../utility/authorize.ts";
+import { ResourceNotFoundError } from "../utility/errors.ts";
 
-export const createOrder = async (input: unknown) => {
-	const values = parse(CreateOrderSchema, input);
-	const [order] = await database.insert(ordersTable).values(values).returning();
+export const getOrders = async (actor: Actor) => {
+	authorize(actor).isAuthenticated();
+	const orders = await database.select().from(ordersTable);
+	return orders;
+};
+
+export const getOrder = async (actor: Actor, id: Order["id"]) => {
+	authorize(actor)
+		.isAuthenticated()
+		.throwCustomError(new ResourceNotFoundError());
+	const [order] = await database
+		.select()
+		.from(ordersTable)
+		.where(eq(ordersTable.id, id));
+	if (order === undefined) {
+		throw new ResourceNotFoundError();
+	}
+	return order;
+};
+
+export const createOrder = async (
+	actor: Actor,
+	orderToCreate: OrderToCreate,
+) => {
+	authorize(actor).hasRoles("ADMIN", "PLANNER");
+	const [order] = await database
+		.insert(ordersTable)
+		.values(orderToCreate)
+		.returning();
 	if (order === undefined) {
 		throw new Error("Failed to create order");
 	}
 	return order;
 };
 
-export const getOrders = async (filter: Record<string, unknown> = {}) => {
-	const conditions = createFilterConditions(filter, ordersTable);
-	const orders = await database
-		.select()
-		.from(ordersTable)
-		.where(and(...conditions));
-	return orders;
-};
-
-export const getOrder = async (id: Order["id"]) => {
-	const [order] = await database
-		.select()
-		.from(ordersTable)
-		.where(eq(ordersTable.id, id));
-	if (order === undefined) {
-		throw new NotFoundError();
-	}
-	return order;
-};
-
-export const updateOrder = async (id: Order["id"], input: unknown) => {
-	const values = parse(UpdateOrderSchema, input);
+export const updateOrder = async (
+	actor: Actor,
+	id: Order["id"],
+	orderToUpdate: OrderToUpdate,
+) => {
+	authorize(actor)
+		.isAuthenticated()
+		.throwCustomError(new ResourceNotFoundError());
 	const [order] = await database
 		.update(ordersTable)
-		.set(values)
+		.set(orderToUpdate)
 		.where(eq(ordersTable.id, id))
 		.returning();
 	if (order === undefined) {
-		throw new NotFoundError();
+		throw new Error("Failed to update order");
 	}
 	return order;
 };
 
-export const deleteOrder = async (id: Order["id"]) => {
+export const deleteOrder = async (actor: Actor, id: Order["id"]) => {
+	authorize(actor)
+		.hasRoles("ADMIN", "PLANNER")
+		.throwCustomError(new ResourceNotFoundError());
 	const [order] = await database
 		.delete(ordersTable)
 		.where(eq(ordersTable.id, id))
 		.returning();
 	if (order === undefined) {
-		throw new NotFoundError();
+		throw new Error("Failed to delete order");
 	}
 	return order;
 };

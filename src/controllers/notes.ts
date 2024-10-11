@@ -1,41 +1,174 @@
-import { Hono } from "hono";
-import { authorization } from "../middleware/authorization.js";
+import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
+import { validationHook } from "../handlers/validation-hook.ts";
+import {
+	CreateNoteSchema,
+	NoteParamsSchema,
+	NoteQuerySchema,
+	NoteSchema,
+	UpdateNoteSchema,
+} from "../schemas/notes.ts";
 import {
 	createNote,
 	deleteNote,
 	getNote,
 	getNotes,
 	updateNote,
-} from "../services/notes.js";
-import { RouterunnerResponse } from "../utility/responses.js";
-import type { Environment } from "../utility/types.js";
+} from "../services/notes.ts";
+import type { Environment } from "../types/environment.ts";
+import { createErrorResponses } from "../utility/create-error-responses.ts";
+import { RouterunnerResponse, createOkSchema } from "../utility/response.ts";
 
-export const notes = new Hono<Environment>();
+const app = new OpenAPIHono<Environment>({ defaultHook: validationHook });
 
-notes.post("/", authorization("DRIVER", "PLANNER", "ADMIN"), async (c) => {
-	const note = await createNote(await c.req.json());
-	return c.json(RouterunnerResponse.data(note), 201);
-});
+app.openapi(
+	createRoute({
+		tags: ["notes"],
+		method: "post",
+		path: "/",
+		request: {
+			body: {
+				required: true,
+				content: {
+					"application/json": {
+						schema: CreateNoteSchema,
+					},
+				},
+				description: "Note to create",
+			},
+		},
+		responses: {
+			201: {
+				content: {
+					"application/json": {
+						schema: createOkSchema(NoteSchema),
+					},
+				},
+				description: "Note created",
+			},
+			...createErrorResponses("Note"),
+		},
+	}),
+	async (c) => {
+		const actor = c.get("actor");
+		const noteToCreate = c.req.valid("json");
+		const note = await createNote(actor, noteToCreate);
+		return c.json(RouterunnerResponse.ok(note), 201);
+	},
+);
 
-notes.get("/", authorization("DRIVER", "PLANNER", "ADMIN"), async (c) => {
-	const notes = await getNotes(c.req.query());
-	return c.json(RouterunnerResponse.data(notes), 200);
-});
+app.openapi(
+	createRoute({
+		tags: ["notes"],
+		method: "get",
+		path: "/",
+		request: {
+			query: NoteQuerySchema,
+		},
+		responses: {
+			200: {
+				content: {
+					"application/json": {
+						schema: createOkSchema(NoteSchema.array()),
+					},
+				},
+				description: "Notes found",
+			},
+			...createErrorResponses("Note"),
+		},
+	}),
+	async (c) => {
+		const notes = await getNotes(c.get("actor"));
+		return c.json(RouterunnerResponse.ok(notes));
+	},
+);
 
-notes.get("/:id", authorization("DRIVER", "PLANNER", "ADMIN"), async (c) => {
-	const id = c.req.param("id");
-	const note = await getNote(id);
-	return c.json(RouterunnerResponse.data(note), 200);
-});
+app.openapi(
+	createRoute({
+		tags: ["notes"],
+		method: "get",
+		path: "/:id",
+		request: {
+			params: NoteParamsSchema,
+		},
+		responses: {
+			200: {
+				content: {
+					"application/json": {
+						schema: createOkSchema(NoteSchema),
+					},
+				},
+				description: "Note found",
+			},
+			...createErrorResponses("Note"),
+		},
+	}),
+	async (c) => {
+		const note = await getNote(c.get("actor"), c.req.param("id"));
+		return c.json(RouterunnerResponse.ok(note));
+	},
+);
 
-notes.patch("/:id", authorization("DRIVER", "PLANNER", "ADMIN"), async (c) => {
-	const id = c.req.param("id");
-	const note = await updateNote(id, await c.req.json());
-	return c.json(RouterunnerResponse.data(note), 200);
-});
+app.openapi(
+	createRoute({
+		tags: ["notes"],
+		method: "patch",
+		path: "/:id",
+		request: {
+			params: NoteParamsSchema,
+			body: {
+				required: true,
+				content: {
+					"application/json": {
+						schema: UpdateNoteSchema,
+					},
+				},
+				description: "Note to update",
+			},
+		},
+		responses: {
+			200: {
+				content: {
+					"application/json": {
+						schema: createOkSchema(NoteSchema),
+					},
+				},
+				description: "Note updated",
+			},
+			...createErrorResponses("Note"),
+		},
+	}),
+	async (c) => {
+		const actor = c.get("actor");
+		const noteToUpdate = c.req.valid("json");
+		const note = await updateNote(actor, c.req.param("id"), noteToUpdate);
+		return c.json(RouterunnerResponse.ok(note));
+	},
+);
 
-notes.delete("/:id", authorization("DRIVER", "PLANNER", "ADMIN"), async (c) => {
-	const id = c.req.param("id");
-	const note = await deleteNote(id);
-	return c.json(RouterunnerResponse.data(note), 200);
-});
+app.openapi(
+	createRoute({
+		tags: ["notes"],
+		method: "delete",
+		path: "/:id",
+		request: {
+			params: NoteParamsSchema,
+		},
+		responses: {
+			200: {
+				content: {
+					"application/json": {
+						schema: createOkSchema(NoteSchema),
+					},
+				},
+				description: "Note found",
+			},
+			...createErrorResponses("Note"),
+		},
+	}),
+	async (c) => {
+		const note = await deleteNote(c.get("actor"), c.req.param("id"));
+		return c.json(RouterunnerResponse.ok(note));
+	},
+);
+
+export default app;

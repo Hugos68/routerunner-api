@@ -1,61 +1,183 @@
-import { Hono } from "hono";
-import { authorization } from "../middleware/authorization.js";
+import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
+import { validationHook } from "../handlers/validation-hook.ts";
+import {
+	CreateRetourPackagingSchema,
+	RetourPackagingParamsSchema,
+	RetourPackagingQuerySchema,
+	RetourPackagingSchema,
+	UpdateRetourPackagingSchema,
+} from "../schemas/retour-packagings.ts";
 import {
 	createRetourPackaging,
 	deleteRetourPackaging,
 	getRetourPackaging,
 	getRetourPackagings,
 	updateRetourPackaging,
-} from "../services/retour-packagings.js";
-import { RouterunnerResponse } from "../utility/responses.js";
-import type { Environment } from "../utility/types.js";
+} from "../services/retour-packagings.ts";
+import type { Environment } from "../types/environment.ts";
+import { createErrorResponses } from "../utility/create-error-responses.ts";
+import { RouterunnerResponse, createOkSchema } from "../utility/response.ts";
 
-export const retourPackagings = new Hono<Environment>();
+const app = new OpenAPIHono<Environment>({ defaultHook: validationHook });
 
-retourPackagings.post(
-	"/",
-	authorization("DRIVER", "PLANNER", "ADMIN"),
+app.openapi(
+	createRoute({
+		tags: ["retour-packagings"],
+		method: "post",
+		path: "/",
+		request: {
+			body: {
+				required: true,
+				content: {
+					"application/json": {
+						schema: CreateRetourPackagingSchema,
+					},
+				},
+				description: "RetourPackaging to create",
+			},
+		},
+		responses: {
+			201: {
+				content: {
+					"application/json": {
+						schema: createOkSchema(RetourPackagingSchema),
+					},
+				},
+				description: "RetourPackaging created",
+			},
+			...createErrorResponses("RetourPackaging"),
+		},
+	}),
 	async (c) => {
-		const retourPackaging = await createRetourPackaging(await c.req.json());
-		return c.json(RouterunnerResponse.data(retourPackaging), 201);
+		const actor = c.get("actor");
+		const retourPackagingToCreate = c.req.valid("json");
+		const retourPackaging = await createRetourPackaging(
+			actor,
+			retourPackagingToCreate,
+		);
+		return c.json(RouterunnerResponse.ok(retourPackaging), 201);
 	},
 );
 
-retourPackagings.get(
-	"/",
-	authorization("DRIVER", "PLANNER", "ADMIN"),
+app.openapi(
+	createRoute({
+		tags: ["retour-packagings"],
+		method: "get",
+		path: "/",
+		request: {
+			query: RetourPackagingQuerySchema,
+		},
+		responses: {
+			200: {
+				content: {
+					"application/json": {
+						schema: createOkSchema(RetourPackagingSchema.array()),
+					},
+				},
+				description: "Retourpackagings found",
+			},
+		},
+	}),
 	async (c) => {
-		const retourPackagings = await getRetourPackagings(c.req.query());
-		return c.json(RouterunnerResponse.data(retourPackagings), 200);
+		const actor = c.get("actor");
+		const retourPackaging = await getRetourPackagings(actor);
+		return c.json(RouterunnerResponse.ok(retourPackaging));
 	},
 );
 
-retourPackagings.get(
-	"/:id",
-	authorization("DRIVER", "PLANNER", "ADMIN"),
+app.openapi(
+	createRoute({
+		tags: ["retour-packagings"],
+		method: "get",
+		path: "/:id",
+		request: {
+			params: RetourPackagingParamsSchema,
+		},
+		responses: {
+			200: {
+				content: {
+					"application/json": {
+						schema: createOkSchema(RetourPackagingSchema),
+					},
+				},
+				description: "RetourPackaging found",
+			},
+		},
+	}),
 	async (c) => {
+		const actor = c.get("actor");
 		const id = c.req.param("id");
-		const retourPackaging = await getRetourPackaging(id);
-		return c.json(RouterunnerResponse.data(retourPackaging), 200);
+		const retourPackaging = await getRetourPackaging(actor, id);
+		return c.json(RouterunnerResponse.ok(retourPackaging));
 	},
 );
 
-retourPackagings.patch(
-	"/:id",
-	authorization("DRIVER", "PLANNER", "ADMIN"),
+app.openapi(
+	createRoute({
+		tags: ["retour-packagings"],
+		method: "patch",
+		path: "/:id",
+		request: {
+			params: RetourPackagingParamsSchema,
+			body: {
+				required: true,
+				content: {
+					"application/json": {
+						schema: UpdateRetourPackagingSchema,
+					},
+				},
+				description: "RetourPackaging to update",
+			},
+		},
+		responses: {
+			200: {
+				content: {
+					"application/json": {
+						schema: createOkSchema(RetourPackagingSchema),
+					},
+				},
+				description: "RetourPackaging updated",
+			},
+		},
+	}),
 	async (c) => {
+		const actor = c.get("actor");
 		const id = c.req.param("id");
-		const retourPackaging = await updateRetourPackaging(id, await c.req.json());
-		return c.json(RouterunnerResponse.data(retourPackaging), 200);
+		const retourPackagingToUpdate = c.req.valid("json");
+		const retourPackaging = await updateRetourPackaging(
+			actor,
+			id,
+			retourPackagingToUpdate,
+		);
+		return c.json(RouterunnerResponse.ok(retourPackaging));
 	},
 );
 
-retourPackagings.delete(
-	"/:id",
-	authorization("DRIVER", "PLANNER", "ADMIN"),
+app.openapi(
+	createRoute({
+		tags: ["retour-packagings"],
+		method: "delete",
+		path: "/:id",
+		request: {
+			params: RetourPackagingParamsSchema,
+		},
+		responses: {
+			200: {
+				content: {
+					"application/json": {
+						schema: createOkSchema(RetourPackagingSchema),
+					},
+				},
+				description: "RetourPackaging deleted",
+			},
+		},
+	}),
 	async (c) => {
+		const actor = c.get("actor");
 		const id = c.req.param("id");
-		const retourPackaging = await deleteRetourPackaging(id);
-		return c.json(RouterunnerResponse.data(retourPackaging), 200);
+		const retourPackaging = await deleteRetourPackaging(actor, id);
+		return c.json(RouterunnerResponse.ok(retourPackaging));
 	},
 );
+
+export default app;

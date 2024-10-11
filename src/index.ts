@@ -1,20 +1,30 @@
-import { Hono } from "hono";
+import { swaggerUI } from "@hono/swagger-ui";
+import { OpenAPIHono } from "@hono/zod-openapi";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
-import { addresses } from "./controllers/addresses.js";
-import { lines } from "./controllers/lines.js";
-import { notes } from "./controllers/notes.js";
-import { orders } from "./controllers/orders.js";
-import { retourPackagings } from "./controllers/retour-packagings.js";
-import { roles } from "./controllers/roles.js";
-import { sessions } from "./controllers/sessions.js";
-import { trips } from "./controllers/trips.js";
-import { users } from "./controllers/users.js";
-import { notFound } from "./handlers/not-found.js";
-import { onError } from "./handlers/on-error.js";
-import { authentication } from "./middleware/authentication.js";
+import addresses from "./controllers/addresses.ts";
+import lines from "./controllers/lines.ts";
+import notes from "./controllers/notes.ts";
+import orders from "./controllers/orders.ts";
+import retourPackagings from "./controllers/retour-packagings.ts";
+import roles from "./controllers/roles.ts";
+import sessions from "./controllers/sessions.ts";
+import trips from "./controllers/trips.ts";
+import users from "./controllers/users.ts";
+import { notFound } from "./handlers/not-found.ts";
+import { onError } from "./handlers/on-error.ts";
+import { authentication } from "./middleware/authentication.ts";
+import type { Environment } from "./types/environment.ts";
+import { SESSION_COOKIE_KEY } from "./utility/constants.ts";
 
-const app = new Hono().basePath("/api/v1");
+const app = new OpenAPIHono<Environment>().basePath("/api/v1");
+
+/**
+ * Middleware
+ */
+app.use(logger());
+app.use("*", cors());
+app.use(authentication);
 
 /**
  * Handlers
@@ -23,24 +33,38 @@ app.onError(onError);
 app.notFound(notFound);
 
 /**
- * Middleware
- */
-app.use(logger());
-app.use(authentication);
-app.use("/*", cors());
-
-/**
  * Routes
  */
+app.route("/users", users);
+app.route("/sessions", sessions);
+app.route("/trips", trips);
+app.route("/orders", orders);
 app.route("/addresses", addresses);
 app.route("/lines", lines);
 app.route("/notes", notes);
-app.route("/orders", orders);
 app.route("/retour-packagings", retourPackagings);
 app.route("/roles", roles);
-app.route("/sessions", sessions);
-app.route("/trips", trips);
-app.route("/users", users);
 
-// biome-ignore lint/style/noDefaultExport: Required to run the app
+/**
+ * OpenAPI
+ */
+app.doc("/doc", {
+	openapi: "3.0.0",
+	info: {
+		title: "Routerunner API",
+		version: "0.0.1",
+		description: "API documentation for Routerunner",
+	},
+});
+app.openAPIRegistry.registerComponent("securitySchemes", "Session", {
+	type: "apiKey",
+	scheme: "cookie",
+	name: SESSION_COOKIE_KEY,
+});
+
+/**
+ * Swagger UI
+ */
+app.get("/ui", swaggerUI({ url: "/api/v1/doc" }));
+
 export default app;
