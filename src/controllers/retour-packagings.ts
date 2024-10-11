@@ -4,6 +4,7 @@ import {
 	RetourPackagingParamsSchema,
 	RetourPackagingQuerySchema,
 	RetourPackagingSchema,
+	UpdateRetourPackagingSchema,
 } from "../schemas/retour-packagings.ts";
 import {
 	createRetourPackaging,
@@ -69,10 +70,10 @@ app.openapi(
 			200: {
 				content: {
 					"application/json": {
-						schema: createOkSchema(RetourPackagingSchema),
+						schema: createOkSchema(RetourPackagingSchema.array()),
 					},
 				},
-				description: "RetourPackaging found",
+				description: "Retourpackagings found",
 			},
 		},
 	}),
@@ -113,7 +114,7 @@ app.openapi(
 app.openapi(
 	createRoute({
 		tags: ["retour-packagings"],
-		method: "put",
+		method: "patch",
 		path: "/:id",
 		request: {
 			params: RetourPackagingParamsSchema,
@@ -121,7 +122,7 @@ app.openapi(
 				required: true,
 				content: {
 					"application/json": {
-						schema: CreateRetourPackagingSchema,
+						schema: UpdateRetourPackagingSchema,
 					},
 				},
 				description: "RetourPackaging to update",

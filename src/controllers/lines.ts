@@ -4,6 +4,7 @@ import {
 	LineParamsSchema,
 	LineQuerySchema,
 	LineSchema,
+	UpdateLineSchema,
 } from "../schemas/lines.ts";
 import {
 	createLine,
@@ -66,10 +67,10 @@ app.openapi(
 			200: {
 				content: {
 					"application/json": {
-						schema: createOkSchema(LineSchema),
+						schema: createOkSchema(LineSchema.array()),
 					},
 				},
-				description: "Line found",
+				description: "Lines found",
 			},
 			...createErrorResponses("Line"),
 		},
@@ -109,7 +110,7 @@ app.openapi(
 app.openapi(
 	createRoute({
 		tags: ["lines"],
-		method: "put",
+		method: "patch",
 		path: "/:id",
 		request: {
 			params: LineParamsSchema,
@@ -117,7 +118,7 @@ app.openapi(
 				required: true,
 				content: {
 					"application/json": {
-						schema: CreateLineSchema,
+						schema: UpdateLineSchema,
 					},
 				},
 				description: "Line to update",

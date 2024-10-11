@@ -4,6 +4,7 @@ import {
 	OrderParamsSchema,
 	OrderQuerySchema,
 	OrderSchema,
+	UpdateOrderSchema,
 } from "../schemas/orders.ts";
 import {
 	createOrder,
@@ -66,7 +67,7 @@ app.openapi(
 			200: {
 				content: {
 					"application/json": {
-						schema: createOkSchema(OrderSchema),
+						schema: createOkSchema(OrderSchema.array()),
 					},
 				},
 				description: "Order found",
@@ -112,7 +113,7 @@ app.openapi(
 app.openapi(
 	createRoute({
 		tags: ["orders"],
-		method: "put",
+		method: "patch",
 		path: "/:id",
 		request: {
 			params: OrderParamsSchema,
@@ -120,7 +121,7 @@ app.openapi(
 				required: true,
 				content: {
 					"application/json": {
-						schema: CreateOrderSchema,
+						schema: UpdateOrderSchema,
 					},
 				},
 				description: "Order to update",

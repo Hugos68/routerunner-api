@@ -4,6 +4,7 @@ import {
 	AddressQuerySchema,
 	AddressSchema,
 	CreateAddressSchema,
+	UpdateAddressSchema,
 } from "../schemas/addresses.ts";
 import {
 	createAddress,
@@ -66,16 +67,17 @@ app.openapi(
 			200: {
 				content: {
 					"application/json": {
-						schema: createOkSchema(AddressSchema),
+						schema: createOkSchema(AddressSchema.array()),
 					},
 				},
-				description: "Address found",
+				description: "Addresses found",
 			},
 			...createErrorResponses("Address"),
 		},
 	}),
 	async (c) => {
 		const actor = c.get("actor");
+
 		const address = await getAddresses(actor);
 		return c.json(RouterunnerResponse.ok(address));
 	},
@@ -112,7 +114,7 @@ app.openapi(
 app.openapi(
 	createRoute({
 		tags: ["addresses"],
-		method: "put",
+		method: "patch",
 		path: "/:id",
 		request: {
 			params: AddressParamsSchema,
@@ -120,7 +122,7 @@ app.openapi(
 				required: true,
 				content: {
 					"application/json": {
-						schema: CreateAddressSchema,
+						schema: UpdateAddressSchema,
 					},
 				},
 				description: "Address to update",

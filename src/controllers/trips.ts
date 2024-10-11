@@ -4,6 +4,7 @@ import {
 	TripParamsSchema,
 	TripQuerySchema,
 	TripSchema,
+	UpdateTripSchema,
 } from "../schemas/trips.ts";
 import {
 	createTrip,
@@ -121,7 +122,7 @@ app.openapi(
 				required: true,
 				content: {
 					"application/json": {
-						schema: TripSchema,
+						schema: UpdateTripSchema,
 					},
 				},
 				description: "Trip to update",

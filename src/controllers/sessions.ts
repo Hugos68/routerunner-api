@@ -1,4 +1,5 @@
 import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
+import { setCookie } from "hono/cookie";
 import {
 	CreateSessionSchema,
 	SessionParamsSchema,
@@ -12,6 +13,7 @@ import {
 	getSessions,
 } from "../services/sessions.ts";
 import type { Environment } from "../types/environment.ts";
+import { SESSION_COOKIE_KEY } from "../utility/constants.ts";
 import { createErrorResponses } from "../utility/create-error-responses.ts";
 import { RouterunnerResponse, createOkSchema } from "../utility/response.ts";
 
@@ -47,8 +49,10 @@ app.openapi(
 	}),
 	async (c) => {
 		const actor = c.get("actor");
+
 		const sessionToCreate = c.req.valid("json");
 		const session = await createSession(actor, sessionToCreate);
+		setCookie(c, SESSION_COOKIE_KEY, session.id);
 		return c.json(RouterunnerResponse.ok(session), 201);
 	},
 );

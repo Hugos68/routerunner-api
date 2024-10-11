@@ -4,6 +4,7 @@ import {
 	RoleParamsSchema,
 	RoleQuerySchema,
 	RoleSchema,
+	UpdateRoleSchema,
 } from "../schemas/roles.ts";
 import {
 	createRole,
@@ -93,10 +94,10 @@ app.openapi(
 			200: {
 				content: {
 					"application/json": {
-						schema: createOkSchema(RoleSchema),
+						schema: createOkSchema(RoleSchema.array()),
 					},
 				},
-				description: "Role found",
+				description: "Roles found",
 			},
 			...createErrorResponses("Role"),
 		},
@@ -111,7 +112,7 @@ app.openapi(
 app.openapi(
 	createRoute({
 		tags: ["roles"],
-		method: "put",
+		method: "patch",
 		path: "/:id",
 		request: {
 			params: RoleParamsSchema,
@@ -119,7 +120,7 @@ app.openapi(
 				required: true,
 				content: {
 					"application/json": {
-						schema: CreateRoleSchema,
+						schema: UpdateRoleSchema,
 					},
 				},
 				description: "Role to update",

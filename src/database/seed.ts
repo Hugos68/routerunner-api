@@ -3,6 +3,7 @@ import { addressesTable } from "./tables/addresses.ts";
 import { linesTable } from "./tables/lines.ts";
 import { ordersTable } from "./tables/orders.ts";
 import { rolesTable } from "./tables/roles.ts";
+import { sessionsTable } from "./tables/sessions.ts";
 import { tripsTable } from "./tables/trips.ts";
 import { usersTable } from "./tables/users.ts";
 
@@ -12,6 +13,7 @@ await database.delete(addressesTable);
 await database.delete(ordersTable);
 await database.delete(tripsTable);
 await database.delete(linesTable);
+await database.delete(sessionsTable);
 
 const [driverRole] = await database
 	.insert(rolesTable)

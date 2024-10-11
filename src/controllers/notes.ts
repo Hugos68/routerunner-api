@@ -4,6 +4,7 @@ import {
 	NoteParamsSchema,
 	NoteQuerySchema,
 	NoteSchema,
+	UpdateNoteSchema,
 } from "../schemas/notes.ts";
 import {
 	createNote,
@@ -66,10 +67,10 @@ app.openapi(
 			200: {
 				content: {
 					"application/json": {
-						schema: createOkSchema(NoteSchema),
+						schema: createOkSchema(NoteSchema.array()),
 					},
 				},
-				description: "Note found",
+				description: "Notes found",
 			},
 			...createErrorResponses("Note"),
 		},
@@ -109,7 +110,7 @@ app.openapi(
 app.openapi(
 	createRoute({
 		tags: ["notes"],
-		method: "put",
+		method: "patch",
 		path: "/:id",
 		request: {
 			params: NoteParamsSchema,
@@ -117,7 +118,7 @@ app.openapi(
 				required: true,
 				content: {
 					"application/json": {
-						schema: CreateNoteSchema,
+						schema: UpdateNoteSchema,
 					},
 				},
 				description: "Note to update",

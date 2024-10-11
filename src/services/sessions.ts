@@ -34,9 +34,13 @@ export const createSession = async (
 	if (!passwordMatches) {
 		throw new BadCredentialsError();
 	}
-	const [session] = await database.insert(sessionsTable).values({
-		userId: user.id,
-	});
+	const [session] = await database
+		.insert(sessionsTable)
+		.values({
+			userId: user.id,
+		})
+		.returning();
+
 	if (session === undefined) {
 		throw new Error("Failed to create session");
 	}
