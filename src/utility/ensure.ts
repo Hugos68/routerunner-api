@@ -19,7 +19,7 @@ export const ensure = <T extends Error>(actor: Actor | null) => {
 	};
 
 	return {
-		toBeLoggedIn: () => {
+		isAuthenticated: () => {
 			checkAndUpdateAuth(actor !== null);
 			return this;
 		},
