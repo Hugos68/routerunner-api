@@ -78,7 +78,8 @@ app.openapi(
 	}),
 	async (c) => {
 		const actor = c.get("actor");
-		const roles = await getRoles(actor);
+		const query = c.req.valid("query");
+		const roles = await getRoles(actor, query);
 		return c.json(RouterunnerResponse.ok(roles));
 	},
 );

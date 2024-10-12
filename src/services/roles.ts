@@ -1,16 +1,25 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { database } from "../database/database.ts";
 import { rolesTable } from "../database/tables/roles.ts";
 import type { Actor } from "../types/actor.ts";
-import type { Role, RoleToCreate, RoleToUpdate } from "../types/role.ts";
+import type {
+	Role,
+	RoleQuery,
+	RoleToCreate,
+	RoleToUpdate,
+} from "../types/role.ts";
 import { authorize } from "../utility/authorize.ts";
+import { createFilterConditions } from "../utility/create-filter-conditions.ts";
 import { ResourceNotFoundError, UnauthorizedError } from "../utility/errors.ts";
 
-export const getRoles = async (actor: Actor) => {
+export const getRoles = async (actor: Actor, query: RoleQuery) => {
 	authorize(actor)
 		.hasRole("DRIVER", "PLANNER", "ADMIN")
 		.orElseThrow(new UnauthorizedError());
-	const roles = await database.select().from(rolesTable);
+	const roles = await database
+		.select()
+		.from(rolesTable)
+		.where(and(...createFilterConditions(query, rolesTable)));
 	return roles;
 };
 

@@ -77,7 +77,7 @@ app.openapi(
 		},
 	}),
 	async (c) => {
-		const notes = await getNotes(c.get("actor"));
+		const notes = await getNotes(c.get("actor"), c.req.valid("query"));
 		return c.json(RouterunnerResponse.ok(notes));
 	},
 );

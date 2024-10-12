@@ -1,21 +1,29 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { database } from "../database/database.ts";
 import { retourPackagingsTable } from "../database/tables/retour-packagings.ts";
 import type { Actor } from "../types/actor.ts";
 import type {
 	RetourPackaging,
+	RetourPackagingQuery,
 	RetourPackagingToCreate,
 	RetourPackagingToUpdate,
 } from "../types/retour-packaging.ts";
 import { ResourceNotFoundError, UnauthorizedError } from "../utility/errors.ts";
 
 import { authorize } from "../utility/authorize.ts";
+import { createFilterConditions } from "../utility/create-filter-conditions.ts";
 
-export const getRetourPackagings = async (actor: Actor) => {
+export const getRetourPackagings = async (
+	actor: Actor,
+	query: RetourPackagingQuery,
+) => {
 	authorize(actor)
 		.hasRole("DRIVER", "PLANNER", "ADMIN")
 		.orElseThrow(new UnauthorizedError());
-	const retourPackagings = await database.select().from(retourPackagingsTable);
+	const retourPackagings = await database
+		.select()
+		.from(retourPackagingsTable)
+		.where(and(...createFilterConditions(query, retourPackagingsTable)));
 	return retourPackagings;
 };
 
