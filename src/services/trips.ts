@@ -7,8 +7,9 @@ import { authorize } from "../utility/authorize.ts";
 import { ResourceNotFoundError, UnauthorizedError } from "../utility/errors.ts";
 
 export const createTrip = async (actor: Actor, tripToCreate: TripToCreate) => {
-	authorize(actor).hasRoles("ADMIN", "PLANNER");
-
+	authorize(actor)
+		.hasRole("PLANNER", "ADMIN")
+		.orElseThrow(new UnauthorizedError());
 	const [trip] = await database
 		.insert(tripsTable)
 		.values(tripToCreate)
@@ -20,15 +21,17 @@ export const createTrip = async (actor: Actor, tripToCreate: TripToCreate) => {
 };
 
 export const getTrips = async (actor: Actor) => {
-	authorize(actor).isAuthenticated();
+	authorize(actor)
+		.hasRole("DRIVER", "PLANNER", "ADMIN")
+		.orElseThrow(new UnauthorizedError());
 	const trips = await database.select().from(tripsTable);
 	return trips;
 };
 
 export const getTrip = async (actor: Actor, id: Trip["id"]) => {
 	authorize(actor)
-		.isAuthenticated()
-		.throwCustomError(new ResourceNotFoundError());
+		.hasRole("DRIVER", "PLANNER", "ADMIN")
+		.orElseThrow(new ResourceNotFoundError());
 	const [trip] = await database
 		.select()
 		.from(tripsTable)
@@ -45,8 +48,8 @@ export const updateTrip = async (
 	tripToUpdate: TripToUpdate,
 ) => {
 	authorize(actor)
-		.hasRoles("ADMIN", "PLANNER")
-		.throwCustomError(new ResourceNotFoundError());
+		.hasRole("ADMIN", "PLANNER")
+		.orElseThrow(new ResourceNotFoundError());
 	const [trip] = await database
 		.update(tripsTable)
 		.set(tripToUpdate)
@@ -60,8 +63,8 @@ export const updateTrip = async (
 
 export const deleteTrip = async (actor: Actor, id: Trip["id"]) => {
 	authorize(actor)
-		.hasRoles("ADMIN", "PLANNER")
-		.throwCustomError(new UnauthorizedError());
+		.hasRole("ADMIN", "PLANNER")
+		.orElseThrow(new ResourceNotFoundError());
 	const [trip] = await database
 		.delete(tripsTable)
 		.where(eq(tripsTable.id, id))

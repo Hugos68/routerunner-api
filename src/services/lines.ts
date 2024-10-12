@@ -4,18 +4,20 @@ import { linesTable } from "../database/tables/lines.ts";
 import type { Actor } from "../types/actor.ts";
 import type { Line, LineToCreate, LineToUpdate } from "../types/line.ts";
 import { authorize } from "../utility/authorize.ts";
-import { ResourceNotFoundError } from "../utility/errors.ts";
+import { ResourceNotFoundError, UnauthorizedError } from "../utility/errors.ts";
 
 export const getLines = async (actor: Actor) => {
-	authorize(actor).isAuthenticated();
+	authorize(actor)
+		.hasRole("DRIVER", "PLANNER", "ADMIN")
+		.orElseThrow(new UnauthorizedError());
 	const lines = await database.select().from(linesTable);
 	return lines;
 };
 
 export const getLine = async (actor: Actor, id: Line["id"]) => {
 	authorize(actor)
-		.isAuthenticated()
-		.throwCustomError(new ResourceNotFoundError());
+		.hasRole("DRIVER", "PLANNER", "ADMIN")
+		.orElseThrow(new ResourceNotFoundError());
 	const [line] = await database
 		.select()
 		.from(linesTable)
@@ -27,7 +29,9 @@ export const getLine = async (actor: Actor, id: Line["id"]) => {
 };
 
 export const createLine = async (actor: Actor, lineToCreate: LineToCreate) => {
-	authorize(actor).hasRoles("ADMIN", "PLANNER");
+	authorize(actor)
+		.hasRole("PLANNER", "ADMIN")
+		.orElseThrow(new UnauthorizedError());
 	const [line] = await database
 		.insert(linesTable)
 		.values(lineToCreate)
@@ -44,8 +48,8 @@ export const updateLine = async (
 	lineToUpdate: LineToUpdate,
 ) => {
 	authorize(actor)
-		.hasRoles("ADMIN", "PLANNER")
-		.throwCustomError(new ResourceNotFoundError());
+		.hasRole("PLANNER", "ADMIN")
+		.orElseThrow(new ResourceNotFoundError());
 	const [line] = await database
 		.update(linesTable)
 		.set(lineToUpdate)
@@ -59,8 +63,8 @@ export const updateLine = async (
 
 export const deleteLine = async (actor: Actor, id: Line["id"]) => {
 	authorize(actor)
-		.hasRoles("ADMIN", "PLANNER")
-		.throwCustomError(new ResourceNotFoundError());
+		.hasRole("PLANNER", "ADMIN")
+		.orElseThrow(new ResourceNotFoundError());
 	const [line] = await database
 		.delete(linesTable)
 		.where(eq(linesTable.id, id))

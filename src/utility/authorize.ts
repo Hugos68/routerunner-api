@@ -1,42 +1,66 @@
 import type { Actor } from "../types/actor.ts";
 import type { Role } from "../types/role.ts";
-import { UnauthorizedError } from "./errors.ts";
+import type { RouterunnerError } from "./errors.ts";
 
-export const authorize = <T extends Error>(actor: Actor | null) => {
-	let isAuthorized = true;
-	let customError: T | null = null;
+type AuthorizationCheck = (actor: Actor | null) => boolean;
 
-	const checkAndUpdateAuth = (condition: boolean) => {
-		isAuthorized = isAuthorized && condition;
-	};
+class AuthorizationGroup {
+	checks: AuthorizationCheck[] = [];
 
-	const throwIfUnauthorized = () => {
+	addCheck(check: AuthorizationCheck) {
+		this.checks.push(check);
+	}
+
+	evaluate(actor: Actor | null): boolean {
+		return this.checks.every((check) => check(actor));
+	}
+}
+
+class AuthorizationBuilder {
+	private actor: Actor | null;
+	private groups: AuthorizationGroup[] = [new AuthorizationGroup()];
+
+	constructor(actor: Actor | null) {
+		this.actor = actor;
+	}
+
+	private currentGroup(): AuthorizationGroup {
+		// biome-ignore lint/style/noNonNullAssertion: <explanation>
+		return this.groups.at(-1)!;
+	}
+
+	isAuthenticated(): this {
+		this.currentGroup().addCheck((actor) => actor !== null);
+		return this;
+	}
+
+	hasRole(...roles: Role["name"][]): this {
+		this.currentGroup().addCheck(
+			(actor) => actor !== null && roles.includes(actor.role.name),
+		);
+		return this;
+	}
+
+	satisfies(check: AuthorizationCheck): this {
+		this.currentGroup().addCheck(check);
+		return this;
+	}
+
+	or(): this {
+		this.groups.push(new AuthorizationGroup());
+		return this;
+	}
+
+	orElseThrow(error: RouterunnerError): void {
+		const isAuthorized = this.groups.some((group) =>
+			group.evaluate(this.actor),
+		);
 		if (!isAuthorized) {
-			if (customError) {
-				throw customError;
-			}
-			throw new UnauthorizedError();
+			throw error;
 		}
-	};
+	}
+}
 
-	const createChain = () => ({
-		isAuthenticated: () => {
-			checkAndUpdateAuth(actor !== null);
-			return createChain();
-		},
-		hasRoles: (...roles: Role["name"][]) => {
-			checkAndUpdateAuth(actor !== null && roles.includes(actor.role.name));
-			return createChain();
-		},
-		when: (callback: (actor: Actor | null) => boolean) => {
-			checkAndUpdateAuth(callback(actor));
-			return createChain();
-		},
-		throwCustomError: (error: T) => {
-			customError = error;
-			throwIfUnauthorized();
-		},
-	});
-
-	return createChain();
+export const authorize = (actor: Actor | null): AuthorizationBuilder => {
+	return new AuthorizationBuilder(actor);
 };

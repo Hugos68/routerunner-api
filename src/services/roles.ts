@@ -4,18 +4,18 @@ import { rolesTable } from "../database/tables/roles.ts";
 import type { Actor } from "../types/actor.ts";
 import type { Role, RoleToCreate, RoleToUpdate } from "../types/role.ts";
 import { authorize } from "../utility/authorize.ts";
-import { ResourceNotFoundError } from "../utility/errors.ts";
+import { ResourceNotFoundError, UnauthorizedError } from "../utility/errors.ts";
 
 export const getRoles = async (actor: Actor) => {
-	authorize(actor).isAuthenticated();
+	authorize(actor)
+		.hasRole("DRIVER", "PLANNER", "ADMIN")
+		.orElseThrow(new UnauthorizedError());
 	const roles = await database.select().from(rolesTable);
 	return roles;
 };
 
 export const getRole = async (actor: Actor, id: Role["id"]) => {
-	authorize(actor)
-		.hasRoles("ADMIN")
-		.throwCustomError(new ResourceNotFoundError());
+	authorize(actor).hasRole("ADMIN").orElseThrow(new ResourceNotFoundError());
 	const [role] = await database
 		.select()
 		.from(rolesTable)
@@ -27,7 +27,7 @@ export const getRole = async (actor: Actor, id: Role["id"]) => {
 };
 
 export const createRole = async (actor: Actor, roleToCreate: RoleToCreate) => {
-	authorize(actor).hasRoles("ADMIN");
+	authorize(actor).hasRole("ADMIN").orElseThrow(new UnauthorizedError());
 	const [role] = await database
 		.insert(rolesTable)
 		.values(roleToCreate)
@@ -43,9 +43,7 @@ export const updateRole = async (
 	id: Role["id"],
 	roleToUpdate: RoleToUpdate,
 ) => {
-	authorize(actor)
-		.hasRoles("ADMIN")
-		.throwCustomError(new ResourceNotFoundError());
+	authorize(actor).hasRole("ADMIN").orElseThrow(new ResourceNotFoundError());
 	const [role] = await database
 		.update(rolesTable)
 		.set(roleToUpdate)
@@ -58,9 +56,7 @@ export const updateRole = async (
 };
 
 export const deleteRole = async (actor: Actor, id: Role["id"]) => {
-	authorize(actor)
-		.hasRoles("ADMIN")
-		.throwCustomError(new ResourceNotFoundError());
+	authorize(actor).hasRole("ADMIN").orElseThrow(new ResourceNotFoundError());
 	const [role] = await database
 		.delete(rolesTable)
 		.where(eq(rolesTable.id, id))
