@@ -1,5 +1,5 @@
 import { customType } from "drizzle-orm/pg-core";
-import { HASH_CONFIG } from "../utility/constants.js";
+import { HASH_CONFIG } from "../../utility/constants.ts";
 
 export const hash = customType<{ data: string }>({
 	dataType() {
