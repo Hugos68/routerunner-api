@@ -1,6 +1,7 @@
 import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { cors } from "hono/cors";
+import { csrf } from "hono/csrf";
 import { logger } from "hono/logger";
 import addresses from "./controllers/addresses.ts";
 import lines from "./controllers/lines.ts";
@@ -23,8 +24,9 @@ const app = new OpenAPIHono<Environment>().basePath("/api/v1");
  * Middleware
  */
 app.use(logger());
-app.use("*", cors());
+app.use(cors());
 app.use(authentication);
+app.use(csrf());
 
 /**
  * Handlers
