@@ -2,11 +2,11 @@ name: Build and Push to ACR
 on:
   push:
     branches:
-      - 'main'
-      - 'feat/deployment'
+      - "main"
+      - "feat/deployment"
 jobs:
   build:
-    name: 'Build and Push to ACR'
+    name: "Build and Push to ACR"
     runs-on: ubuntu-latest
 
     defaults:
