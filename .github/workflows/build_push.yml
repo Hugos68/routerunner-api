@@ -24,9 +24,12 @@ jobs:
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
+      - name: Verify Docker Login
+        run: docker info
+
       - name: Build and Push to ACR
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: routerunner/api:latest
+          tags: ${{ secrets.AZURE_URL }}/routerunner/api:latest
           file: Dockerfile
