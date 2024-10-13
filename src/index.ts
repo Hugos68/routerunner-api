@@ -54,7 +54,7 @@ app.doc("/doc", {
 	openapi: "3.0.0",
 	info: {
 		title: "Routerunner API",
-		version: "0.0.1",
+		version: "1.0.0",
 		description: "API documentation for Routerunner",
 	},
 });
