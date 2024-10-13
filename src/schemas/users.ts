@@ -8,4 +8,4 @@ export const UserSchema = createSelectSchema(usersTable, {
 export const CreateUserSchema = UserSchema.omit({ id: true });
 export const UpdateUserSchema = CreateUserSchema.partial();
 export const UserParamsSchema = UserSchema.pick({ id: true });
-export const UserQuerySchema = UserSchema.partial();
+export const UserQuerySchema = UserSchema.omit({ password: true }).partial();

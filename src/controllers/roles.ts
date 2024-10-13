@@ -106,7 +106,8 @@ app.openapi(
 	}),
 	async (c) => {
 		const actor = c.get("actor");
-		const role = await getRole(actor, c.req.param("id"));
+		const id = c.req.param("id");
+		const role = await getRole(actor, id);
 		return c.json(RouterunnerResponse.ok(role));
 	},
 );
@@ -142,8 +143,9 @@ app.openapi(
 	}),
 	async (c) => {
 		const actor = c.get("actor");
+		const id = c.req.param("id");
 		const roleToUpdate = c.req.valid("json");
-		const role = await updateRole(actor, c.req.param("id"), roleToUpdate);
+		const role = await updateRole(actor, id, roleToUpdate);
 		return c.json(RouterunnerResponse.ok(role));
 	},
 );
@@ -165,7 +167,8 @@ app.openapi(
 	}),
 	async (c) => {
 		const actor = c.get("actor");
-		await deleteRole(actor, c.req.param("id"));
+		const id = c.req.param("id");
+		await deleteRole(actor, id);
 		return c.json(undefined, 204);
 	},
 );
