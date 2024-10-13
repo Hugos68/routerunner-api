@@ -78,7 +78,8 @@ app.openapi(
 	}),
 	async (c) => {
 		const actor = c.get("actor");
-		const order = await getOrders(actor);
+		const query = c.req.valid("query");
+		const order = await getOrders(actor, query);
 		return c.json(RouterunnerResponse.ok(order));
 	},
 );

@@ -1,6 +1,7 @@
 import type { z } from "zod";
 import type {
 	CreateRetourPackagingSchema,
+	RetourPackagingQuerySchema,
 	RetourPackagingSchema,
 	UpdateRetourPackagingSchema,
 } from "../schemas/retour-packagings.ts";
@@ -12,3 +13,4 @@ export type RetourPackagingToCreate = z.infer<
 export type RetourPackagingToUpdate = z.infer<
 	typeof UpdateRetourPackagingSchema
 >;
+export type RetourPackagingQuery = z.infer<typeof RetourPackagingQuerySchema>;

@@ -1,16 +1,25 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { database } from "../database/database.ts";
 import { linesTable } from "../database/tables/lines.ts";
 import type { Actor } from "../types/actor.ts";
-import type { Line, LineToCreate, LineToUpdate } from "../types/line.ts";
+import type {
+	Line,
+	LineQuery,
+	LineToCreate,
+	LineToUpdate,
+} from "../types/line.ts";
 import { authorize } from "../utility/authorize.ts";
+import { createFilterConditions } from "../utility/create-filter-conditions.ts";
 import { ResourceNotFoundError, UnauthorizedError } from "../utility/errors.ts";
 
-export const getLines = async (actor: Actor) => {
+export const getLines = async (actor: Actor, query: LineQuery) => {
 	authorize(actor)
 		.hasRole("DRIVER", "PLANNER", "ADMIN")
 		.orElseThrow(new UnauthorizedError());
-	const lines = await database.select().from(linesTable);
+	const lines = await database
+		.select()
+		.from(linesTable)
+		.where(and(...createFilterConditions(query, linesTable)));
 	return lines;
 };
 

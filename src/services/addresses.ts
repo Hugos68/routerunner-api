@@ -1,13 +1,15 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { database } from "../database/database.ts";
 import { addressesTable } from "../database/tables/addresses.ts";
 import type { Actor } from "../types/actor.ts";
 import type {
 	Address,
+	AddressQuery,
 	AddressToCreate,
 	AddressToUpdate,
 } from "../types/address.ts";
 import { authorize } from "../utility/authorize.ts";
+import { createFilterConditions } from "../utility/create-filter-conditions.ts";
 import { ResourceNotFoundError, UnauthorizedError } from "../utility/errors.ts";
 
 export const getAddress = async (actor: Actor, id: Address["id"]) => {
@@ -24,11 +26,14 @@ export const getAddress = async (actor: Actor, id: Address["id"]) => {
 	return address;
 };
 
-export const getAddresses = async (actor: Actor) => {
+export const getAddresses = async (actor: Actor, query: AddressQuery) => {
 	authorize(actor)
 		.hasRole("DRIVER", "PLANNER", "ADMIN")
 		.orElseThrow(new UnauthorizedError());
-	const addresses = await database.select().from(addressesTable);
+	const addresses = await database
+		.select()
+		.from(addressesTable)
+		.where(and(...createFilterConditions(query, addressesTable)));
 	return addresses;
 };
 

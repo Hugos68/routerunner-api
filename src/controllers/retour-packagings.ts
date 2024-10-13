@@ -80,7 +80,8 @@ app.openapi(
 	}),
 	async (c) => {
 		const actor = c.get("actor");
-		const retourPackaging = await getRetourPackagings(actor);
+		const query = c.req.valid("query");
+		const retourPackaging = await getRetourPackagings(actor, query);
 		return c.json(RouterunnerResponse.ok(retourPackaging));
 	},
 );

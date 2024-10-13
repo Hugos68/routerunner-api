@@ -1,9 +1,15 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { database } from "../database/database.ts";
 import { tripsTable } from "../database/tables/trips.ts";
 import type { Actor } from "../types/actor.ts";
-import type { Trip, TripToCreate, TripToUpdate } from "../types/trip.ts";
+import type {
+	Trip,
+	TripQuery,
+	TripToCreate,
+	TripToUpdate,
+} from "../types/trip.ts";
 import { authorize } from "../utility/authorize.ts";
+import { createFilterConditions } from "../utility/create-filter-conditions.ts";
 import { ResourceNotFoundError, UnauthorizedError } from "../utility/errors.ts";
 
 export const createTrip = async (actor: Actor, tripToCreate: TripToCreate) => {
@@ -20,11 +26,14 @@ export const createTrip = async (actor: Actor, tripToCreate: TripToCreate) => {
 	return trip;
 };
 
-export const getTrips = async (actor: Actor) => {
+export const getTrips = async (actor: Actor, query: TripQuery) => {
 	authorize(actor)
 		.hasRole("DRIVER", "PLANNER", "ADMIN")
 		.orElseThrow(new UnauthorizedError());
-	const trips = await database.select().from(tripsTable);
+	const trips = await database
+		.select()
+		.from(tripsTable)
+		.where(and(...createFilterConditions(query, tripsTable)));
 	return trips;
 };
 

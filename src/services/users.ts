@@ -1,9 +1,15 @@
-import { eq, getTableColumns } from "drizzle-orm";
+import { and, eq, getTableColumns } from "drizzle-orm";
 import { database } from "../database/database.ts";
 import { usersTable } from "../database/tables/users.ts";
 import type { Actor } from "../types/actor.ts";
-import type { User, UserToCreate, UserToUpdate } from "../types/user.ts";
+import type {
+	User,
+	UserQuery,
+	UserToCreate,
+	UserToUpdate,
+} from "../types/user.ts";
 import { authorize } from "../utility/authorize.ts";
+import { createFilterConditions } from "../utility/create-filter-conditions.ts";
 import { ResourceNotFoundError, UnauthorizedError } from "../utility/errors.ts";
 
 const { password: _, ...columns } = getTableColumns(usersTable);
@@ -40,9 +46,12 @@ export const getUser = async (actor: Actor, id: User["id"]) => {
 	return user;
 };
 
-export const getUsers = async (actor: Actor) => {
+export const getUsers = async (actor: Actor, query: UserQuery) => {
 	authorize(actor).hasRole("ADMIN").orElseThrow(new UnauthorizedError());
-	const users = await database.select(columns).from(usersTable);
+	const users = await database
+		.select(columns)
+		.from(usersTable)
+		.where(and(...createFilterConditions(query, usersTable)));
 	return users;
 };
 

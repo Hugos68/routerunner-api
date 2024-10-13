@@ -1,16 +1,25 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { database } from "../database/database.ts";
 import { notesTable } from "../database/tables/notes.ts";
 import type { Actor } from "../types/actor.ts";
-import type { Note, NoteToCreate, NoteToUpdate } from "../types/note.ts";
+import type {
+	Note,
+	NoteQuery,
+	NoteToCreate,
+	NoteToUpdate,
+} from "../types/note.ts";
 import { authorize } from "../utility/authorize.ts";
+import { createFilterConditions } from "../utility/create-filter-conditions.ts";
 import { ResourceNotFoundError, UnauthorizedError } from "../utility/errors.ts";
 
-export const getNotes = async (actor: Actor) => {
+export const getNotes = async (actor: Actor, query: NoteQuery) => {
 	authorize(actor)
 		.hasRole("DRIVER", "PLANNER", "ADMIN")
 		.orElseThrow(new ResourceNotFoundError());
-	const notes = await database.select().from(notesTable);
+	const notes = await database
+		.select()
+		.from(notesTable)
+		.where(and(...createFilterConditions(query, notesTable)));
 	return notes;
 };
 
