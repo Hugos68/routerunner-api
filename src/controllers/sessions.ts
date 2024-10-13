@@ -35,7 +35,6 @@ app.openapi(
 				},
 				description: "Session to create",
 			},
-			query: SessionQuerySchema,
 		},
 		responses: {
 			201: {
