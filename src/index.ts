@@ -62,6 +62,8 @@ app.openAPIRegistry.registerComponent("securitySchemes", "Session", {
 	name: SESSION_COOKIE_KEY,
 });
 
+app.get("/hello-world", (c) => c.text("Hello, world!"));
+
 /**
  * Swagger UI
  */
