@@ -73,8 +73,8 @@ bun test
 
 ## API Documentation
 
-- Swagger UI: Available at `/ui`
-- OpenAPI documentation: Available at `/doc`
+- Swagger UI: Available at `/api-docs`
+- OpenAPI documentation: Available at `/api-spec`
 
 ## Docker
 
