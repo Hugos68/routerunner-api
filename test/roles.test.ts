@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "bun:test";
+import { describe, expect, it } from "bun:test";
 // biome-ignore lint/style/noNamespaceImport: <explanation>
 import * as uuid from "uuid";
 import {
@@ -9,15 +9,9 @@ import {
 	updateRole,
 } from "../src/services/roles.ts";
 import { ResourceNotFoundError } from "../src/utility/errors.ts";
-import { seedDatabase } from "./seed.ts";
+import { seedData } from "./setup.ts";
 
-let seedData: Awaited<ReturnType<typeof seedDatabase>>;
-
-beforeEach(async () => {
-	seedData = await seedDatabase();
-});
-
-describe.skip("Role Service Tests", () => {
+describe("Role Service Tests", () => {
 	it("should create a role as an admin", async () => {
 		const adminActor = { ...seedData.admin, role: seedData.adminRole };
 		await deleteRole(adminActor, seedData.driverRole.id);

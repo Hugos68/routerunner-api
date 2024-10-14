@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "bun:test";
+import { describe, expect, it } from "bun:test";
 // biome-ignore lint/style/noNamespaceImport: <explanation>
 import * as uuid from "uuid";
 import {
@@ -13,14 +13,9 @@ import {
 	ResourceNotFoundError,
 	UnauthorizedError,
 } from "../src/utility/errors.ts";
-import { seedDatabase } from "./seed.ts";
+import { seedData } from "./setup.ts";
 
-let seedData: Awaited<ReturnType<typeof seedDatabase>>;
-beforeEach(async () => {
-	seedData = await seedDatabase();
-});
-
-describe.skip("Session Service Tests", () => {
+describe("Session Service Tests", () => {
 	it("should create a session for a valid user", async () => {
 		const sessionToCreate = { username: "admin", password: "1234567890" };
 		const session = await createSession(sessionToCreate);

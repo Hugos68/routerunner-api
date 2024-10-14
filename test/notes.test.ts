@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "bun:test";
+import { describe, expect, it } from "bun:test";
 // biome-ignore lint/style/noNamespaceImport: <explanation>
 import * as uuid from "uuid";
 import {
@@ -10,15 +10,9 @@ import {
 } from "../src/services/notes.ts";
 import type { Note } from "../src/types/note.ts";
 import { ResourceNotFoundError } from "../src/utility/errors.ts";
-import { seedDatabase } from "./seed.ts";
+import { seedData } from "./setup.ts";
 
-let seedData: Awaited<ReturnType<typeof seedDatabase>>;
-
-beforeEach(async () => {
-	seedData = await seedDatabase();
-});
-
-describe.skip("Notes Service Tests", () => {
+describe("Notes Service Tests", () => {
 	it("should get all notes as an admin", async () => {
 		const adminActor = { ...seedData.admin, role: seedData.adminRole };
 
