@@ -12,7 +12,7 @@ Before you begin, ensure you have the following installed:
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/routerunner.git
+   git clone https://github.com/Hugos68/routerunner.git
    cd routerunner
    ```
 
