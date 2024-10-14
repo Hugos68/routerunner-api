@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "bun:test";
+import { beforeEach, describe, expect, it, test } from "bun:test";
 // // biome-ignore lint/style/noNamespaceImport: <explanation>
 // import * as uuid from "uuid";
 import {
@@ -22,12 +22,12 @@ beforeEach(async () => {
 });
 
 describe("Orders Service Tests", () => {
-	// it("should get all orders as an admin", async () => {
-	// 	const adminActor = { ...seedData.admin, role: seedData.adminRole };
-	// 	const orders = await getOrders(adminActor, {});
-	// 	expect(orders).toBeDefined();
-	// 	expect(orders.length).toBeGreaterThan(0);
-	// });
+	test("should get all orders as an admin", async () => {
+		const adminActor = { ...seedData.admin, role: seedData.adminRole };
+		const orders = await getOrders(adminActor, {});
+		expect(orders).toBeDefined();
+		expect(orders.length).toBeGreaterThan(0);
+	});
 	// it("should get an order by ID as a planner", async () => {
 	// 	const plannerActor = { ...seedData.planner, role: seedData.plannerRole };
 	// 	const orderId = seedData.order.id;
