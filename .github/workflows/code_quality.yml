@@ -40,7 +40,12 @@ jobs:
 
       - name: Install Dependencies
         run: bun install
-
+      - name: Wait for PostgreSQL
+        run: |
+          until pg_isready -h localhost -p 5432 -U postgres; do
+            echo "Waiting for PostgreSQL..."
+            sleep 3
+          done
       - name: Run Database Migrations
         run: bun run drizzle:push
         env:
