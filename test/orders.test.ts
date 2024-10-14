@@ -1,27 +1,15 @@
-import { beforeEach, describe, expect, it, test } from "bun:test";
+import { beforeEach, describe, expect, test } from "bun:test";
 // // biome-ignore lint/style/noNamespaceImport: <explanation>
 // import * as uuid from "uuid";
-import {
-	createOrder,
-	deleteOrder,
-	getOrder,
-	getOrders,
-	updateOrder,
-} from "../src/services/orders.ts";
-import type { Order } from "../src/types/order.ts";
-import {
-	ResourceNotFoundError,
-	UnauthorizedError,
-} from "../src/utility/errors.ts";
+import { getOrders } from "../src/services/orders.ts";
 import { seedDatabase } from "./seed.ts";
 
 let seedData: Awaited<ReturnType<typeof seedDatabase>>;
 
-beforeEach(async () => {
-	seedData = await seedDatabase();
-});
-
 describe("Orders Service Tests", () => {
+	beforeEach(async () => {
+		seedData = await seedDatabase();
+	});
 	console.log("seedData", seedData);
 
 	test("should get all orders as an admin", async () => {
