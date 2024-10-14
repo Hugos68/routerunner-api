@@ -1,5 +1,8 @@
 {
 	"name": "routerunner",
+	"version": "0.0.1",
+	"description": "A logistic app for truckdrivers for keeping track of their trips and registering orders and retour packagings.",
+
 	"scripts": {
 		"dev": "bun --hot src/index.ts",
 		"drizzle:push": "bun --bun drizzle-kit push",
@@ -22,5 +25,7 @@
 		"@types/uuid": "^10.0.0",
 		"drizzle-kit": "^0.25.0"
 	},
-	"type": "module"
+	"license": "MIT",
+	"type": "module",
+	"private": true
 }

@@ -50,7 +50,7 @@ app.route("/roles", roles);
 /**
  * OpenAPI
  */
-app.doc("/doc", {
+app.doc("/api-spec", {
 	openapi: "3.0.0",
 	info: {
 		title: "Routerunner API",
@@ -58,15 +58,19 @@ app.doc("/doc", {
 		description: "API documentation for Routerunner",
 	},
 });
-app.openAPIRegistry.registerComponent("securitySchemes", "Session", {
-	type: "apiKey",
-	scheme: "cookie",
-	name: SESSION_COOKIE_KEY,
-});
+app.openAPIRegistry.registerComponent(
+	"securitySchemes",
+	"Session Authentication",
+	{
+		type: "apiKey",
+		name: SESSION_COOKIE_KEY,
+		scheme: "cookie",
+	},
+);
 
 /**
  * Swagger UI
  */
-app.get("/ui", swaggerUI({ url: "/api/v1/doc" }));
+app.get("/api-docs", swaggerUI({ url: "/api/v1/api-spec" }));
 
 export default app;
