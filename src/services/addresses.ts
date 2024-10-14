@@ -1,19 +1,21 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { database } from "../database/database.ts";
 import { addressesTable } from "../database/tables/addresses.ts";
 import type { Actor } from "../types/actor.ts";
 import type {
 	Address,
+	AddressQuery,
 	AddressToCreate,
 	AddressToUpdate,
 } from "../types/address.ts";
 import { authorize } from "../utility/authorize.ts";
-import { ResourceNotFoundError } from "../utility/errors.ts";
+import { createFilterConditions } from "../utility/create-filter-conditions.ts";
+import { ResourceNotFoundError, UnauthorizedError } from "../utility/errors.ts";
 
 export const getAddress = async (actor: Actor, id: Address["id"]) => {
 	authorize(actor)
-		.isAuthenticated()
-		.throwCustomError(new ResourceNotFoundError());
+		.hasRole("DRIVER", "PLANNER", "ADMIN")
+		.orElseThrow(new ResourceNotFoundError());
 	const [address] = await database
 		.select()
 		.from(addressesTable)
@@ -24,9 +26,14 @@ export const getAddress = async (actor: Actor, id: Address["id"]) => {
 	return address;
 };
 
-export const getAddresses = async (actor: Actor) => {
-	authorize(actor).hasRoles("ADMIN", "PLANNER");
-	const addresses = await database.select().from(addressesTable);
+export const getAddresses = async (actor: Actor, query: AddressQuery) => {
+	authorize(actor)
+		.hasRole("DRIVER", "PLANNER", "ADMIN")
+		.orElseThrow(new UnauthorizedError());
+	const addresses = await database
+		.select()
+		.from(addressesTable)
+		.where(and(...createFilterConditions(query, addressesTable)));
 	return addresses;
 };
 
@@ -34,7 +41,9 @@ export const createAddress = async (
 	actor: Actor,
 	addressToCreate: AddressToCreate,
 ) => {
-	authorize(actor).hasRoles("ADMIN", "PLANNER");
+	authorize(actor)
+		.hasRole("PLANNER", "ADMIN")
+		.orElseThrow(new UnauthorizedError());
 	const [address] = await database
 		.insert(addressesTable)
 		.values(addressToCreate)
@@ -51,8 +60,8 @@ export const updateAddress = async (
 	addressToUpdate: AddressToUpdate,
 ) => {
 	authorize(actor)
-		.hasRoles("ADMIN", "PLANNER")
-		.throwCustomError(new ResourceNotFoundError());
+		.hasRole("PLANNER", "ADMIN")
+		.orElseThrow(new ResourceNotFoundError());
 	const [address] = await database
 		.update(addressesTable)
 		.set(addressToUpdate)
@@ -66,8 +75,8 @@ export const updateAddress = async (
 
 export const deleteAddress = async (actor: Actor, id: Address["id"]) => {
 	authorize(actor)
-		.hasRoles("ADMIN", "PLANNER")
-		.throwCustomError(new ResourceNotFoundError());
+		.hasRole("PLANNER", "ADMIN")
+		.orElseThrow(new ResourceNotFoundError());
 	const [address] = await database
 		.delete(addressesTable)
 		.where(eq(addressesTable.id, id))

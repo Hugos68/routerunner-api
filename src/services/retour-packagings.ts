@@ -1,19 +1,29 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { database } from "../database/database.ts";
 import { retourPackagingsTable } from "../database/tables/retour-packagings.ts";
 import type { Actor } from "../types/actor.ts";
 import type {
 	RetourPackaging,
+	RetourPackagingQuery,
 	RetourPackagingToCreate,
 	RetourPackagingToUpdate,
 } from "../types/retour-packaging.ts";
-import { ResourceNotFoundError } from "../utility/errors.ts";
+import { ResourceNotFoundError, UnauthorizedError } from "../utility/errors.ts";
 
 import { authorize } from "../utility/authorize.ts";
+import { createFilterConditions } from "../utility/create-filter-conditions.ts";
 
-export const getRetourPackagings = async (actor: Actor) => {
-	authorize(actor).isAuthenticated();
-	const retourPackagings = await database.select().from(retourPackagingsTable);
+export const getRetourPackagings = async (
+	actor: Actor,
+	query: RetourPackagingQuery,
+) => {
+	authorize(actor)
+		.hasRole("DRIVER", "PLANNER", "ADMIN")
+		.orElseThrow(new UnauthorizedError());
+	const retourPackagings = await database
+		.select()
+		.from(retourPackagingsTable)
+		.where(and(...createFilterConditions(query, retourPackagingsTable)));
 	return retourPackagings;
 };
 
@@ -22,8 +32,8 @@ export const getRetourPackaging = async (
 	id: RetourPackaging["id"],
 ) => {
 	authorize(actor)
-		.isAuthenticated()
-		.throwCustomError(new ResourceNotFoundError());
+		.hasRole("DRIVER", "PLANNER", "ADMIN")
+		.orElseThrow(new ResourceNotFoundError());
 	const [retourPackaging] = await database
 		.select()
 		.from(retourPackagingsTable)
@@ -38,7 +48,9 @@ export const createRetourPackaging = async (
 	actor: Actor,
 	retourPackagingToCreate: RetourPackagingToCreate,
 ) => {
-	authorize(actor).isAuthenticated();
+	authorize(actor)
+		.hasRole("DRIVER", "PLANNER", "ADMIN")
+		.orElseThrow(new UnauthorizedError());
 	const [retourPackaging] = await database
 		.insert(retourPackagingsTable)
 		.values(retourPackagingToCreate)
@@ -55,8 +67,8 @@ export const updateRetourPackaging = async (
 	retourPackagingToUpdate: RetourPackagingToUpdate,
 ) => {
 	authorize(actor)
-		.isAuthenticated()
-		.throwCustomError(new ResourceNotFoundError());
+		.hasRole("DRIVER", "PLANNER", "ADMIN")
+		.orElseThrow(new ResourceNotFoundError());
 	const [retourPackaging] = await database
 		.update(retourPackagingsTable)
 		.set(retourPackagingToUpdate)
@@ -73,8 +85,8 @@ export const deleteRetourPackaging = async (
 	id: RetourPackaging["id"],
 ) => {
 	authorize(actor)
-		.isAuthenticated()
-		.throwCustomError(new ResourceNotFoundError());
+		.hasRole("DRIVER", "PLANNER", "ADMIN")
+		.orElseThrow(new ResourceNotFoundError());
 	const [retourPackaging] = await database
 		.delete(retourPackagingsTable)
 		.where(eq(retourPackagingsTable.id, id))

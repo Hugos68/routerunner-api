@@ -1,21 +1,32 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { database } from "../database/database.ts";
 import { ordersTable } from "../database/tables/orders.ts";
 import type { Actor } from "../types/actor.ts";
-import type { Order, OrderToCreate, OrderToUpdate } from "../types/order.ts";
+import type {
+	Order,
+	OrderQuery,
+	OrderToCreate,
+	OrderToUpdate,
+} from "../types/order.ts";
 import { authorize } from "../utility/authorize.ts";
-import { ResourceNotFoundError } from "../utility/errors.ts";
+import { createFilterConditions } from "../utility/create-filter-conditions.ts";
+import { ResourceNotFoundError, UnauthorizedError } from "../utility/errors.ts";
 
-export const getOrders = async (actor: Actor) => {
-	authorize(actor).isAuthenticated();
-	const orders = await database.select().from(ordersTable);
+export const getOrders = async (actor: Actor, query: OrderQuery) => {
+	authorize(actor)
+		.hasRole("DRIVER", "PLANNER", "ADMIN")
+		.orElseThrow(new UnauthorizedError());
+	const orders = await database
+		.select()
+		.from(ordersTable)
+		.where(and(...createFilterConditions(query, ordersTable)));
 	return orders;
 };
 
 export const getOrder = async (actor: Actor, id: Order["id"]) => {
 	authorize(actor)
-		.isAuthenticated()
-		.throwCustomError(new ResourceNotFoundError());
+		.hasRole("DRIVER", "PLANNER", "ADMIN")
+		.orElseThrow(new ResourceNotFoundError());
 	const [order] = await database
 		.select()
 		.from(ordersTable)
@@ -30,7 +41,9 @@ export const createOrder = async (
 	actor: Actor,
 	orderToCreate: OrderToCreate,
 ) => {
-	authorize(actor).hasRoles("ADMIN", "PLANNER");
+	authorize(actor)
+		.hasRole("PLANNER", "ADMIN")
+		.orElseThrow(new UnauthorizedError());
 	const [order] = await database
 		.insert(ordersTable)
 		.values(orderToCreate)
@@ -47,8 +60,8 @@ export const updateOrder = async (
 	orderToUpdate: OrderToUpdate,
 ) => {
 	authorize(actor)
-		.isAuthenticated()
-		.throwCustomError(new ResourceNotFoundError());
+		.hasRole("DRIVER", "PLANNER", "ADMIN")
+		.orElseThrow(new ResourceNotFoundError());
 	const [order] = await database
 		.update(ordersTable)
 		.set(orderToUpdate)
@@ -62,8 +75,8 @@ export const updateOrder = async (
 
 export const deleteOrder = async (actor: Actor, id: Order["id"]) => {
 	authorize(actor)
-		.hasRoles("ADMIN", "PLANNER")
-		.throwCustomError(new ResourceNotFoundError());
+		.hasRole("ADMIN", "PLANNER")
+		.orElseThrow(new ResourceNotFoundError());
 	const [order] = await database
 		.delete(ordersTable)
 		.where(eq(ordersTable.id, id))

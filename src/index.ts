@@ -1,6 +1,7 @@
 import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { cors } from "hono/cors";
+import { csrf } from "hono/csrf";
 import { logger } from "hono/logger";
 import addresses from "./controllers/addresses.ts";
 import lines from "./controllers/lines.ts";
@@ -23,8 +24,9 @@ const app = new OpenAPIHono<Environment>().basePath("/api/v1");
  * Middleware
  */
 app.use(logger());
-app.use("*", cors());
+app.use(cors());
 app.use(authentication);
+app.use(csrf());
 
 /**
  * Handlers
@@ -48,23 +50,27 @@ app.route("/roles", roles);
 /**
  * OpenAPI
  */
-app.doc("/doc", {
+app.doc("/api-spec", {
 	openapi: "3.0.0",
 	info: {
 		title: "Routerunner API",
-		version: "0.0.1",
+		version: "1.0.0",
 		description: "API documentation for Routerunner",
 	},
 });
-app.openAPIRegistry.registerComponent("securitySchemes", "Session", {
-	type: "apiKey",
-	scheme: "cookie",
-	name: SESSION_COOKIE_KEY,
-});
+app.openAPIRegistry.registerComponent(
+	"securitySchemes",
+	"Session Authentication",
+	{
+		type: "apiKey",
+		name: SESSION_COOKIE_KEY,
+		scheme: "cookie",
+	},
+);
 
 /**
  * Swagger UI
  */
-app.get("/ui", swaggerUI({ url: "/api/v1/doc" }));
+app.get("/api-docs", swaggerUI({ url: "/api/v1/api-spec" }));
 
 export default app;

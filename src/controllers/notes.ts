@@ -77,7 +77,9 @@ app.openapi(
 		},
 	}),
 	async (c) => {
-		const notes = await getNotes(c.get("actor"));
+		const actor = c.get("actor");
+		const query = c.req.valid("query");
+		const notes = await getNotes(actor, query);
 		return c.json(RouterunnerResponse.ok(notes));
 	},
 );
@@ -103,7 +105,9 @@ app.openapi(
 		},
 	}),
 	async (c) => {
-		const note = await getNote(c.get("actor"), c.req.param("id"));
+		const actor = c.get("actor");
+		const id = c.req.param("id");
+		const note = await getNote(actor, id);
 		return c.json(RouterunnerResponse.ok(note));
 	},
 );
@@ -139,8 +143,9 @@ app.openapi(
 	}),
 	async (c) => {
 		const actor = c.get("actor");
+		const id = c.req.param("id");
 		const noteToUpdate = c.req.valid("json");
-		const note = await updateNote(actor, c.req.param("id"), noteToUpdate);
+		const note = await updateNote(actor, id, noteToUpdate);
 		return c.json(RouterunnerResponse.ok(note));
 	},
 );
@@ -166,7 +171,9 @@ app.openapi(
 		},
 	}),
 	async (c) => {
-		const note = await deleteNote(c.get("actor"), c.req.param("id"));
+		const actor = c.get("actor");
+		const id = c.req.param("id");
+		const note = await deleteNote(actor, id);
 		return c.json(RouterunnerResponse.ok(note));
 	},
 );

@@ -8,8 +8,8 @@ export const onError: ErrorHandler = (err, c) => {
 	}
 	return c.json(
 		RouterunnerResponse.error({
-			message: err.message,
-			name: err.name,
+			message: "Internal server error",
+			name: "An unknown error occurred",
 		}),
 		500,
 	);

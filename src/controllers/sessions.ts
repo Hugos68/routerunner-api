@@ -49,9 +49,8 @@ app.openapi(
 		},
 	}),
 	async (c) => {
-		const actor = c.get("actor");
 		const sessionToCreate = c.req.valid("json");
-		const session = await createSession(actor, sessionToCreate);
+		const session = await createSession(sessionToCreate);
 		setCookie(c, SESSION_COOKIE_KEY, session.id);
 		return c.json(RouterunnerResponse.ok(session), 201);
 	},

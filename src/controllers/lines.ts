@@ -77,7 +77,9 @@ app.openapi(
 		},
 	}),
 	async (c) => {
-		const lines = await getLines(c.get("actor"));
+		const actor = c.get("actor");
+		const query = c.req.valid("query");
+		const lines = await getLines(actor, query);
 		return c.json(RouterunnerResponse.ok(lines));
 	},
 );
@@ -103,7 +105,9 @@ app.openapi(
 		},
 	}),
 	async (c) => {
-		const line = await getLine(c.get("actor"), c.req.param("id"));
+		const actor = c.get("actor");
+		const id = c.req.param("id");
+		const line = await getLine(actor, id);
 		return c.json(RouterunnerResponse.ok(line));
 	},
 );
@@ -139,8 +143,9 @@ app.openapi(
 	}),
 	async (c) => {
 		const actor = c.get("actor");
+		const id = c.req.param("id");
 		const lineToUpdate = c.req.valid("json");
-		const line = await updateLine(actor, c.req.param("id"), lineToUpdate);
+		const line = await updateLine(actor, id, lineToUpdate);
 		return c.json(RouterunnerResponse.ok(line));
 	},
 );
@@ -167,7 +172,8 @@ app.openapi(
 	}),
 	async (c) => {
 		const actor = c.get("actor");
-		const line = await deleteLine(actor, c.req.param("id"));
+		const id = c.req.param("id");
+		const line = await deleteLine(actor, id);
 		return c.json(RouterunnerResponse.ok(line));
 	},
 );
