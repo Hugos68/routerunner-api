@@ -3,6 +3,7 @@ import { describe, expect, test } from "bun:test";
 // import * as uuid from "uuid";
 import { getOrders } from "../src/services/orders.ts";
 import { seedData } from "./setup.ts";
+console.log(seedData);
 
 describe("Orders Service Tests", () => {
 	test("should get all orders as an admin", async () => {
