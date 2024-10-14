@@ -1,6 +1,5 @@
 import { describe, expect, it } from "bun:test";
-// biome-ignore lint/style/noNamespaceImport: <explanation>
-import * as uuid from "uuid";
+import { v4 } from "uuid";
 import {
 	createUser,
 	deleteUser,
@@ -27,7 +26,6 @@ describe("User Service Tests", () => {
 		expect(createdUser).toBeDefined();
 		expect(createdUser.username).toBe("newuser");
 	});
-
 	it("should get user details for an admin", async () => {
 		const adminActor = { ...seedData.admin, role: seedData.adminRole };
 
@@ -35,7 +33,6 @@ describe("User Service Tests", () => {
 		expect(user).toBeDefined();
 		expect(user.username).toBe(seedData.driver.username);
 	});
-
 	it("should get user details for a driver", async () => {
 		const driverActor = { ...seedData.driver, role: seedData.driverRole };
 
@@ -43,7 +40,6 @@ describe("User Service Tests", () => {
 		expect(user).toBeDefined();
 		expect(user.username).toBe(seedData.driver.username);
 	});
-
 	it("should get all users as an admin", async () => {
 		const adminActor = { ...seedData.admin, role: seedData.adminRole };
 		const users = await getUsers(adminActor, {});
@@ -51,7 +47,6 @@ describe("User Service Tests", () => {
 		expect(users).toBeDefined();
 		expect(users.length).toBeGreaterThan(0);
 	});
-
 	it("should update user details as an admin", async () => {
 		const adminActor = { ...seedData.admin, role: seedData.adminRole };
 		const userToUpdate = { username: "updateduser" };
@@ -64,52 +59,42 @@ describe("User Service Tests", () => {
 		expect(updatedUser).toBeDefined();
 		expect(updatedUser.username).toBe("updateduser");
 	});
-
 	it("should delete a user as an admin", async () => {
 		const adminActor = { ...seedData.admin, role: seedData.adminRole };
-
 		const deletedUser = await deleteUser(adminActor, seedData.driver.id);
 		expect(deletedUser).toBeDefined();
 		expect(deletedUser.username).toBe(seedData.driver.username);
 	});
-
-	it("should throw UnauthorizedError when a non-admin tries to get users", async () => {
+	it("should throw UnauthorizedError when a non-admin tries to get users", () => {
 		const driverActor = { ...seedData.driver, role: seedData.driverRole };
-		await expect(getUsers(driverActor, {})).rejects.toThrow(UnauthorizedError);
+		expect(getUsers(driverActor, {})).rejects.toThrow(UnauthorizedError);
 	});
-
-	it("should throw ResourceNotFoundError when a non-admin tries to update a user", async () => {
+	it("should throw ResourceNotFoundError when a non-admin tries to update a user", () => {
 		const driverActor = { ...seedData.driver, role: seedData.driverRole };
 		const userToUpdate = { username: "updateduser" };
-		await expect(
+		expect(
 			updateUser(driverActor, seedData.admin.id, userToUpdate),
 		).rejects.toThrow(ResourceNotFoundError);
 	});
-
-	it("should throw ResourceNotFoundError when a non-admin tries to delete a user", async () => {
+	it("should throw ResourceNotFoundError when a non-admin tries to delete a user", () => {
 		const driverActor = { ...seedData.driver, role: seedData.driverRole };
-		await expect(deleteUser(driverActor, seedData.admin.id)).rejects.toThrow(
+		expect(deleteUser(driverActor, seedData.admin.id)).rejects.toThrow(
 			ResourceNotFoundError,
 		);
 	});
-
-	it("should throw UnauthorizedError when a non-admin tries to create a user", async () => {
+	it("should throw UnauthorizedError when a non-admin tries to create a user", () => {
 		const driverActor = { ...seedData.driver, role: seedData.driverRole };
 		const newUser = {
 			username: "newuser",
 			password: "password123",
 			roleId: seedData.driverRole.id,
 		};
-
-		await expect(createUser(driverActor, newUser)).rejects.toThrow(
-			UnauthorizedError,
-		);
+		expect(createUser(driverActor, newUser)).rejects.toThrow(UnauthorizedError);
 	});
-
-	it("should throw ResourceNotFoundError when getting a nonexistent user", async () => {
+	it("should throw ResourceNotFoundError when getting a nonexistent user", () => {
 		const adminActor = { ...seedData.admin, role: seedData.adminRole };
-		const randomId = uuid.v4();
-		await expect(getUser(adminActor, randomId)).rejects.toThrow(
+		const randomId = v4();
+		expect(getUser(adminActor, randomId)).rejects.toThrow(
 			ResourceNotFoundError,
 		);
 	});

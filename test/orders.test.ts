@@ -1,6 +1,5 @@
 import { describe, expect, it } from "bun:test";
-// biome-ignore lint/style/noNamespaceImport: <explanation>
-import * as uuid from "uuid";
+import { v4 } from "uuid";
 import {
 	createOrder,
 	deleteOrder,
@@ -61,16 +60,16 @@ describe("Orders Service Tests", () => {
 		const adminActor = { ...seedData.admin, role: seedData.adminRole };
 		const orderId = seedData.order.id;
 		const order = await deleteOrder(adminActor, orderId);
-		await expect(order).toBeDefined();
+		expect(order).toBeDefined();
 	});
-	it("should throw ResourceNotFoundError when deleting a order as as driver", async () => {
+	it("should throw ResourceNotFoundError when deleting a order as as driver", () => {
 		const driverActor = { ...seedData.driver, role: seedData.driverRole };
 		const orderId = seedData.order.id;
-		await expect(deleteOrder(driverActor, orderId)).rejects.toThrow(
+		expect(deleteOrder(driverActor, orderId)).rejects.toThrow(
 			ResourceNotFoundError,
 		);
 	});
-	it("should throw UnauthorizedError when a driver tries to create an order", async () => {
+	it("should throw UnauthorizedError when a driver tries to create an order", () => {
 		const driverActor = { ...seedData.driver, role: seedData.driverRole };
 		const orderToCreate = {
 			quantity: 10,
@@ -82,14 +81,14 @@ describe("Orders Service Tests", () => {
 			tripId: seedData.trip.id,
 			unloadingDateTime: new Date().toDateString(),
 		};
-		await expect(createOrder(driverActor, orderToCreate)).rejects.toThrow(
+		expect(createOrder(driverActor, orderToCreate)).rejects.toThrow(
 			UnauthorizedError,
 		);
 	});
-	it("should throw ResourceNotFoundError when getting a nonexistent order", async () => {
+	it("should throw ResourceNotFoundError when getting a nonexistent order", () => {
 		const adminActor = { ...seedData.admin, role: seedData.adminRole };
-		const nonexistentOrderId = uuid.v4();
-		await expect(getOrder(adminActor, nonexistentOrderId)).rejects.toThrow(
+		const nonexistentOrderId = v4();
+		expect(getOrder(adminActor, nonexistentOrderId)).rejects.toThrow(
 			ResourceNotFoundError,
 		);
 	});

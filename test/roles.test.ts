@@ -1,6 +1,5 @@
 import { describe, expect, it } from "bun:test";
-// biome-ignore lint/style/noNamespaceImport: <explanation>
-import * as uuid from "uuid";
+import { v4 } from "uuid";
 import {
 	createRole,
 	deleteRole,
@@ -22,7 +21,6 @@ describe("Role Service Tests", () => {
 		expect(role).toBeDefined();
 		expect(role.name).toBe(roleToCreate.name);
 	});
-
 	it("should get all roles as an admin", async () => {
 		const adminActor = { ...seedData.admin, role: seedData.adminRole };
 
@@ -30,23 +28,18 @@ describe("Role Service Tests", () => {
 		expect(roles).toBeDefined();
 		expect(roles.length).toBeGreaterThan(0);
 	});
-
 	it("Should get all roles as a planner", async () => {
 		const plannerActor = { ...seedData.planner, role: seedData.plannerRole };
-
 		const roles = await getRoles(plannerActor, {});
 		expect(roles).toBeDefined();
 		expect(roles.length).toBeGreaterThan(0);
 	});
-
 	it("Should get all roles as a driver", async () => {
 		const driverActor = { ...seedData.driver, role: seedData.driverRole };
-
 		const roles = await getRoles(driverActor, {});
 		expect(roles).toBeDefined();
 		expect(roles.length).toBeGreaterThan(0);
 	});
-
 	it("should update a role as an admin", async () => {
 		const adminActor = { ...seedData.admin, role: seedData.adminRole };
 		const roleId = seedData.driverRole.id;
@@ -57,30 +50,23 @@ describe("Role Service Tests", () => {
 		expect(role).toBeDefined();
 		expect(role.name).toBe(roleToUpdate.name);
 	});
-
 	it("should get a role by ID as an admin", async () => {
 		const adminActor = { ...seedData.admin, role: seedData.adminRole };
 		const roleId = seedData.adminRole.id;
-
 		const role = await getRole(adminActor, roleId);
 		expect(role).toBeDefined();
 		expect(role.name).toBe(seedData.adminRole.name);
 	});
-
 	it("should delete a role as an admin", async () => {
 		const adminActor = { ...seedData.admin, role: seedData.adminRole };
 		const roleId = seedData.driverRole.id;
-
 		const role = await deleteRole(adminActor, roleId);
-
 		expect(role).toBeDefined();
 	});
-
-	it("should throw ResourceNotFoundError when getting a nonexistent role", async () => {
+	it("should throw ResourceNotFoundError when getting a nonexistent role", () => {
 		const adminActor = { ...seedData.admin, role: seedData.adminRole };
-		const nonexistentRoleId = uuid.v4();
-
-		await expect(getRole(adminActor, nonexistentRoleId)).rejects.toThrow(
+		const nonexistentRoleId = v4();
+		expect(getRole(adminActor, nonexistentRoleId)).rejects.toThrow(
 			ResourceNotFoundError,
 		);
 	});

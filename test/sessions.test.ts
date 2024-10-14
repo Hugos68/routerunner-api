@@ -1,6 +1,5 @@
 import { describe, expect, it } from "bun:test";
-// biome-ignore lint/style/noNamespaceImport: <explanation>
-import * as uuid from "uuid";
+import { v4 } from "uuid";
 import {
 	createSession,
 	deleteSession,
@@ -21,44 +20,26 @@ describe("Session Service Tests", () => {
 		const session = await createSession(sessionToCreate);
 		expect(session).toBeDefined();
 	});
-
-	it("should throw BadCredentialsError for invalid password", async () => {
+	it("should throw BadCredentialsError for invalid password", () => {
 		const sessionToCreate = { username: "admin", password: "wrongpassword" };
-		try {
-			await createSession(sessionToCreate);
-		} catch (error) {
-			expect(error).toBeInstanceOf(BadCredentialsError);
-		}
+		expect(createSession(sessionToCreate)).rejects.toThrow(BadCredentialsError);
 	});
-
-	it("should throw BadCredentialsError for non-existent user", async () => {
+	it("should throw BadCredentialsError for non-existent user", () => {
 		const sessionToCreate = { username: "nonexistent", password: "1234567890" };
-		try {
-			await createSession(sessionToCreate);
-		} catch (error) {
-			expect(error).toBeInstanceOf(BadCredentialsError);
-		}
+		expect(createSession(sessionToCreate)).rejects.toThrow(BadCredentialsError);
 	});
-
 	it("should get all sessions for admin user", async () => {
 		const adminActor: Actor = { ...seedData.admin, role: seedData.adminRole };
-
 		const sessions = await getSessions(adminActor, {});
 		expect(sessions).toBeDefined();
 	});
-
-	it("should throw UnauthorizedError when a non-admin tries to get sessions", async () => {
+	it("should throw UnauthorizedError when a non-admin tries to get sessions", () => {
 		const driverActor: Actor = {
 			...seedData.driver,
 			role: seedData.driverRole,
 		};
-		try {
-			await getSessions(driverActor, {});
-		} catch (error) {
-			expect(error).toBeInstanceOf(UnauthorizedError);
-		}
+		expect(getSessions(driverActor, {})).rejects.toThrow(UnauthorizedError);
 	});
-
 	it("should get a specific session by ID for admin", async () => {
 		const adminActor: Actor = { ...seedData.admin, role: seedData.adminRole };
 		const sessionToCreate = { username: "driver", password: "1234567890" };
@@ -67,16 +48,10 @@ describe("Session Service Tests", () => {
 		expect(session).toBeDefined();
 		expect(session.id).toBe(createdSession.id);
 	});
-
-	it("should throw ResourceNotFoundError when non-existent session is fetched", async () => {
+	it("should throw ResourceNotFoundError when non-existent session is fetched", () => {
 		const adminActor: Actor = { ...seedData.admin, role: seedData.adminRole };
-		try {
-			await getSession(adminActor, uuid.v4());
-		} catch (error) {
-			expect(error).toBeInstanceOf(ResourceNotFoundError);
-		}
+		expect(getSession(adminActor, v4())).rejects.toThrow(ResourceNotFoundError);
 	});
-
 	it("should delete a session for authorized user", async () => {
 		const driverActor: Actor = {
 			...seedData.driver,
@@ -84,24 +59,19 @@ describe("Session Service Tests", () => {
 		};
 		const sessionToCreate = { username: "driver", password: "1234567890" };
 		const createdSession = await createSession(sessionToCreate);
-
 		const deletedSession = await deleteSession(driverActor, createdSession.id);
 		expect(deletedSession).toBeDefined();
 		expect(deletedSession.id).toBe(createdSession.id);
 	});
-
-	it("should throw ResourceNotFoundError when trying to delete non-existent session", async () => {
+	it("should throw ResourceNotFoundError when trying to delete non-existent session", () => {
 		const driverActor: Actor = {
 			...seedData.driver,
 			role: seedData.driverRole,
 		};
-		try {
-			await deleteSession(driverActor, uuid.v4());
-		} catch (error) {
-			expect(error).toBeInstanceOf(ResourceNotFoundError);
-		}
+		expect(deleteSession(driverActor, v4())).rejects.toThrow(
+			ResourceNotFoundError,
+		);
 	});
-
 	it("should throw ResourceNotFoundError when unauthorized user tries to delete a session", async () => {
 		const driverActor: Actor = {
 			...seedData.driver,
@@ -109,11 +79,8 @@ describe("Session Service Tests", () => {
 		};
 		const sessionToCreate = { username: "planner", password: "1234567890" };
 		const createdSession = await createSession(sessionToCreate);
-
-		try {
-			await deleteSession(driverActor, createdSession.id);
-		} catch (error) {
-			expect(error).toBeInstanceOf(ResourceNotFoundError);
-		}
+		expect(deleteSession(driverActor, createdSession.id)).rejects.toThrow(
+			ResourceNotFoundError,
+		);
 	});
 });

@@ -1,6 +1,5 @@
 import { describe, expect, it } from "bun:test";
-// biome-ignore lint/style/noNamespaceImport: <explanation>
-import * as uuid from "uuid";
+import { v4 } from "uuid";
 import {
 	createRetourPackaging,
 	deleteRetourPackaging,
@@ -15,16 +14,13 @@ import { seedData } from "./setup.ts";
 describe("Retour Packagings Service Tests", () => {
 	it("should get all retour packagings as an admin", async () => {
 		const adminActor = { ...seedData.admin, role: seedData.adminRole };
-
 		const retourPackagings = await getRetourPackagings(adminActor, {});
 		expect(retourPackagings).toBeDefined();
 		expect(retourPackagings.length).toBeGreaterThan(0);
 	});
-
 	it("should get a retour packaging by ID as a planner", async () => {
 		const plannerActor = { ...seedData.planner, role: seedData.plannerRole };
 		const retourPackagingId = seedData.retourPackaging.id;
-
 		const retourPackaging = await getRetourPackaging(
 			plannerActor,
 			retourPackagingId,
@@ -40,7 +36,6 @@ describe("Retour Packagings Service Tests", () => {
 			packageType: "Pallet",
 			orderId: seedData.order.id,
 		};
-
 		const createdRetourPackaging: RetourPackaging = await createRetourPackaging(
 			driverActor,
 			retourPackagingToCreate,
@@ -48,7 +43,6 @@ describe("Retour Packagings Service Tests", () => {
 		expect(createdRetourPackaging).toBeDefined();
 		expect(createdRetourPackaging.packageType).toBe("Pallet");
 	});
-
 	it("should update a retour packaging as a planner", async () => {
 		const plannerActor = { ...seedData.planner, role: seedData.plannerRole };
 		const retourPackagingId = seedData.retourPackaging.id;
@@ -64,7 +58,6 @@ describe("Retour Packagings Service Tests", () => {
 		expect(updatedRetourPackaging).toBeDefined();
 		expect(updatedRetourPackaging.quantity).toBe(99);
 	});
-
 	it("should delete a retour packaging as a driver", async () => {
 		const driverActor = { ...seedData.driver, role: seedData.driverRole };
 		const retourPackagingId = seedData.retourPackaging.id;
@@ -72,15 +65,12 @@ describe("Retour Packagings Service Tests", () => {
 			driverActor,
 			retourPackagingId,
 		);
-
-		await expect(retourPackaging).toBeDefined();
+		expect(retourPackaging).toBeDefined();
 	});
-
-	it("should throw ResourceNotFoundError when getting a nonexistent retour packaging", async () => {
+	it("should throw ResourceNotFoundError when getting a nonexistent retour packaging", () => {
 		const adminActor = { ...seedData.admin, role: seedData.adminRole };
-		const nonexistentRetourPackagingId = uuid.v4();
-
-		await expect(
+		const nonexistentRetourPackagingId = v4();
+		expect(
 			getRetourPackaging(adminActor, nonexistentRetourPackagingId),
 		).rejects.toThrow(ResourceNotFoundError);
 	});
