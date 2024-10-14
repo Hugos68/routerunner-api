@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, test } from "bun:test";
 import { getOrders } from "../src/services/orders.ts";
 import { seedDatabase } from "./seed.ts";
 
-let seedData: Awaited<ReturnType<typeof seedDatabase>>;
+let seedData;
 
 describe("Orders Service Tests", () => {
 	beforeEach(async () => {
