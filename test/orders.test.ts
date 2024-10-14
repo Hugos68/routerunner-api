@@ -22,6 +22,8 @@ beforeEach(async () => {
 });
 
 describe("Orders Service Tests", () => {
+	console.log("seedData", seedData);
+
 	test("should get all orders as an admin", async () => {
 		const adminActor = { ...seedData.admin, role: seedData.adminRole };
 		const orders = await getOrders(adminActor, {});
