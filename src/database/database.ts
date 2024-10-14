@@ -7,7 +7,7 @@ const client = postgres({
 	database: process.env.POSTGRES_DATABASE as string,
 	user: process.env.POSTGRES_USERNAME as string,
 	password: process.env.POSTGRES_PASSWORD as string,
-	ssl: true,
+	ssl: process.env.POSTGRES_SSL === "true",
 });
 
 export const database = drizzle(client, {
