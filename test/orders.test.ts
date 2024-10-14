@@ -1,22 +1,10 @@
-import { beforeEach, describe, expect, test } from "bun:test";
+import { describe, expect, test } from "bun:test";
 // // biome-ignore lint/style/noNamespaceImport: <explanation>
 // import * as uuid from "uuid";
 import { getOrders } from "../src/services/orders.ts";
-import { seedDatabase } from "./seed.ts";
-
-let seedData;
+import { seedData } from "./setup.ts";
 
 describe("Orders Service Tests", () => {
-	beforeEach(async () => {
-		try {
-			seedData = await seedDatabase();
-			console.log("Seeding successful", seedData);
-		} catch (error) {
-			console.error("Error seeding database", error);
-		}
-	});
-	console.log("seedData", seedData);
-
 	test("should get all orders as an admin", async () => {
 		const adminActor = { ...seedData.admin, role: seedData.adminRole };
 		const orders = await getOrders(adminActor, {});
