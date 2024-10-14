@@ -9,19 +9,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Setup Biome
         uses: biomejs/setup-biome@v2
         with:
           version: latest
-
       - name: Run Biome
         run: biome ci
-
   test:
     runs-on: ubuntu-latest
     services:
-      postgres:
+       postgres:
         image: postgres:latest
         env:
           POSTGRES_USER: postgres
@@ -40,30 +37,9 @@ jobs:
 
       - name: Install Bun
         uses: oven-sh/setup-bun@v1
-        with:
-          version: latest
 
       - name: Install Dependencies
         run: bun install
-
-      - name: Wait for PostgreSQL to be ready
-        run: |
-          until pg_isready -h localhost -p 5432 -U postgres; do
-            echo "Waiting for Postgres to be ready..."
-            sleep 5
-          done
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-
-      - name: Check database connection
-        run: |
-          PGPASSWORD=$POSTGRES_PASSWORD psql -h localhost -U $POSTGRES_USER -d $POSTGRES_DB -c '\l'
-        env:
-          POSTGRES_HOST: localhost
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: postgres
 
       - name: Run Database Migrations
         run: bun run drizzle:push
@@ -73,6 +49,7 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DATABASE: postgres
           POSTGRES_PORT: 5432
+          POSTGRES_SSL: false
 
       - name: Run Tests
         run: bun test
@@ -82,3 +59,4 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DATABASE: postgres
           POSTGRES_PORT: 5432
+          POSTGRES_SSL: false
