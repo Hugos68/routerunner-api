@@ -50,7 +50,9 @@ jobs:
           POSTGRES_DATABASE: postgres
           POSTGRES_PORT: 5432
           POSTGRES_SSL: false
-
+      - name: Wait for Postgres
+        run: sleep 10
+        
       - name: Run Tests
         run: bun test --verbose
         env:
