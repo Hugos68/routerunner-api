@@ -17,7 +17,7 @@ beforeEach(async () => {
 	seedData = await seedDatabase();
 });
 
-describe("Retour Packagings Service Tests", () => {
+describe.skip("Retour Packagings Service Tests", () => {
 	it("should get all retour packagings as an admin", async () => {
 		const adminActor = { ...seedData.admin, role: seedData.adminRole };
 

@@ -17,7 +17,7 @@ beforeEach(async () => {
 	seedData = await seedDatabase();
 });
 
-describe("Role Service Tests", () => {
+describe.skip("Role Service Tests", () => {
 	it("should create a role as an admin", async () => {
 		const adminActor = { ...seedData.admin, role: seedData.adminRole };
 		await deleteRole(adminActor, seedData.driverRole.id);

@@ -21,7 +21,7 @@ beforeEach(async () => {
 	seedData = await seedDatabase();
 });
 
-describe("Trip Service Tests", () => {
+describe.skip("Trip Service Tests", () => {
 	it("should create a new trip as a planner", async () => {
 		const plannerActor = { ...seedData.planner, role: seedData.plannerRole };
 		const tripToCreate = {

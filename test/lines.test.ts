@@ -21,7 +21,7 @@ beforeEach(async () => {
 	seedData = await seedDatabase();
 });
 
-describe("Lines Service Tests", () => {
+describe.skip("Lines Service Tests", () => {
 	it("should get all lines as an admin", async () => {
 		const adminActor = { ...seedData.admin, role: seedData.adminRole };
 

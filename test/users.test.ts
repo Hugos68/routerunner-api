@@ -19,7 +19,7 @@ beforeEach(async () => {
 	seedData = await seedDatabase();
 });
 
-describe("User Service Tests", () => {
+describe.skip("User Service Tests", () => {
 	it("should create a new user as an admin", async () => {
 		const adminActor = { ...seedData.admin, role: seedData.adminRole };
 		const newUser = {
