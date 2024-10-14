@@ -157,20 +157,6 @@ export async function seedDatabase() {
 	if (retourPackaging === undefined) {
 		throw new Error("Failed to create retourPackaging");
 	}
-	console.log("seedData", {
-		driver,
-		planner,
-		admin,
-		driverRole,
-		plannerRole,
-		adminRole,
-		address,
-		trip,
-		order,
-		line,
-		note,
-		retourPackaging,
-	});
 
 	return {
 		driver,
