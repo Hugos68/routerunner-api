@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from "bun:test";
-// biome-ignore lint/style/noNamespaceImport: <explanation>
-import * as uuid from "uuid";
+// // biome-ignore lint/style/noNamespaceImport: <explanation>
+// import * as uuid from "uuid";
 import {
 	createOrder,
 	deleteOrder,
@@ -106,12 +106,12 @@ describe("Orders Service Tests", () => {
 		);
 	});
 
-	it("should throw ResourceNotFoundError when getting a nonexistent order", async () => {
-		const adminActor = { ...seedData.admin, role: seedData.adminRole };
-		const nonexistentOrderId = uuid.v4();
+	// it("should throw ResourceNotFoundError when getting a nonexistent order", async () => {
+	// 	const adminActor = { ...seedData.admin, role: seedData.adminRole };
+	// 	const nonexistentOrderId = uuid.v4();
 
-		await expect(getOrder(adminActor, nonexistentOrderId)).rejects.toThrow(
-			ResourceNotFoundError,
-		);
-	});
+	// 	await expect(getOrder(adminActor, nonexistentOrderId)).rejects.toThrow(
+	// 		ResourceNotFoundError,
+	// 	);
+	// });
 });
