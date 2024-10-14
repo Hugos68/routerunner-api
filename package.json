@@ -1,7 +1,7 @@
 {
 	"name": "routerunner",
 	"version": "0.0.1",
-	"description": "Package management for truck drivers.",
+	"description": "A logistic app for truckdrivers for keeping track of their trips and registering orders and retour packagings.",
 
 	"scripts": {
 		"dev": "bun --hot src/index.ts",

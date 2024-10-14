@@ -1,6 +1,6 @@
 # Routerunner
 
-Package management for truck drivers.
+A logistic app for truckdrivers for keeping track of their trips and registering orders and retour packagings.
 
 ## Prerequisites
 
