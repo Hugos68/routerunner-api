@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from "bun:test";
+// biome-ignore lint/style/noNamespaceImport: <explanation>
 import * as uuid from "uuid";
 import {
 	createSession,
@@ -13,9 +14,8 @@ import {
 	UnauthorizedError,
 } from "../src/utility/errors.ts";
 import { seedDatabase } from "./seed.ts";
-import type { SeedData } from "./seedDataType.ts";
 
-let seedData: SeedData;
+let seedData: Awaited<ReturnType<typeof seedDatabase>>;
 beforeEach(async () => {
 	seedData = await seedDatabase();
 });

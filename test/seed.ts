@@ -1,7 +1,9 @@
 import { database } from "../src/database/database.ts";
 import { addressesTable } from "../src/database/tables/addresses.ts";
 import { linesTable } from "../src/database/tables/lines.ts";
+import { notesTable } from "../src/database/tables/notes.ts";
 import { ordersTable } from "../src/database/tables/orders.ts";
+import { retourPackagingsTable } from "../src/database/tables/retour-packagings.ts";
 import { rolesTable } from "../src/database/tables/roles.ts";
 import { tripsTable } from "../src/database/tables/trips.ts";
 import { usersTable } from "../src/database/tables/users.ts";
@@ -131,7 +133,31 @@ export async function seedDatabase() {
 		throw new Error("Failed to create line");
 	}
 
-	// Return the inserted records for test use
+	const [note] = await database
+		.insert(notesTable)
+		.values({
+			orderId: order.id,
+			content: "Handle with care",
+		})
+		.returning();
+
+	if (note === undefined) {
+		throw new Error("Failed to create note");
+	}
+
+	const [retourPackaging] = await database
+		.insert(retourPackagingsTable)
+		.values({
+			quantity: 10,
+			packageType: "Pallet",
+			orderId: order.id,
+		})
+		.returning();
+
+	if (retourPackaging === undefined) {
+		throw new Error("Failed to create retourPackaging");
+	}
+
 	return {
 		driver,
 		planner,
@@ -143,5 +169,7 @@ export async function seedDatabase() {
 		trip,
 		order,
 		line,
+		note,
+		retourPackaging,
 	};
 }

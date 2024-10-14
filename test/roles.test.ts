@@ -1,16 +1,17 @@
 import { beforeEach, describe, expect, it } from "bun:test";
+// biome-ignore lint/style/noNamespaceImport: <explanation>
 import * as uuid from "uuid";
 import {
 	createRole,
 	deleteRole,
 	getRole,
 	getRoles,
+	updateRole,
 } from "../src/services/roles.ts";
 import { ResourceNotFoundError } from "../src/utility/errors.ts";
 import { seedDatabase } from "./seed.ts";
-import type { SeedData } from "./seedDataType.ts";
 
-let seedData: SeedData;
+let seedData: Awaited<ReturnType<typeof seedDatabase>>;
 
 beforeEach(async () => {
 	seedData = await seedDatabase();
@@ -50,6 +51,17 @@ describe("Role Service Tests", () => {
 		const roles = await getRoles(driverActor, {});
 		expect(roles).toBeDefined();
 		expect(roles.length).toBeGreaterThan(0);
+	});
+
+	it("should update a role as an admin", async () => {
+		const adminActor = { ...seedData.admin, role: seedData.adminRole };
+		const roleId = seedData.driverRole.id;
+		const roleToUpdate: { name: "DRIVER" | "PLANNER" | "ADMIN" } = {
+			name: "DRIVER",
+		};
+		const role = await updateRole(adminActor, roleId, roleToUpdate);
+		expect(role).toBeDefined();
+		expect(role.name).toBe(roleToUpdate.name);
 	});
 
 	it("should get a role by ID as an admin", async () => {
