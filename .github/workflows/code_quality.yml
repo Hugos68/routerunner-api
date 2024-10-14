@@ -52,7 +52,7 @@ jobs:
           POSTGRES_SSL: false
 
       - name: Run Tests
-        run: bun test
+        run: bun test --verbose
         env:
           POSTGRES_HOST: localhost
           POSTGRES_USERNAME: postgres
