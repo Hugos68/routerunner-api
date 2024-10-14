@@ -8,7 +8,12 @@ let seedData: Awaited<ReturnType<typeof seedDatabase>>;
 
 describe("Orders Service Tests", () => {
 	beforeEach(async () => {
-		seedData = await seedDatabase();
+		try {
+			seedData = await seedDatabase();
+			console.log("Seeding successful", seedData);
+		} catch (error) {
+			console.error("Error seeding database", error);
+		}
 	});
 	console.log("seedData", seedData);
 
