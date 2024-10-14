@@ -55,7 +55,7 @@ jobs:
           POSTGRES_SSL: false
         
       - name: Run Tests
-        run: bun test /test/roles.test.ts
+        run: bun test ./test/orders.test.ts
         env:
           POSTGRES_HOST: localhost
           POSTGRES_USERNAME: postgres
