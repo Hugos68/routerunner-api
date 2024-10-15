@@ -5,6 +5,7 @@ import { notesTable } from "../src/database/tables/notes.ts";
 import { ordersTable } from "../src/database/tables/orders.ts";
 import { retourPackagingsTable } from "../src/database/tables/retour-packagings.ts";
 import { rolesTable } from "../src/database/tables/roles.ts";
+import { sessionsTable } from "../src/database/tables/sessions.ts";
 import { tripsTable } from "../src/database/tables/trips.ts";
 import { usersTable } from "../src/database/tables/users.ts";
 
@@ -15,6 +16,9 @@ export async function seedDatabase() {
 	await database.delete(ordersTable);
 	await database.delete(tripsTable);
 	await database.delete(linesTable);
+	await database.delete(sessionsTable);
+	await database.delete(notesTable);
+	await database.delete(retourPackagingsTable);
 
 	const [driverRole] = await database
 		.insert(rolesTable)

@@ -8,7 +8,7 @@ export const HASH_CONFIG = {
 
 export const SESSION_COOKIE_KEY = "session_id";
 
-export const SESSION_COOKIE_CONIG = {
+export const SESSION_COOKIE_CONFIG = {
 	sameSite: "strict",
 	secure: true,
 	httpOnly: true,

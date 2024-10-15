@@ -1,5 +1,5 @@
 import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
-import { setCookie } from "hono/cookie";
+import { deleteCookie, setCookie } from "hono/cookie";
 import { validationHook } from "../handlers/validation-hook.ts";
 import {
 	CreateSessionSchema,
@@ -14,7 +14,10 @@ import {
 	getSessions,
 } from "../services/sessions.ts";
 import type { Environment } from "../types/environment.ts";
-import { SESSION_COOKIE_KEY } from "../utility/constants.ts";
+import {
+	SESSION_COOKIE_CONFIG,
+	SESSION_COOKIE_KEY,
+} from "../utility/constants.ts";
 import { createErrorResponses } from "../utility/create-error-responses.ts";
 import { RouterunnerResponse, createOkSchema } from "../utility/response.ts";
 
@@ -136,6 +139,10 @@ app.openapi(
 		const actor = c.get("actor");
 		const id = c.req.param("id");
 		const session = await deleteSession(actor, id);
+		deleteCookie(c, SESSION_COOKIE_KEY, {
+			...SESSION_COOKIE_CONFIG,
+			expires: session.expiresAt,
+		});
 		return c.json(RouterunnerResponse.ok(session), 200);
 	},
 );
