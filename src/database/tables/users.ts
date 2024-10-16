@@ -8,6 +8,9 @@ export const usersTable = pgTable("users", {
 	username: text("username").unique().notNull(),
 	password: hash("password").notNull(),
 	roleId: uuid("role_id")
-		.references(() => rolesTable.id)
+		.references(() => rolesTable.id, {
+			onDelete: "cascade",
+			onUpdate: "cascade",
+		})
 		.notNull(),
 });
