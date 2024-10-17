@@ -123,6 +123,24 @@ const [trip2] = await database
 if (trip2 === undefined) {
 	throw new Error("Failed to create trip2");
 }
+
+const promises: Promise<unknown>[] = [];
+
+for (let i = 0; i < 20; i++) {
+	const promise = database.insert(ordersTable).values({
+		quantity: 10,
+		packageType: "Pallet",
+		unloadingAddress: address1.id,
+		unloadingDateTime: new Date().toDateString(),
+		deliveryInstructions: "Handle with care",
+		status: "OPEN",
+		tripId: trip1.id,
+	});
+	promises.push(promise);
+}
+
+await Promise.all(promises);
+
 const [order1] = await database
 	.insert(ordersTable)
 	.values({

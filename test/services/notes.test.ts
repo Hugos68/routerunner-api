@@ -7,10 +7,10 @@ import {
 	getNote,
 	getNotes,
 	updateNote,
-} from "../src/services/notes.ts";
-import type { Note } from "../src/types/note.ts";
-import { ResourceNotFoundError } from "../src/utility/errors.ts";
-import { seedData } from "./setup.ts";
+} from "../../src/services/notes.ts";
+import type { Note } from "../../src/types/note.ts";
+import { ResourceNotFoundError } from "../../src/utility/errors.ts";
+import { seedData } from "../setup.ts";
 
 describe("Notes Service Tests", () => {
 	it("should get all notes as an admin", async () => {

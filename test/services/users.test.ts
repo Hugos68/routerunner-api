@@ -6,12 +6,12 @@ import {
 	getUser,
 	getUsers,
 	updateUser,
-} from "../src/services/users.ts";
+} from "../../src/services/users.ts";
 import {
 	ResourceNotFoundError,
 	UnauthorizedError,
-} from "../src/utility/errors.ts";
-import { seedData } from "./setup.ts";
+} from "../../src/utility/errors.ts";
+import { seedData } from "../setup.ts";
 
 describe("User Service Tests", () => {
 	it("should create a new user as an admin", async () => {

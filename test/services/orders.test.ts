@@ -6,13 +6,13 @@ import {
 	getOrder,
 	getOrders,
 	updateOrder,
-} from "../src/services/orders.ts";
-import type { Order } from "../src/types/order.ts";
+} from "../../src/services/orders.ts";
+import type { Order } from "../../src/types/order.ts";
 import {
 	ResourceNotFoundError,
 	UnauthorizedError,
-} from "../src/utility/errors.ts";
-import { seedData } from "./setup.ts";
+} from "../../src/utility/errors.ts";
+import { seedData } from "../setup.ts";
 
 describe("Orders Service Tests", () => {
 	it("should get all orders as an admin", async () => {

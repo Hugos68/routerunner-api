@@ -5,14 +5,14 @@ import {
 	deleteSession,
 	getSession,
 	getSessions,
-} from "../src/services/sessions.ts";
-import type { Actor } from "../src/types/actor.ts";
+} from "../../src/services/sessions.ts";
+import type { Actor } from "../../src/types/actor.ts";
 import {
 	BadCredentialsError,
 	ResourceNotFoundError,
 	UnauthorizedError,
-} from "../src/utility/errors.ts";
-import { seedData } from "./setup.ts";
+} from "../../src/utility/errors.ts";
+import { seedData } from "../setup.ts";
 
 describe("Session Service Tests", () => {
 	it("should create a session for a valid user", async () => {

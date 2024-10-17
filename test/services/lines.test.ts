@@ -6,13 +6,13 @@ import {
 	getLine,
 	getLines,
 	updateLine,
-} from "../src/services/lines.ts";
-import type { Line } from "../src/types/line.ts";
+} from "../../src/services/lines.ts";
+import type { Line } from "../../src/types/line.ts";
 import {
 	ResourceNotFoundError,
 	UnauthorizedError,
-} from "../src/utility/errors.ts";
-import { seedData } from "./setup.ts";
+} from "../../src/utility/errors.ts";
+import { seedData } from "../setup.ts";
 
 describe("Lines Service Tests", () => {
 	it("should get all lines as an admin", async () => {
