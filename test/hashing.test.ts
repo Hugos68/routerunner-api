@@ -7,10 +7,8 @@ describe("Hashing Tests", () => {
 		const wrongPassword = "0123456789";
 		const hashedPassword = Bun.password.hashSync(password, HASH_CONFIG);
 		expect(hashedPassword).toBeDefined();
-		const passwordMatches = await Bun.password.verify(
-			wrongPassword,
-			hashedPassword,
+		expect(await Bun.password.verify(wrongPassword, hashedPassword)).toBe(
+			false,
 		);
-		expect(passwordMatches).toBe(false);
 	});
 });
