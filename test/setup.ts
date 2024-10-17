@@ -1,5 +1,5 @@
 import { beforeEach } from "bun:test";
-import { seedDatabase } from "./seed.ts";
+import { seedDatabase } from "./services/seed.ts";
 
 export let seedData: Awaited<ReturnType<typeof seedDatabase>>;
 beforeEach(async () => {

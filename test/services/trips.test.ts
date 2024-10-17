@@ -6,13 +6,13 @@ import {
 	getTrip,
 	getTrips,
 	updateTrip,
-} from "../src/services/trips.ts";
-import type { Trip } from "../src/types/trip.ts";
+} from "../../src/services/trips.ts";
+import type { Trip } from "../../src/types/trip.ts";
 import {
 	ResourceNotFoundError,
 	UnauthorizedError,
-} from "../src/utility/errors.ts";
-import { seedData } from "./setup.ts";
+} from "../../src/utility/errors.ts";
+import { seedData } from "../setup.ts";
 
 describe("Trip Service Tests", () => {
 	it("should create a new trip as a planner", async () => {

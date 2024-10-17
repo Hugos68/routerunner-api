@@ -6,9 +6,9 @@ import {
 	getRole,
 	getRoles,
 	updateRole,
-} from "../src/services/roles.ts";
-import { ResourceNotFoundError } from "../src/utility/errors.ts";
-import { seedData } from "./setup.ts";
+} from "../../src/services/roles.ts";
+import { ResourceNotFoundError } from "../../src/utility/errors.ts";
+import { seedData } from "../setup.ts";
 
 describe("Role Service Tests", () => {
 	it("should create a role as an admin", async () => {

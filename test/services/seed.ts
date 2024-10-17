@@ -1,13 +1,13 @@
-import { database } from "../src/database/database.ts";
-import { addressesTable } from "../src/database/tables/addresses.ts";
-import { linesTable } from "../src/database/tables/lines.ts";
-import { notesTable } from "../src/database/tables/notes.ts";
-import { ordersTable } from "../src/database/tables/orders.ts";
-import { retourPackagingsTable } from "../src/database/tables/retour-packagings.ts";
-import { rolesTable } from "../src/database/tables/roles.ts";
-import { sessionsTable } from "../src/database/tables/sessions.ts";
-import { tripsTable } from "../src/database/tables/trips.ts";
-import { usersTable } from "../src/database/tables/users.ts";
+import { database } from "../../src/database/database.ts";
+import { addressesTable } from "../../src/database/tables/addresses.ts";
+import { linesTable } from "../../src/database/tables/lines.ts";
+import { notesTable } from "../../src/database/tables/notes.ts";
+import { ordersTable } from "../../src/database/tables/orders.ts";
+import { retourPackagingsTable } from "../../src/database/tables/retour-packagings.ts";
+import { rolesTable } from "../../src/database/tables/roles.ts";
+import { sessionsTable } from "../../src/database/tables/sessions.ts";
+import { tripsTable } from "../../src/database/tables/trips.ts";
+import { usersTable } from "../../src/database/tables/users.ts";
 
 export async function seedDatabase() {
 	await database.delete(usersTable);

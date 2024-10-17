@@ -6,10 +6,10 @@ import {
 	getRetourPackaging,
 	getRetourPackagings,
 	updateRetourPackaging,
-} from "../src/services/retour-packagings.ts";
-import type { RetourPackaging } from "../src/types/retour-packaging.ts";
-import { ResourceNotFoundError } from "../src/utility/errors.ts";
-import { seedData } from "./setup.ts";
+} from "../../src/services/retour-packagings.ts";
+import type { RetourPackaging } from "../../src/types/retour-packaging.ts";
+import { ResourceNotFoundError } from "../../src/utility/errors.ts";
+import { seedData } from "../setup.ts";
 
 describe("Retour Packagings Service Tests", () => {
 	it("should get all retour packagings as an admin", async () => {
