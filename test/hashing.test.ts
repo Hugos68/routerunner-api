@@ -6,6 +6,6 @@ describe("Hashing Tests", () => {
 		const password = "1234567890";
 		const hashedPassword = Bun.password.hashSync(password, HASH_CONFIG);
 		expect(hashedPassword).toBeDefined();
-		expect(Bun.password.verify(password, hashedPassword)).toBeTruthy();
+		expect(Bun.password.verify("0123456789", hashedPassword)).toBeFalse();
 	});
 });
