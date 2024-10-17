@@ -14,4 +14,5 @@ export const SESSION_COOKIE_CONFIG = {
 	httpOnly: true,
 } satisfies CookieOptions;
 
+// 30 days
 export const SESSION_LIFETIME = 30 * 24 * 60 * 60 * 1000;
