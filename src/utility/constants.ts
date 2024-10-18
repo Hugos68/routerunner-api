@@ -1,5 +1,9 @@
 import type { CookieOptions } from "hono/utils/cookie";
 
+/**
+ * Hash configuration following the OWASP recommendation.
+ * @see https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html
+ */
 export const HASH_CONFIG = {
 	algorithm: "argon2id",
 	memoryCost: 19_456,
