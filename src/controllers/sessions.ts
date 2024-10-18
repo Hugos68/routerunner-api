@@ -20,7 +20,7 @@ import {
 	SESSION_COOKIE_KEY,
 } from "../utility/constants.ts";
 import { createErrorResponses } from "../utility/create-error-responses.ts";
-import { RouterunnerResponse } from "../utility/response.ts";
+import { RouterunnerResponse } from "../utility/routerunner-response.ts";
 
 const app = new OpenAPIHono<Environment>({ defaultHook: validationHook });
 

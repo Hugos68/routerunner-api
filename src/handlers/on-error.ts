@@ -1,6 +1,6 @@
 import type { ErrorHandler } from "hono";
 import { RouterunnerError, getStatusCode } from "../utility/errors.ts";
-import { RouterunnerResponse } from "../utility/response.ts";
+import { RouterunnerResponse } from "../utility/routerunner-response.ts";
 
 export const onError: ErrorHandler = (err, c) => {
 	if (err instanceof RouterunnerError) {
