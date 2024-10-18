@@ -7,6 +7,7 @@ import {
 	NoteSchema,
 	UpdateNoteSchema,
 } from "../schemas/notes.ts";
+import { createOkSchema } from "../schemas/responses.ts";
 import {
 	createNote,
 	deleteNote,
@@ -16,7 +17,7 @@ import {
 } from "../services/notes.ts";
 import type { Environment } from "../types/environment.ts";
 import { createErrorResponses } from "../utility/create-error-responses.ts";
-import { RouterunnerResponse, createOkSchema } from "../utility/response.ts";
+import { RouterunnerResponse } from "../utility/routerunner-response.ts";
 
 const app = new OpenAPIHono<Environment>({ defaultHook: validationHook });
 

@@ -24,24 +24,24 @@ class AuthorizationBuilder {
 		this.actor = actor;
 	}
 
-	private currentGroup(): AuthorizationGroup {
-		// biome-ignore lint/style/noNonNullAssertion: <explanation>
+	private currentGroup() {
+		// biome-ignore lint/style/noNonNullAssertion: Always present in our context
 		return this.groups.at(-1)!;
 	}
 
-	isAuthenticated(): this {
+	isAuthenticated() {
 		this.currentGroup().addCheck((actor) => actor !== null);
 		return this;
 	}
 
-	hasRole(...roles: Role["name"][]): this {
+	hasRole(...roles: Role["name"][]) {
 		this.currentGroup().addCheck(
 			(actor) => actor !== null && roles.includes(actor.role.name),
 		);
 		return this;
 	}
 
-	satisfies(check: AuthorizationCheck): this {
+	satisfies(check: AuthorizationCheck) {
 		this.currentGroup().addCheck(check);
 		return this;
 	}
@@ -51,7 +51,7 @@ class AuthorizationBuilder {
 		return this;
 	}
 
-	orElseThrow(error: RouterunnerError): void {
+	orElseThrow(error: RouterunnerError) {
 		const isAuthorized = this.groups.some((group) =>
 			group.evaluate(this.actor),
 		);
@@ -61,6 +61,6 @@ class AuthorizationBuilder {
 	}
 }
 
-export const authorize = (actor: Actor | null): AuthorizationBuilder => {
+export const authorize = (actor: Actor | null) => {
 	return new AuthorizationBuilder(actor);
 };

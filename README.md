@@ -2,13 +2,15 @@
 
 A logistic app for truckdrivers for keeping track of their trips and registering orders and retour packagings.
 
-## Prerequisites
+## Local Development
+
+### Prerequisites
 
 Before you begin, ensure you have the following installed:
 - [Bun](https://bun.sh/)
 - [PostgreSQL](https://www.postgresql.org/)
 
-## Installation
+### Installation
 
 1. Clone the repository:
    ```
@@ -24,10 +26,8 @@ Before you begin, ensure you have the following installed:
 3. Set up environment variables:
    - Copy the `.env.example` file to `.env`
    - Fill in the necessary environment variables in the `.env` file
-   
-## 
 
-## Development
+### Development
 
 To start the development server:
 
@@ -49,6 +49,7 @@ The base URL for the API is `/api/v1`.
   ```
   bun run drizzle:seed
   ```
+  Note: Once seeded there are 3 registered users with usernames: `driver`, `planner` and `admin`. They all share the same password which is: `1234567890`.
 
 - Open Drizzle Studio:
   ```
@@ -71,27 +72,25 @@ Run tests using Bun's test runner:
 bun test
 ```
 
+## Docker
+
+### Prerequisites
+
+Before you begin, ensure you have the following installed:
+- [Docker](https://www.docker.com/)
+
+### Docker Compose
+
+To build and run the app (including a PostgresSQL database):
+```
+docker-compose up -d --build
+```
+
 ## API Documentation
 
 - Swagger UI: Available at `/api-docs`
 - OpenAPI documentation: Available at `/api-spec`
 
-## Docker
-
-To build and run the project using Docker:
-
-1. Build the Docker image:
-   ```
-   docker build -t routerunner .
-   ```
-
-2. Run the container:
-   ```
-   docker run -p 3000:3000 routerunner
-   ```
-
 ## License
 
 See [LICENSE](./LICENSE.txt)
-
-

@@ -1,4 +1,4 @@
-import { ErrorSchema } from "./response.ts";
+import { ErrorSchema } from "../schemas/responses.ts";
 
 export function createErrorResponses(resource: string) {
 	return {
