@@ -7,6 +7,7 @@ import {
 	OrderSchema,
 	UpdateOrderSchema,
 } from "../schemas/orders.ts";
+import { createOkSchema } from "../schemas/responses.ts";
 import {
 	createOrder,
 	deleteOrder,
@@ -16,7 +17,7 @@ import {
 } from "../services/orders.ts";
 import type { Environment } from "../types/environment.ts";
 import { createErrorResponses } from "../utility/create-error-responses.ts";
-import { RouterunnerResponse, createOkSchema } from "../utility/response.ts";
+import { RouterunnerResponse } from "../utility/response.ts";
 
 const app = new OpenAPIHono<Environment>({ defaultHook: validationHook });
 
