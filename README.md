@@ -49,7 +49,7 @@ The base URL for the API is `/api/v1`.
   ```
   bun run drizzle:seed
   ```
-  Note: Once seeded there are 3 registered users, `driver`, `planner` and `admin`. They all share the same password which is: `1234567890`.
+  Note: Once seeded there are 3 registered users with usernames: `driver`, `planner` and `admin`. They all share the same password which is: `1234567890`.
 
 - Open Drizzle Studio:
   ```
