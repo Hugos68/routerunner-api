@@ -79,17 +79,12 @@ bun test
 
 ## Docker
 
-To build and run the project using Docker:
+The app can be fully dockerized.
 
-1. Build the Docker image:
-   ```
-   docker build -t routerunner .
-   ```
-
-2. Run the container:
-   ```
-   docker run -p 3000:3000 routerunner
-   ```
+To build and run the app (including a PostgresSQL database):
+```
+docker-compose up -d --build
+```
 
 ## License
 
